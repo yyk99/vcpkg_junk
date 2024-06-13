@@ -7,7 +7,10 @@ project(cmake_with_boost)
 
 set(Boost_USE_STATIC_LIBS OFF)
 set(Boost_USE_STATIC_RUNTIME OFF)
-find_package(Boost REQUIRED COMPONENTS program_options)
+find_package(Boost REQUIRED COMPONENTS 
+	program_options
+	filesystem
+)
 
 message(STATUS "Boost_LIBRARY_DIRS=${Boost_LIBRARY_DIRS}")
 message(STATUS "Boost_LIB_DIAGNOSTIC_DEFINITIONS=${Boost_LIB_DIAGNOSTIC_DEFINITIONS}")
