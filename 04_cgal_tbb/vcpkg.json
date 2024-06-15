@@ -1,0 +1,16 @@
+{
+  "dependencies": [
+    "boost-program-options",
+    "boost-filesystem",
+    "cgal",
+    "tbb"
+  ],
+  "features": {
+    "tests": {
+      "description": "Build Tests",
+      "dependencies": [
+        "gtest"
+      ]
+    }
+  }
+}
