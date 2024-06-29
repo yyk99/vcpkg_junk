@@ -2,7 +2,6 @@
   "dependencies": [
     "boost-program-options",
     "boost-filesystem",
-    "cgal",
     "tbb"
   ],
   "features": {
