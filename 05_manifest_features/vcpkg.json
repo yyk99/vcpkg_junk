@@ -1,0 +1,24 @@
+{
+  "dependencies": [
+    "boost-program-options",
+    "boost-filesystem",
+    "tbb"
+  ],
+  "features": {
+    "tests": {
+      "description": "Build Tests",
+      "dependencies": [
+        "gtest"
+      ]
+    },
+    "cgal-vcpkg" : {
+      "description": "Use CGAL from vcpkg",
+      "dependencies": [
+        {
+          "name": "cgal",
+          "default-features": false
+        }
+      ]
+    }
+  }
+}
