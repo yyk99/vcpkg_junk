@@ -11,13 +11,20 @@
         "gtest"
       ]
     },
-    "cgal-vcpkg" : {
+    "cgal-vcpkg": {
       "description": "Use CGAL from vcpkg",
       "dependencies": [
         {
           "name": "cgal",
           "default-features": false
         }
+      ]
+    },
+    "cgal-local": {
+      "description": "Use CGAL from other location",
+      "dependencies": [
+        "gmp",
+        "mpfr"
       ]
     }
   }

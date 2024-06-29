@@ -4,7 +4,6 @@
 #
 
 cmake_minimum_required(VERSION 3.28)
-project(05_manifest_features)
 
 option(BUILD_WITH_VCPKG_CGAL "Build with CGAL from VCPKG" OFF)
 option(BUILD_TESTING "Build tests" OFF)
@@ -12,16 +11,26 @@ set(VCPKG_MANIFEST_FEATURES "" CACHE STRING "Manifest features")
 
 if (BUILD_WITH_VCPKG_CGAL)
 	list(APPEND VCPKG_MANIFEST_FEATURES "cgal-vcpkg")
+else()
+	if (EXISTS ${CMAKE_SOURCE_DIR}/cgal)
+		set(GDAL_DIR "${CMAKE_SOURCE_DIR}/cgal" CACHE PATH "")
+		list(APPEND VCPKG_MANIFEST_FEATURES "cgal-local")
+	endif()
 endif()
 
 if (BUILD_TESTING)
 	list(APPEND VCPKG_MANIFEST_FEATURES "tests")
 endif()
 
+
+project(05_manifest_features)
+
 find_package(Boost REQUIRED COMPONENTS 
 	program_options
 	filesystem
 )
+
+message (STATUS "*********** VCPKG_MANIFEST_FEATURES=${VCPKG_MANIFEST_FEATURES} **************")
 
 find_package(TBB REQUIRED)
 find_package(CGAL REQUIRED)
@@ -36,6 +45,7 @@ add_executable(
 	cmd_getargs.cpp
 	../.clang-format
 	README.txt
+	vcpkg.json
 )
 target_link_libraries(cmd_getargs PRIVATE Boost::program_options)
 
