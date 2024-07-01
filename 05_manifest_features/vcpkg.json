@@ -23,7 +23,6 @@
     "cgal-local": {
       "description": "Use CGAL from other location",
       "dependencies": [
-        "gmp",
         "mpfr"
       ]
     }
