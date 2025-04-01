@@ -1,0 +1,4 @@
+[submodule "05_manifest_features/cgal"]
+	path = 05_manifest_features/cgal
+	url = git@github.com:CGAL/cgal.git
+	shallow = true
