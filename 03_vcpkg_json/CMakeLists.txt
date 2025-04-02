@@ -14,12 +14,12 @@ find_package(Boost REQUIRED COMPONENTS
 add_definitions(${Boost_LIB_DIAGNOSTIC_DEFINITIONS})
 
 add_executable(
-	cmd_getargs 
+	cmd_getargs_03
 	cmd_getargs.cpp
 	../.clang-format
 	README.txt
 )
-target_link_libraries(cmd_getargs PRIVATE Boost::program_options)
+target_link_libraries(cmd_getargs_03 PRIVATE Boost::program_options)
 
 option(BUILD_TESTING "Build tests" ON)
 if(BUILD_TESTING)
@@ -29,11 +29,11 @@ if(BUILD_TESTING)
 
 	find_package(GTest REQUIRED)
 
-	add_executable(test_boost 
+	add_executable(test_boost_03
 		test_boost.cpp
 	)
 	target_link_libraries(
-		test_boost
+		test_boost_03
 		PRIVATE 
 		Boost::program_options 
 		Boost::filesystem 
@@ -44,5 +44,3 @@ if(BUILD_TESTING)
 	add_test(test_boost test_boost)
 
 endif()
-
-

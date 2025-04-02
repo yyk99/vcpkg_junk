@@ -16,12 +16,12 @@ find_package(CGAL REQUIRED)
 include (CGAL_TBB_support)
 
 add_executable(
-	cmd_getargs 
+	cmd_getargs_06
 	cmd_getargs.cpp
 	../.clang-format
 	README.txt
 )
-target_link_libraries(cmd_getargs PRIVATE Boost::program_options)
+target_link_libraries(cmd_getargs_06 PRIVATE Boost::program_options)
 
 option(BUILD_TESTING "Build tests" ON)
 if(BUILD_TESTING)
@@ -49,11 +49,11 @@ if(BUILD_TESTING)
 		## add_test(NAME example_test COMMAND example)
 	endif()
 
-	add_executable(test_boost 
+	add_executable(test_boost_06 
 		test_boost.cpp
 	)
 	target_link_libraries(
-		test_boost
+		test_boost_06
 		PRIVATE 
 		Boost::program_options 
 		Boost::filesystem
@@ -66,8 +66,8 @@ if(BUILD_TESTING)
 	)
 	if (FALSE)
 		# DEPRECATED
-		CGAL_target_use_TBB(test_boost)
+		CGAL_target_use_TBB(test_boost_06)
 	endif()
-	add_test(test_boost test_boost)
+	add_test(test_boost_06 test_boost_06)
 
 endif()
