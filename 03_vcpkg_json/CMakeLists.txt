@@ -9,6 +9,7 @@ project(cmake_with_boost)
 find_package(Boost REQUIRED COMPONENTS 
 	program_options
 	filesystem
+	geometry
 )
 
 add_definitions(${Boost_LIB_DIAGNOSTIC_DEFINITIONS})
@@ -36,7 +37,8 @@ if(BUILD_TESTING)
 		test_boost_03
 		PRIVATE 
 		Boost::program_options 
-		Boost::filesystem 
+		Boost::filesystem
+		Boost::geometry
 		GTest::gtest 
 		GTest::gtest_main
 	)
