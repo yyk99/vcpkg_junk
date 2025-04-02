@@ -17,4 +17,6 @@ add_subdirectory(05_manifest_features)
 add_subdirectory(06_cgal_tbb_novcpkg)
 add_subdirectory(07_cmake_qt)
 
+enable_testing()
+
 # end of file
