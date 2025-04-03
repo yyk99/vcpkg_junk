@@ -52,6 +52,7 @@ target_link_libraries(cmd_getargs_05 PRIVATE Boost::program_options)
 
 if(BUILD_TESTING)
 	enable_testing()
+	include(GoogleTest)
 
 	find_package(GTest REQUIRED)
 
@@ -74,6 +75,6 @@ if(BUILD_TESTING)
 		# DEPRECATED
 		CGAL_target_use_TBB(test_boost_05)
 	endif()
-	add_test(test_boost_05 test_boost_05)
+	gtest_discover_tests(test_boost_05)
 
 endif()

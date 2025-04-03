@@ -25,6 +25,8 @@ target_link_libraries(cmd_getargs_03 PRIVATE Boost::program_options)
 option(BUILD_TESTING "Build tests" ON)
 if(BUILD_TESTING)
 	enable_testing()
+	
+	include(GoogleTest)
 
 	list(APPEND VCPKG_MANIFEST_FEATURES "tests")
 
@@ -43,6 +45,6 @@ if(BUILD_TESTING)
 		GTest::gtest_main
 	)
 
-	add_test(test_boost test_boost)
+	gtest_discover_tests(test_boost_03)
 
 endif()

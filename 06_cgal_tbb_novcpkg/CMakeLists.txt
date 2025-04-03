@@ -26,6 +26,7 @@ target_link_libraries(cmd_getargs_06 PRIVATE Boost::program_options)
 option(BUILD_TESTING "Build tests" ON)
 if(BUILD_TESTING)
 	enable_testing()
+	include(GoogleTest)
 
 	set (BUILD_GMOCK OFF CACHE BOOL "")
 	list(APPEND VCPKG_MANIFEST_FEATURES "tests")
@@ -68,6 +69,6 @@ if(BUILD_TESTING)
 		# DEPRECATED
 		CGAL_target_use_TBB(test_boost_06)
 	endif()
-	add_test(test_boost_06 test_boost_06)
+	gtest_discover_tests(test_boost_06)
 
 endif()
