@@ -18,7 +18,7 @@ add_executable(
 	cmd_getargs_03
 	cmd_getargs.cpp
 	../.clang-format
-	README.txt
+	README.md
 )
 target_link_libraries(cmd_getargs_03 PRIVATE Boost::program_options)
 

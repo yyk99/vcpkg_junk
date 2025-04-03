@@ -1,7 +1,9 @@
 {
     "dependencies": [
         "boost-program-options",
-        "boost-filesystem"
+        "boost-filesystem",
+        "boost-geometry",
+        "gtest"
     ],
     "features": {
         "tests": {
