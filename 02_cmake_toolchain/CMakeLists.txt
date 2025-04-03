@@ -18,12 +18,12 @@ message(STATUS "Boost_LIB_DIAGNOSTIC_DEFINITIONS=${Boost_LIB_DIAGNOSTIC_DEFINITI
 add_definitions(${Boost_LIB_DIAGNOSTIC_DEFINITIONS})
 
 add_executable(
-	cmd_getargs 
+	cmd_getargs_02
 	cmd_getargs.cpp
 	../.clang-format
 	README.txt
 )
-target_link_libraries(cmd_getargs PRIVATE Boost::program_options)
+target_link_libraries(cmd_getargs_02 PRIVATE Boost::program_options)
 
 
 

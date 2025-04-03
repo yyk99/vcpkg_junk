@@ -42,24 +42,25 @@ if (CGAL_FOUND)
 endif()
 
 add_executable(
-	cmd_getargs 
+	cmd_getargs_05
 	cmd_getargs.cpp
 	../.clang-format
 	README.txt
 	vcpkg.json
 )
-target_link_libraries(cmd_getargs PRIVATE Boost::program_options)
+target_link_libraries(cmd_getargs_05 PRIVATE Boost::program_options)
 
 if(BUILD_TESTING)
 	enable_testing()
+	include(GoogleTest)
 
 	find_package(GTest REQUIRED)
 
-	add_executable(test_boost 
+	add_executable(test_boost_05
 		test_boost.cpp
 	)
 	target_link_libraries(
-		test_boost
+		test_boost_05
 		PRIVATE 
 		Boost::program_options 
 		Boost::filesystem
@@ -72,8 +73,8 @@ if(BUILD_TESTING)
 	)
 	if (FALSE)
 		# DEPRECATED
-		CGAL_target_use_TBB(test_boost)
+		CGAL_target_use_TBB(test_boost_05)
 	endif()
-	add_test(test_boost test_boost)
+	gtest_discover_tests(test_boost_05)
 
 endif()

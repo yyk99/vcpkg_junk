@@ -16,26 +16,27 @@ find_package(CGAL REQUIRED)
 include (CGAL_TBB_support)
 
 add_executable(
-	cmd_getargs 
+	cmd_getargs_04
 	cmd_getargs.cpp
 	../.clang-format
 	README.txt
 )
-target_link_libraries(cmd_getargs PRIVATE Boost::program_options)
+target_link_libraries(cmd_getargs_04 PRIVATE Boost::program_options)
 
 option(BUILD_TESTING "Build tests" ON)
 if(BUILD_TESTING)
 	enable_testing()
+	include(GoogleTest)
 
 	list(APPEND VCPKG_MANIFEST_FEATURES "tests")
 
 	find_package(GTest REQUIRED)
 
-	add_executable(test_boost 
+	add_executable(test_boost_04
 		test_boost.cpp
 	)
 	target_link_libraries(
-		test_boost
+		test_boost_04
 		PRIVATE 
 		Boost::program_options 
 		Boost::filesystem
@@ -50,6 +51,6 @@ if(BUILD_TESTING)
 		# DEPRECATED
 		CGAL_target_use_TBB(test_boost)
 	endif()
-	add_test(test_boost test_boost)
+	gtest_discover_tests(test_boost_04)
 
 endif()

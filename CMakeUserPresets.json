@@ -1,0 +1,21 @@
+{
+  "version": 2,
+  "configurePresets": [
+    {
+      "name": "default",
+      "inherits": "vcpkg",
+      "environment": {
+        "VCPKG_ROOT": "g:\\opt\\vcpkg"
+      }
+    },
+    {
+      "name": "kestrel",
+      "inherits": "vcpkg",
+      "generator": "Unix Makefiles",
+      "binaryDir": "${sourceDir}/build-linux",
+      "environment": {
+        "VCPKG_ROOT": "/home/yyk/src/vcpkg"
+      }
+    }
+  ]
+}
