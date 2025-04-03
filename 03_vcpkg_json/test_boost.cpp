@@ -55,3 +55,38 @@ TEST(boost_geometry, t0) {
               << (is_within_border ? "yes" : "no") << std::endl;
     ASSERT_FALSE(is_within_border);
 }
+
+TEST(boost_geometry, within) {
+    polygon2d_t p1;
+    bg::read_wkt("POLYGON((0 0, 0 2, 2 2, 2 0, 0 0))", p1);
+
+    polygon2d_t p2;
+    bg::read_wkt("POLYGON((0 0, 0 2, 2 2, 2 0, 0 0))", p2);
+
+    EXPECT_TRUE(bg::within(p1, p2));
+    EXPECT_TRUE(bg::within(p2, p1));
+}
+
+TEST(boost_geometry, intersects) {
+    polygon2d_t p1;
+    bg::read_wkt("POLYGON((0 0, 0 2, 2 2, 2 0, 0 0))", p1);
+
+    polygon2d_t p2;
+    bg::read_wkt("POLYGON((0 0, 0 2, 2 2, 2 0, 0 0))", p2);
+
+    EXPECT_TRUE(bg::intersects(p1, p2));
+    EXPECT_TRUE(bg::intersects(p2, p1));
+}
+
+TEST(boost_geometry, intersects_within) {
+    polygon2d_t p1;
+    bg::read_wkt("POLYGON((0.5 0.5, 0.5 1.5, 1.5 1.5, 1.5 0.5, 0.5 0.5))", p1);
+
+    polygon2d_t p2;
+    bg::read_wkt("POLYGON((0 0, 0 2, 2 2, 2 0, 0 0))", p2);
+
+    EXPECT_TRUE(bg::within(p1, p2));
+    EXPECT_FALSE(bg::within(p2, p1));
+    EXPECT_TRUE(bg::intersects(p1, p2));
+    EXPECT_TRUE(bg::intersects(p2, p1));
+}
