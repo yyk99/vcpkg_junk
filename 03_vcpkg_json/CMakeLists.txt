@@ -3,6 +3,10 @@
 # https://learn.microsoft.com/en-us/vcpkg/users/buildsystems/cmake-integration#settings-reference
 #
 
+if(POLICY CMP0167)
+	cmake_policy(SET CMP0167 OLD)
+endif()
+
 cmake_minimum_required(VERSION 3.28)
 project(cmake_with_boost)
 
