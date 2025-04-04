@@ -16,9 +16,9 @@ In Linux
     cmake --build build-linux
     cmake --build build-linux --target test
 
-In Windows (TODO: test and update the file)
+In Windows (WIP)
 
-    cmake --preset default
+    cmake --preset default -DCMAKE_POLICY_DEFAULT_CMP0167=NEW
     cmake --build build-vs2022
     cmake --build build-vs2022 --target RUN_TESTS
 
