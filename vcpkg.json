@@ -4,8 +4,7 @@
         "boost-program-options",
         "boost-filesystem",
         "boost-geometry",
-        "cgal",
-        "gtest"
+        "cgal"
     ],
     "features": {
         "tests": {
