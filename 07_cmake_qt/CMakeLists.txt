@@ -2,7 +2,7 @@
 #
 #
 
-cmake_minimum_required(VERSION 3.28)
+cmake_minimum_required(VERSION 3.25)
 project(cmake_qt)
 
 if(BUILD_WITH_BOOST)
