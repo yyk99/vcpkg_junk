@@ -4,10 +4,10 @@
 #
 
 if(POLICY CMP0167)
-	cmake_policy(SET CMP0167 OLD)
+	cmake_policy(SET CMP0167 NEW)
 endif()
 
-cmake_minimum_required(VERSION 3.28)
+cmake_minimum_required(VERSION 3.25)
 project(assimp_junk)
 
 set(CMAKE_CXX_STANDARD 17)
