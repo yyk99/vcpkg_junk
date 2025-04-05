@@ -4,15 +4,15 @@
 
 #include <gtest/gtest.h>
 
-#include <assimp/Importer.hpp>
-#include <assimp/Exporter.hpp>
-#include <assimp/scene.h>
-
 #include <filesystem>
-#include <string>
 #include <fstream>
+#include <string>
 
 namespace fs = std::filesystem;
+
+#include <assimp/Exporter.hpp>
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>
 
 class AssimpF : public testing::Test {
 protected:
@@ -21,7 +21,9 @@ protected:
     }
 
     std::string test_case_name() const {
-        return ::testing::UnitTest::GetInstance()->current_test_info()->test_case_name();
+        return ::testing::UnitTest::GetInstance()
+            ->current_test_info()
+            ->test_case_name();
     }
 
     fs::path create_ws() {
@@ -31,11 +33,11 @@ protected:
         return ws;
     }
 
-    void save_as(std::string const &text, fs::path const &location)
-    {
+    void save_as(std::string const &text, fs::path const &location) {
         std::ofstream os(location.string().c_str());
-        if(!os.good())
-            throw std::runtime_error("Cannot create file: " + location.string());
+        if (!os.good())
+            throw std::runtime_error("Cannot create file: " +
+                                     location.string());
         os << text;
         os.close();
     }
@@ -58,10 +60,36 @@ TEST_F(AssimpF, toolkit_create_ws) {
     ASSERT_TRUE(fs::is_regular_file(ws2 / "foo2.txt"));
 }
 
-TEST_F(AssimpF, z1) {
-    Assimp::Exporter exp;
+#include <assimp/DefaultLogger.hpp>
+#include <assimp/Logger.hpp>
 
-    std::cout << fs::absolute(".") << "\n";
-    std::cout << test_name() << "\n";
-    std::cout << test_case_name() << "\n";
+/// @brief
+/// @param
+/// @param
+TEST_F(AssimpF, z1) {
+    auto ws = create_ws();
+
+    auto cube_ply = fs::path(__FILE__).parent_path() / "test_data/cube.ply";
+
+    std::cout << cube_ply << "\n";
+
+    Assimp::DefaultLogger::create((ws / "logfile.txt").string().c_str(),
+                                  Assimp::Logger::VERBOSE);
+    ASSIMP_LOG_DEBUG("First message");
+
+    Assimp::Importer sot;
+    {
+        auto actual_scene = sot.ReadFile("simple.ply", 0);
+        ASSERT_EQ(nullptr, actual_scene);
+    }
+
+    {
+        auto actual_scene = sot.ReadFile(cube_ply.c_str(), 0);
+        ASSERT_NE(nullptr, actual_scene);
+
+        Assimp::Exporter exporter;
+        auto rc = exporter.Export(actual_scene, "assxml",
+                                  (ws / "cube_ply.xml").string());
+        ASSERT_EQ(0, rc);
+    }
 }
