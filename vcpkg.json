@@ -1,0 +1,17 @@
+{
+    "dependencies": [
+        "assimp",
+        "boost-program-options",
+        "boost-filesystem",
+        "boost-geometry",
+        "gtest"
+    ],
+    "features": {
+        "tests": {
+            "description": "Build Tests",
+            "dependencies": [
+                "gtest"
+            ]
+        }
+    }
+}
