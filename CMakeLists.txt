@@ -16,6 +16,7 @@ add_subdirectory(04_cgal_tbb)
 add_subdirectory(05_manifest_features)
 add_subdirectory(06_cgal_tbb_novcpkg)
 add_subdirectory(07_cmake_qt)
+add_subdirectory(08_assimp_junk)
 
 enable_testing()
 
