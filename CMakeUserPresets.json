@@ -9,12 +9,35 @@
       }
     },
     {
+      "name": "default-root",
+      "inherits": "vcpkg",
+      "environment": {
+        "VCPKG_ROOT": "g:\\opt\\vcpkg"
+      },
+      "cacheVariables": {
+        "CMAKE_POLICY_DEFAULT_CMP0167": "NEW",
+        "VCPKG_INSTALLED_DIR": "$env{VCPKG_ROOT}/installed"
+      }
+    },
+    {
       "name": "kestrel",
       "inherits": "vcpkg",
       "generator": "Unix Makefiles",
       "binaryDir": "${sourceDir}/build-linux",
       "environment": {
         "VCPKG_ROOT": "/home/yyk/src/vcpkg"
+      }
+    },
+    {
+      "name": "kestrel-root",
+      "inherits": "vcpkg",
+      "generator": "Unix Makefiles",
+      "binaryDir": "${sourceDir}/build-linux-root",
+      "environment": {
+        "VCPKG_ROOT": "/home/yyk/src/vcpkg"
+      },
+      "cacheVariables": {
+        "VCPKG_INSTALLED_DIR": "$env{VCPKG_ROOT}/installed"
       }
     }
   ]

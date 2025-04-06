@@ -69,7 +69,7 @@ TEST_F(AssimpF, toolkit_create_ws) {
 TEST_F(AssimpF, z1) {
     auto ws = create_ws();
 
-    auto cube_ply = fs::path(__FILE__).parent_path() / "test_data/cube.ply";
+    auto cube_ply = (fs::path(__FILE__).parent_path() / "test_data/cube.ply").string();
 
     std::cout << cube_ply << "\n";
 

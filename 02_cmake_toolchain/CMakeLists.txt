@@ -2,7 +2,7 @@
 #
 #
 
-cmake_minimum_required(VERSION 3.28)
+cmake_minimum_required(VERSION 3.25)
 project(cmake_with_boost)
 
 set(Boost_USE_STATIC_LIBS OFF)

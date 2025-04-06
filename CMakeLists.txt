@@ -2,8 +2,22 @@
 #
 #
 
-cmake_minimum_required(VERSION 3.20)
+cmake_minimum_required(VERSION 3.25)
+
+if(POLICY CMP0167)
+	cmake_policy(SET CMP0167 NEW)
+endif()
+
+option(BUILD_TESTING "Build tests" ON)
+if(BUILD_TESTING)
+  list(APPEND VCPKG_MANIFEST_FEATURES "tests")
+endif()
+
 project (vcpkg_junk)
+
+if(BUILD_TESTING)
+	enable_testing()
+endif()
 
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
@@ -17,7 +31,5 @@ add_subdirectory(05_manifest_features)
 add_subdirectory(06_cgal_tbb_novcpkg)
 add_subdirectory(07_cmake_qt)
 add_subdirectory(08_assimp_junk)
-
-enable_testing()
 
 # end of file

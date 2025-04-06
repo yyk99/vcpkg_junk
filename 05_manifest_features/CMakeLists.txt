@@ -3,7 +3,7 @@
 # https://learn.microsoft.com/en-us/vcpkg/users/buildsystems/cmake-integration#settings-reference
 #
 
-cmake_minimum_required(VERSION 3.28)
+cmake_minimum_required(VERSION 3.25)
 
 option(BUILD_WITH_VCPKG_CGAL "Build with CGAL from VCPKG" OFF)
 option(BUILD_TESTING "Build tests" OFF)

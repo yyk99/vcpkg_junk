@@ -2,7 +2,7 @@
 #
 #
 
-cmake_minimum_required(VERSION 3.28)
+cmake_minimum_required(VERSION 3.25)
 project(cmake_with_boost)
 
 option (BUILD_STATIC "Build with static boost libraries" ON)
