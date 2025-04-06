@@ -7,7 +7,7 @@
 
 ## How to build in Windows
 
-	cmake --preset default -DCMAKE_POLICY_DEFAULT_CMP0167=NEW
+	cmake --preset default
 	cmake --build build-vs2022
 
 ## EXAMPLE command line(s)
