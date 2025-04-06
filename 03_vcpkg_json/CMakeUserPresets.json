@@ -15,6 +15,9 @@
       "binaryDir": "${sourceDir}/build-linux",
       "environment": {
         "VCPKG_ROOT": "/home/yyk/src/vcpkg"
+      },
+      "cacheVariables": {
+        "VCPKG_INSTALLED_DIR": "$env{VCPKG_ROOT}/installed"
       }
     }
   ]
