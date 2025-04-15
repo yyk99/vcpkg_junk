@@ -18,7 +18,7 @@ using boost::polygon::y;
 using boost::polygon::low;
 using boost::polygon::high;
 
-#include "voronoi_visual_utils.hpp"
+//#include "voronoi_visual_utils.hpp"
 
 struct Point {
   int a;
