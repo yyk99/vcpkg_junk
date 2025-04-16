@@ -6,6 +6,8 @@
 #include <gtest/gtest.h>
 #include <iostream>
 
+#include "../common/DebuggingConsole.h"
+
 TEST(t1, t1) { std::cout << "Hello...\n"; }
 
 TEST(t1, fs1) {
@@ -164,6 +166,7 @@ std::ostream &operator<<(std::ostream &ss, std::vector<Point> const &v) {
 TEST_F(voronoy_f, example) {
 
     std::vector<Point> vertices;
+    std::vector<Polygon> triangulation;
     // add your input vertices
 
     // const char polygon_wkt[] = "POLYGON((0 0, 10 0, 10 10, 0 10, 0 0))";
@@ -193,11 +196,19 @@ TEST_F(voronoy_f, example) {
             triangle.push_back(vertices[cell->source_index()]);
             if (triangle.size() == 3) {
                 // process output triangles
-                std::cout << "Got triangle:" << triangle << std::endl;
+                Polygon tr;
+                tr.outer().push_back(triangle[0]);
+                tr.outer().push_back(triangle[1]);
+                tr.outer().push_back(triangle[2]);
+                triangulation.push_back(tr);
+
+                CONSOLE("Got triangle:" << triangle);
                 triangle.erase(triangle.begin() + 1);
             }
 
             edge = edge->rot_next();
         } while (edge != vertex.incident_edge());
     }
+
+    CONSOLE("...");
 }
