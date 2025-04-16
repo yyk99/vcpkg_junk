@@ -1,16 +1,18 @@
 {
-    "dependencies": [
-        "boost-program-options",
-        "boost-filesystem",
-        "boost-geometry",
+  "dependencies": [
+    "boost-program-options",
+    "boost-filesystem",
+    "boost-geometry",
+    "boost-polygon",
+    "vtk",
+    "gtest"
+  ],
+  "features": {
+    "tests": {
+      "description": "Build Tests",
+      "dependencies": [
         "gtest"
-    ],
-    "features": {
-        "tests": {
-            "description": "Build Tests",
-            "dependencies": [
-                "gtest"
-            ]
-        }
+      ]
     }
+  }
 }

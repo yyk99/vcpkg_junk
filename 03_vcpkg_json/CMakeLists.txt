@@ -14,13 +14,38 @@ if(BUILD_TESTING)
   list(APPEND VCPKG_MANIFEST_FEATURES "tests")
 endif()
 
-project(cmake_with_boost)
+project(03_vcpkg_json)
+
+# Prevent a "command line is too long" failure in Windows.
+set(CMAKE_NINJA_FORCE_RESPONSE_FILE "ON" CACHE BOOL "Force Ninja to use response files.")
+
+set_property(GLOBAL PROPERTY USE_FOLDERS TRUE)
 
 find_package(Boost REQUIRED COMPONENTS 
 	program_options
 	filesystem
 	geometry
+	polygon
 )
+
+find_package(VTK COMPONENTS 
+	CommonColor
+	CommonCore
+	CommonDataModel
+	FiltersCore
+	FiltersSources
+	InteractionStyle
+	RenderingContextOpenGL2
+	RenderingCore
+	RenderingFreeType
+	RenderingGL2PSOpenGL2
+	RenderingOpenGL2
+)
+
+if (NOT VTK_FOUND)
+  message(FATAL_ERROR "ConstrainedDelaunay2D: Unable to find the VTK build folder.")
+endif()
+
 
 add_definitions(${Boost_LIB_DIAGNOSTIC_DEFINITIONS})
 
@@ -31,6 +56,36 @@ add_executable(
 	README.md
 )
 target_link_libraries(cmd_getargs_03 PRIVATE Boost::program_options)
+
+add_executable(
+	voronoi_basic_tutorial
+	voronoi_basic_tutorial.cpp
+	../.clang-format
+	README.md
+)
+target_link_libraries(voronoi_basic_tutorial PRIVATE Boost::geometry Boost::polygon)
+
+add_executable(
+	ConstrainedDelaunay2D
+	ConstrainedDelaunay2D.cxx
+	../.clang-format
+	README.md
+)
+target_link_libraries(ConstrainedDelaunay2D PRIVATE ${VTK_LIBRARIES} Boost::geometry Boost::polygon)
+vtk_module_autoinit(TARGETS ConstrainedDelaunay2D   MODULES ${VTK_LIBRARIES})
+
+add_executable(
+	Triangulate
+	Triangulate.cxx
+	../.clang-format
+	README.md
+)
+target_link_libraries(Triangulate PRIVATE ${VTK_LIBRARIES} Boost::geometry Boost::polygon)
+vtk_module_autoinit(TARGETS Triangulate MODULES ${VTK_LIBRARIES})
+
+set_target_properties(
+	Triangulate ConstrainedDelaunay2D voronoi_basic_tutorial cmd_getargs_03 
+	PROPERTIES FOLDER "Apps")
 
 if(BUILD_TESTING)
 	enable_testing()
@@ -56,4 +111,5 @@ if(BUILD_TESTING)
 
 	gtest_discover_tests(test_boost_03)
 
+	set_target_properties(test_boost_03 PROPERTIES FOLDER "Tests")
 endif()
