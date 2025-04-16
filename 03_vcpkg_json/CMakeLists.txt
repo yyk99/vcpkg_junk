@@ -16,6 +16,11 @@ endif()
 
 project(03_vcpkg_json)
 
+# Prevent a "command line is too long" failure in Windows.
+set(CMAKE_NINJA_FORCE_RESPONSE_FILE "ON" CACHE BOOL "Force Ninja to use response files.")
+
+set_property(GLOBAL PROPERTY USE_FOLDERS TRUE)
+
 find_package(Boost REQUIRED COMPONENTS 
 	program_options
 	filesystem
@@ -60,9 +65,6 @@ add_executable(
 )
 target_link_libraries(voronoi_basic_tutorial PRIVATE Boost::geometry Boost::polygon)
 
-# Prevent a "command line is too long" failure in Windows.
-set(CMAKE_NINJA_FORCE_RESPONSE_FILE "ON" CACHE BOOL "Force Ninja to use response files.")
-
 add_executable(
 	ConstrainedDelaunay2D
 	ConstrainedDelaunay2D.cxx
@@ -80,6 +82,10 @@ add_executable(
 )
 target_link_libraries(Triangulate PRIVATE ${VTK_LIBRARIES} Boost::geometry Boost::polygon)
 vtk_module_autoinit(TARGETS Triangulate MODULES ${VTK_LIBRARIES})
+
+set_target_properties(
+	Triangulate ConstrainedDelaunay2D voronoi_basic_tutorial cmd_getargs_03 
+	PROPERTIES FOLDER "Apps")
 
 if(BUILD_TESTING)
 	enable_testing()
@@ -105,4 +111,5 @@ if(BUILD_TESTING)
 
 	gtest_discover_tests(test_boost_03)
 
+	set_target_properties(test_boost_03 PROPERTIES FOLDER "Tests")
 endif()
