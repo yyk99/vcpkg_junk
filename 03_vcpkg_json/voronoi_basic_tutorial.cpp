@@ -21,17 +21,20 @@ using boost::polygon::y;
 #include <boost/geometry.hpp>
 #include <boost/geometry/geometries/point_xy.hpp>
 #include <boost/geometry/geometries/polygon.hpp>
+#include <boost/geometry/geometries/segment.hpp>
 
 typedef boost::geometry::model::d2::point_xy<double> Point;
 typedef boost::geometry::model::polygon<Point> Polygon;
+typedef boost::geometry::model::segment<Point> Segment;
 
 // #include "voronoi_visual_utils.hpp"
 
-// struct Point {
-//   int a;
-//   int b;
-//   Point(int x, int y) : a(x), b(y) {}
-// };
+#if 0
+struct Point {
+    int a;
+    int b;
+    Point(int x, int y) : a(x), b(y) {}
+};
 
 struct Segment {
     Point p0;
@@ -39,6 +42,7 @@ struct Segment {
     Segment(double x1, double y1, double x2, double y2)
         : p0(x1, y1), p1(x2, y2) {}
 };
+#endif
 
 namespace boost {
 namespace polygon {
@@ -61,11 +65,11 @@ template <> struct geometry_concept<Segment> {
 };
 
 template <> struct segment_traits<Segment> {
-    typedef int coordinate_type;
+    typedef double coordinate_type;
     typedef Point point_type;
 
     static inline point_type get(const Segment &segment, direction_1d dir) {
-        return dir.to_int() ? segment.p1 : segment.p0;
+        return dir.to_int() ? segment.second : segment.first;
     }
 };
 } // namespace polygon
@@ -126,8 +130,8 @@ int main() {
     points.push_back(Point(0, 0));
     points.push_back(Point(1, 6));
     std::vector<Segment> segments;
-    segments.push_back(Segment(-4, 5, 5, -1));
-    segments.push_back(Segment(3, -11, 13, -1));
+    segments.push_back(Segment({-4, 5}, {5, -1}));
+    segments.push_back(Segment({3, -11}, {13, -1}));
 
     // Construction of the Voronoi Diagram.
     voronoi_diagram<double> vd;
