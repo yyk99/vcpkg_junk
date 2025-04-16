@@ -32,6 +32,14 @@ add_executable(
 )
 target_link_libraries(cmd_getargs_03 PRIVATE Boost::program_options)
 
+add_executable(
+	voronoi_basic_tutorial
+	voronoi_basic_tutorial.cpp
+	../.clang-format
+	README.md
+)
+target_link_libraries(voronoi_basic_tutorial PRIVATE Boost::geometry)
+
 if(BUILD_TESTING)
 	enable_testing()
 	
