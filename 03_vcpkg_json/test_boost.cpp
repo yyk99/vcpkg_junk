@@ -211,4 +211,5 @@ TEST_F(voronoy_f, example) {
     }
 
     CONSOLE("...");
+    ASSERT_EQ(4, triangulation.size());
 }
