@@ -1,4 +1,4 @@
-# Collection of vcpkg related project
+# Collection of vcpkg related projects
 
 ## How to Build in Linux
 
