@@ -14,13 +14,32 @@ if(BUILD_TESTING)
   list(APPEND VCPKG_MANIFEST_FEATURES "tests")
 endif()
 
-project(cmake_with_boost)
+project(03_vcpkg_json)
 
 find_package(Boost REQUIRED COMPONENTS 
 	program_options
 	filesystem
 	geometry
+	polygon
 )
+
+find_package(VTK COMPONENTS 
+  CommonColor
+  CommonCore
+  CommonDataModel
+  FiltersCore
+  InteractionStyle
+  RenderingContextOpenGL2
+  RenderingCore
+  RenderingFreeType
+  RenderingGL2PSOpenGL2
+  RenderingOpenGL2
+)
+
+if (NOT VTK_FOUND)
+  message(FATAL_ERROR "ConstrainedDelaunay2D: Unable to find the VTK build folder.")
+endif()
+
 
 add_definitions(${Boost_LIB_DIAGNOSTIC_DEFINITIONS})
 
@@ -38,7 +57,18 @@ add_executable(
 	../.clang-format
 	README.md
 )
-target_link_libraries(voronoi_basic_tutorial PRIVATE Boost::geometry)
+target_link_libraries(voronoi_basic_tutorial PRIVATE Boost::geometry Boost::polygon)
+
+# Prevent a "command line is too long" failure in Windows.
+set(CMAKE_NINJA_FORCE_RESPONSE_FILE "ON" CACHE BOOL "Force Ninja to use response files.")
+add_executable(ConstrainedDelaunay2D MACOSX_BUNDLE ConstrainedDelaunay2D.cxx )
+  target_link_libraries(ConstrainedDelaunay2D PRIVATE ${VTK_LIBRARIES} Boost::geometry Boost::polygon
+)
+# vtk_module_autoinit is needed
+vtk_module_autoinit(
+  TARGETS ConstrainedDelaunay2D
+  MODULES ${VTK_LIBRARIES}
+)
 
 if(BUILD_TESTING)
 	enable_testing()
