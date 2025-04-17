@@ -91,12 +91,20 @@ TEST(boost_geometry, intersects_within) {
     EXPECT_TRUE(bg::intersects(p2, p1));
 }
 
+/// @brief 
+/// @param --gtest_filter=boost_geometry.weird_case_1
+/// @param  
 TEST(boost_geometry, weird_case_1) {
     polygon2d_t p1;
     bg::read_wkt("POLYGON((0 0, 0 10, 5 5, 10 10, 10 0, 5 5, 0 0))", p1);
+    ASSERT_FALSE(bg::is_valid(p1));
 
     polygon2d_t p2;
     bg::read_wkt("POLYGON((0 0, 0 2, 2 2, 2 0, 0 0))", p2);
+    ASSERT_TRUE(bg::is_valid(p2));
+
+    // Split p1 into two "simple" polygons
+
 }
 
 //
