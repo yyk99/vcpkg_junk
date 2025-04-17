@@ -9,7 +9,7 @@
       }
     },
     {
-      "name": "windows-devyyk",
+      "name": "windows-developmentyk",
       "inherits": "vcpkg",
       "environment": {
         "VCPKG_ROOT": "c:\\opt\\vcpkg"
