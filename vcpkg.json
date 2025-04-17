@@ -1,17 +1,20 @@
 {
-    "dependencies": [
-        "assimp",
-        "boost-program-options",
-        "boost-filesystem",
-        "boost-geometry",
-        "cgal"
-    ],
-    "features": {
-        "tests": {
-            "description": "Build Tests",
-            "dependencies": [
-                "gtest"
-            ]
-        }
+  "dependencies": [
+    "assimp",
+    "boost-program-options",
+    "boost-filesystem",
+    "boost-geometry",
+    "boost-polygon",
+    "vtk",
+    "tbb",
+    "cgal"
+  ],
+  "features": {
+    "tests": {
+      "description": "Build Tests",
+      "dependencies": [
+        "gtest"
+      ]
     }
+  }
 }
