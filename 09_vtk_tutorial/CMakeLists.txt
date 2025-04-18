@@ -102,6 +102,17 @@ vtk_module_autoinit(
 )
 set_target_properties(Tutorial_Step1 PROPERTIES FOLDER "VTK Tutorials")
 
+# VTK Step 2
+add_executable(Tutorial_Step2 MACOSX_BUNDLE Tutorial_Step2.cxx )
+  target_link_libraries(Tutorial_Step2 PRIVATE ${VTK_LIBRARIES}
+)
+# vtk_module_autoinit is needed
+vtk_module_autoinit(
+  TARGETS Tutorial_Step2
+  MODULES ${VTK_LIBRARIES}
+)
+set_target_properties(Tutorial_Step1 PROPERTIES FOLDER "VTK Tutorials")
+
 if(BUILD_TESTING)
 	enable_testing()
 	
