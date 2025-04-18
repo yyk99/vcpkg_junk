@@ -91,27 +91,19 @@ set_target_properties(
 	Triangulate ConstrainedDelaunay2D voronoi_basic_tutorial cmd_getargs_03 
 	PROPERTIES FOLDER "Apps")
 
-# VTK Step 1
-add_executable(Tutorial_Step1 MACOSX_BUNDLE Tutorial_Step1.cxx )
-  target_link_libraries(Tutorial_Step1 PRIVATE ${VTK_LIBRARIES}
-)
-# vtk_module_autoinit is needed
-vtk_module_autoinit(
-  TARGETS Tutorial_Step1
-  MODULES ${VTK_LIBRARIES}
-)
-set_target_properties(Tutorial_Step1 PROPERTIES FOLDER "VTK Tutorials")
+macro (add_vtk_tutorial tutorial_name)
+	add_executable(${tutorial_name} MACOSX_BUNDLE ${tutorial_name}.cxx )
+	target_link_libraries(${tutorial_name} PRIVATE ${VTK_LIBRARIES})
+	vtk_module_autoinit(
+  		TARGETS ${tutorial_name}
+  		MODULES ${VTK_LIBRARIES}
+	)
+	set_target_properties(${tutorial_name} PROPERTIES FOLDER "VTK Tutorials")
+endmacro()
 
-# VTK Step 2
-add_executable(Tutorial_Step2 MACOSX_BUNDLE Tutorial_Step2.cxx )
-  target_link_libraries(Tutorial_Step2 PRIVATE ${VTK_LIBRARIES}
-)
-# vtk_module_autoinit is needed
-vtk_module_autoinit(
-  TARGETS Tutorial_Step2
-  MODULES ${VTK_LIBRARIES}
-)
-set_target_properties(Tutorial_Step1 PROPERTIES FOLDER "VTK Tutorials")
+add_vtk_tutorial(Tutorial_Step1)
+add_vtk_tutorial(Tutorial_Step2)
+add_vtk_tutorial(Tutorial_Step3)
 
 if(BUILD_TESTING)
 	enable_testing()
