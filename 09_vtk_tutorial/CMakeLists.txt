@@ -50,46 +50,7 @@ if (NOT VTK_FOUND)
   message(FATAL_ERROR "ConstrainedDelaunay2D: Unable to find the VTK build folder.")
 endif()
 
-
 add_definitions(${Boost_LIB_DIAGNOSTIC_DEFINITIONS})
-
-add_executable(
-	cmd_getargs_03
-	cmd_getargs.cpp
-	../.clang-format
-	README.md
-)
-target_link_libraries(cmd_getargs_03 PRIVATE Boost::program_options)
-
-add_executable(
-	voronoi_basic_tutorial
-	voronoi_basic_tutorial.cpp
-	../.clang-format
-	README.md
-)
-target_link_libraries(voronoi_basic_tutorial PRIVATE Boost::geometry Boost::polygon)
-
-add_executable(
-	ConstrainedDelaunay2D
-	ConstrainedDelaunay2D.cxx
-	../.clang-format
-	README.md
-)
-target_link_libraries(ConstrainedDelaunay2D PRIVATE ${VTK_LIBRARIES} Boost::geometry Boost::polygon)
-vtk_module_autoinit(TARGETS ConstrainedDelaunay2D   MODULES ${VTK_LIBRARIES})
-
-add_executable(
-	Triangulate
-	Triangulate.cxx
-	../.clang-format
-	README.md
-)
-target_link_libraries(Triangulate PRIVATE ${VTK_LIBRARIES} Boost::geometry Boost::polygon)
-vtk_module_autoinit(TARGETS Triangulate MODULES ${VTK_LIBRARIES})
-
-set_target_properties(
-	Triangulate ConstrainedDelaunay2D voronoi_basic_tutorial cmd_getargs_03 
-	PROPERTIES FOLDER "Apps")
 
 macro (add_vtk_tutorial tutorial_name)
 	add_executable(${tutorial_name} MACOSX_BUNDLE ${tutorial_name}.cxx )
@@ -114,12 +75,12 @@ if(BUILD_TESTING)
 
 	find_package(GTest REQUIRED)
 
-	add_executable(test_boost_03
+	add_executable(test_boost_09
 		test_boost.cpp
 	)
 	target_link_libraries(
-		test_boost_03
-		PRIVATE 
+		test_boost_09
+		PRIVATE
 		Boost::program_options 
 		Boost::filesystem
 		Boost::geometry
@@ -127,7 +88,7 @@ if(BUILD_TESTING)
 		GTest::gtest_main
 	)
 
-	gtest_discover_tests(test_boost_03)
+	gtest_discover_tests(test_boost_09)
 
-	set_target_properties(test_boost_03 PROPERTIES FOLDER "Tests")
+	set_target_properties(test_boost_09 PROPERTIES FOLDER "Tests")
 endif()
