@@ -36,9 +36,11 @@ find_package(VTK COMPONENTS
 	CommonColor
 	CommonCore
 	CommonDataModel
+	CommonTransforms
 	FiltersCore
 	FiltersSources
 	InteractionStyle
+	InteractionWidgets
 	RenderingContextOpenGL2
 	RenderingCore
 	RenderingFreeType
@@ -50,57 +52,24 @@ if (NOT VTK_FOUND)
   message(FATAL_ERROR "ConstrainedDelaunay2D: Unable to find the VTK build folder.")
 endif()
 
-
 add_definitions(${Boost_LIB_DIAGNOSTIC_DEFINITIONS})
 
-add_executable(
-	cmd_getargs_03
-	cmd_getargs.cpp
-	../.clang-format
-	README.md
-)
-target_link_libraries(cmd_getargs_03 PRIVATE Boost::program_options)
+macro (add_vtk_tutorial tutorial_name)
+	add_executable(${tutorial_name} MACOSX_BUNDLE ${tutorial_name}.cxx )
+	target_link_libraries(${tutorial_name} PRIVATE ${VTK_LIBRARIES})
+	vtk_module_autoinit(
+  		TARGETS ${tutorial_name}
+  		MODULES ${VTK_LIBRARIES}
+	)
+	set_target_properties(${tutorial_name} PROPERTIES FOLDER "VTK Tutorials")
+endmacro()
 
-add_executable(
-	voronoi_basic_tutorial
-	voronoi_basic_tutorial.cpp
-	../.clang-format
-	README.md
-)
-target_link_libraries(voronoi_basic_tutorial PRIVATE Boost::geometry Boost::polygon)
-
-add_executable(
-	ConstrainedDelaunay2D
-	ConstrainedDelaunay2D.cxx
-	../.clang-format
-	README.md
-)
-target_link_libraries(ConstrainedDelaunay2D PRIVATE ${VTK_LIBRARIES} Boost::geometry Boost::polygon)
-vtk_module_autoinit(TARGETS ConstrainedDelaunay2D   MODULES ${VTK_LIBRARIES})
-
-add_executable(
-	Triangulate
-	Triangulate.cxx
-	../.clang-format
-	README.md
-)
-target_link_libraries(Triangulate PRIVATE ${VTK_LIBRARIES} Boost::geometry Boost::polygon)
-vtk_module_autoinit(TARGETS Triangulate MODULES ${VTK_LIBRARIES})
-
-set_target_properties(
-	Triangulate ConstrainedDelaunay2D voronoi_basic_tutorial cmd_getargs_03 
-	PROPERTIES FOLDER "Apps")
-
-# VTK Step 1
-add_executable(Tutorial_Step1 MACOSX_BUNDLE Tutorial_Step1.cxx )
-  target_link_libraries(Tutorial_Step1 PRIVATE ${VTK_LIBRARIES}
-)
-# vtk_module_autoinit is needed
-vtk_module_autoinit(
-  TARGETS Tutorial_Step1
-  MODULES ${VTK_LIBRARIES}
-)
-set_target_properties(Tutorial_Step1 PROPERTIES FOLDER "VTK Tutorials")
+add_vtk_tutorial(Tutorial_Step1)
+add_vtk_tutorial(Tutorial_Step2)
+add_vtk_tutorial(Tutorial_Step3)
+add_vtk_tutorial(Tutorial_Step4)
+add_vtk_tutorial(Tutorial_Step5)
+add_vtk_tutorial(Tutorial_Step6)
 
 if(BUILD_TESTING)
 	enable_testing()
@@ -111,12 +80,12 @@ if(BUILD_TESTING)
 
 	find_package(GTest REQUIRED)
 
-	add_executable(test_boost_03
+	add_executable(test_boost_09
 		test_boost.cpp
 	)
 	target_link_libraries(
-		test_boost_03
-		PRIVATE 
+		test_boost_09
+		PRIVATE
 		Boost::program_options 
 		Boost::filesystem
 		Boost::geometry
@@ -124,7 +93,7 @@ if(BUILD_TESTING)
 		GTest::gtest_main
 	)
 
-	gtest_discover_tests(test_boost_03)
+	gtest_discover_tests(test_boost_09)
 
-	set_target_properties(test_boost_03 PROPERTIES FOLDER "Tests")
+	set_target_properties(test_boost_09 PROPERTIES FOLDER "Tests")
 endif()

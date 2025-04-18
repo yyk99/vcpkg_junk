@@ -14,22 +14,20 @@
 #include <vtkActor.h>
 #include <vtkCamera.h>
 #include <vtkConeSource.h>
+#include <vtkInteractorStyleTrackballCamera.h>
 #include <vtkNamedColors.h>
 #include <vtkNew.h>
 #include <vtkPolyDataMapper.h>
 #include <vtkProperty.h>
 #include <vtkRenderWindow.h>
+#include <vtkRenderWindowInteractor.h>
 #include <vtkRenderer.h>
 
 int main(int, char *[]) {
-    //
-    // Next we create an instance of vtkNamedColors and we will use
-    // this to select colors for the object and background.
-    //
     vtkNew<vtkNamedColors> colors;
 
     //
-    // Now we create an instance of vtkConeSource and set some of its
+    // Next we create an instance of vtkConeSource and set some of its
     // properties. The instance of vtkConeSource "cone" is part of a
     // visualization pipeline (it is a source process object); it produces data
     // (output type is vtkPolyData) which other filters may process.
@@ -58,8 +56,7 @@ int main(int, char *[]) {
     //
     vtkNew<vtkActor> coneActor;
     coneActor->SetMapper(coneMapper);
-    coneActor->GetProperty()->SetColor(
-        colors->GetColor3d("MistyRose").GetData());
+    coneActor->GetProperty()->SetColor(colors->GetColor3d("Bisque").GetData());
 
     //
     // Create the Renderer and assign actors to it. A renderer is like a
@@ -71,6 +68,7 @@ int main(int, char *[]) {
     ren1->AddActor(coneActor);
     ren1->SetBackground(colors->GetColor3d("MidnightBlue").GetData());
 
+    //
     // Finally we create the render window which will show up on the screen.
     // We put our renderer into the render window using AddRenderer. We also
     // set the size to be 300 pixels by 300.
@@ -78,17 +76,44 @@ int main(int, char *[]) {
     vtkNew<vtkRenderWindow> renWin;
     renWin->AddRenderer(ren1);
     renWin->SetSize(300, 300);
-    renWin->SetWindowName("Tutorial_Step1");
+    renWin->SetWindowName("Tutorial_Step5");
 
     //
-    // Now we loop over 360 degrees and render the cone each time.
+    // The vtkRenderWindowInteractor class watches for events (e.g., keypress,
+    // mouse) in the vtkRenderWindow. These events are translated into
+    // event invocations that VTK understands (see VTK/Common/vtkCommand.h
+    // for all events that VTK processes). Then observers of these VTK
+    // events can process them as appropriate.
+    vtkNew<vtkRenderWindowInteractor> iren;
+    iren->SetRenderWindow(renWin);
+
     //
-    for (int i = 0; i < 360; ++i) {
-        // Render the image
-        renWin->Render();
-        // Rotate the active camera by one degree.
-        ren1->GetActiveCamera()->Azimuth(1);
-    }
+    // By default the vtkRenderWindowInteractor instantiates an instance
+    // of vtkInteractorStyle. vtkInteractorStyle translates a set of events
+    // it observes into operations on the camera, actors, and/or properties
+    // in the vtkRenderWindow associated with the vtkRenderWinodwInteractor.
+    // Here we specify a particular interactor style.
+    vtkNew<vtkInteractorStyleTrackballCamera> style;
+    iren->SetInteractorStyle(style);
+
+    //
+    // Unlike the previous scripts where we performed some operations and then
+    // exited, here we leave an event loop running. The user can use the mouse
+    // and keyboard to perform the operations on the scene according to the
+    // current interaction style. When the user presses the "e" key, by default
+    // an ExitEvent is invoked by the vtkRenderWindowInteractor which is caught
+    // and drops out of the event loop (triggered by the Start() method that
+    // follows.
+    //
+    iren->Initialize();
+    iren->Start();
+
+    //
+    // Final note: recall that observers can watch for particular events and
+    // take appropriate action. Pressing "u" in the render window causes the
+    // vtkRenderWindowInteractor to invoke a UserEvent. This can be caught to
+    // popup a GUI, etc. See the Tcl Cone5.tcl example for an idea of how this
+    // works.
 
     return EXIT_SUCCESS;
 }

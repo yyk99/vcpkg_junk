@@ -31,5 +31,6 @@ add_subdirectory(05_manifest_features)
 add_subdirectory(06_cgal_tbb_novcpkg)
 add_subdirectory(07_cmake_qt)
 add_subdirectory(08_assimp_junk)
+add_subdirectory(09_vtk_tutorial)
 
 # end of file
