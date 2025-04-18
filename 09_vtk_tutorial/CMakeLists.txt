@@ -36,9 +36,11 @@ find_package(VTK COMPONENTS
 	CommonColor
 	CommonCore
 	CommonDataModel
+	CommonTransforms
 	FiltersCore
 	FiltersSources
 	InteractionStyle
+	InteractionWidgets
 	RenderingContextOpenGL2
 	RenderingCore
 	RenderingFreeType
@@ -65,6 +67,9 @@ endmacro()
 add_vtk_tutorial(Tutorial_Step1)
 add_vtk_tutorial(Tutorial_Step2)
 add_vtk_tutorial(Tutorial_Step3)
+add_vtk_tutorial(Tutorial_Step4)
+add_vtk_tutorial(Tutorial_Step5)
+add_vtk_tutorial(Tutorial_Step6)
 
 if(BUILD_TESTING)
 	enable_testing()
