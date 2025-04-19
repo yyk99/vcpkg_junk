@@ -72,8 +72,9 @@ add_vtk_tutorial(Tutorial_Step5)
 add_vtk_tutorial(Tutorial_Step6)
 
 if(BUILD_TESTING)
-    find_package(PkgConfig REQUIRED)
-    pkg_check_modules(JSONCPP jsoncpp)
+    # this is heuristically generated, and may not be correct
+    find_package(jsoncpp CONFIG REQUIRED)
+    # target_link_libraries(main PRIVATE JsonCpp::JsonCpp)
 
     enable_testing()
 
@@ -96,7 +97,7 @@ if(BUILD_TESTING)
         GTest::gtest
         GTest::gtest_main
         ${VTK_LIBRARIES}
-        ${JSONCPP_LIBRARIES}
+        JsonCpp::JsonCpp
     )
 
     gtest_discover_tests(test_boost_09)
