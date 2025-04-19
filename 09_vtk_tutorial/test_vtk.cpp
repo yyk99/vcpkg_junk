@@ -8,10 +8,11 @@
 
 #include "vtkNamedColors.h"
 #include "vtkSmartPointer.h"
+#include "vtk_jsoncpp.h"
 
-#define _DEBUG 1
 #include "../common/DebuggingConsole.h"
 
+/// @brief 
 class VTK_F : public testing::Test {
 public:
     //------------------------------------------------------------------------------
@@ -35,10 +36,10 @@ public:
     }
 };
 
-///
-TEST_F(VTK_F, t0) {
-    CONSOLE("Hello...");
-
+/// @brief 
+/// @param  
+/// @param  
+TEST_F(VTK_F, vtkNamedColors_GetColorNames) {
     vtkSmartPointer<vtkNamedColors> sot =
         vtkSmartPointer<vtkNamedColors>::New();
     std::string name;
@@ -52,5 +53,44 @@ TEST_F(VTK_F, t0) {
         auto actual_colors = ParseColorNames(sot->GetColorNames());
         CONSOLE_EVAL(actual_colors.size());
         ASSERT_NE(0, actual_colors.size());
+    }
+}
+
+/// @brief 
+/// @param  
+/// @param
+TEST_F(VTK_F, json_parse) {
+    Json::CharReaderBuilder sot_builder;
+
+    auto sot = std::unique_ptr<Json::CharReader>(sot_builder.newCharReader());
+    ASSERT_TRUE(sot);
+
+    {
+        const char text_json[] = R"({"a" = 10, "b" = "hello"})";
+        Json::Value actual_root;
+        Json::String actual_err;
+        bool ok = sot->parse(text_json, text_json + strlen(text_json),
+                             &actual_root, &actual_err);
+        CONSOLE_EVAL(actual_err);
+        ASSERT_FALSE(ok);
+    }
+    {
+        const char text_json[] = R"({"a" : 10, "b" : "hello"})";
+        Json::Value actual_root;
+        Json::String actual_err;
+        bool ok = sot->parse(text_json, text_json + strlen(text_json),
+                             &actual_root, &actual_err);
+        CONSOLE_EVAL(actual_err);
+        ASSERT_TRUE(ok);
+        ASSERT_TRUE(actual_err.empty());
+
+        EXPECT_TRUE(actual_root.isObject());
+        auto actual_a = actual_root.get("a", Json::Value(0));
+        EXPECT_TRUE(actual_a.isInt());
+        EXPECT_EQ(10, actual_a.asInt());
+
+        auto actual_b = actual_root.get("b", Json::Value(""));
+        EXPECT_TRUE(actual_b.isString());
+        EXPECT_EQ(std::string("hello"), actual_b.asString());
     }
 }

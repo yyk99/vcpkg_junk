@@ -72,6 +72,9 @@ add_vtk_tutorial(Tutorial_Step5)
 add_vtk_tutorial(Tutorial_Step6)
 
 if(BUILD_TESTING)
+    find_package(PkgConfig REQUIRED)
+    pkg_check_modules(JSONCPP jsoncpp)
+
     enable_testing()
 
     include(GoogleTest)
@@ -93,6 +96,7 @@ if(BUILD_TESTING)
         GTest::gtest
         GTest::gtest_main
         ${VTK_LIBRARIES}
+        ${JSONCPP_LIBRARIES}
     )
 
     gtest_discover_tests(test_boost_09)
