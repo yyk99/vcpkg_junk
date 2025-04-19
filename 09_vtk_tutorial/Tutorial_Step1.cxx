@@ -36,8 +36,9 @@ int main(int, char *[]) {
     //
     vtkNew<vtkConeSource> cone;
     cone->SetHeight(3.0);
-    cone->SetRadius(1.0);
-    cone->SetResolution(10);
+    cone->SetRadius(2.0);
+    cone->SetResolution(100);
+    cone->SetCapping(false);
 
     //
     // In this example we terminate the pipeline with a mapper process object.
@@ -77,7 +78,7 @@ int main(int, char *[]) {
     //
     vtkNew<vtkRenderWindow> renWin;
     renWin->AddRenderer(ren1);
-    renWin->SetSize(300, 300);
+    renWin->SetSize(800, 600);
     renWin->SetWindowName("Tutorial_Step1");
 
     //
