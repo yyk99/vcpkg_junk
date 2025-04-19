@@ -18,7 +18,7 @@ In Linux
 
 In Windows (WIP)
 
-    cmake --preset default -DCMAKE_POLICY_DEFAULT_CMP0167=NEW
+    cmake --preset default
     cmake --build build-vs2022
     cmake --build build-vs2022 --target RUN_TESTS
 
