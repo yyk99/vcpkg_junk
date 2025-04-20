@@ -87,6 +87,16 @@ set_target_properties(
 	Triangulate ConstrainedDelaunay2D voronoi_basic_tutorial cmd_getargs_03 
 	PROPERTIES FOLDER "Apps")
 
+add_executable(
+	GLTFImporter
+	GLTFImporter.cxx
+	../.clang-format
+	README.md
+)
+target_link_libraries(GLTFImporter PRIVATE ${VTK_LIBRARIES})
+vtk_module_autoinit(TARGETS GLTFImporter MODULES ${VTK_LIBRARIES})
+set_target_properties(GLTFImporter PROPERTIES FOLDER "Apps")
+
 if(BUILD_TESTING)
 	enable_testing()
 	
