@@ -28,8 +28,14 @@ In Windows
 
 ## Run
 
+In Linux:
+
     build-linux/GLTFImporter ../08_assimp_junk/test_data/BoxTextured-glTF/BoxTextured.gltf
     build-linux/GLTFImporter ~/src/glTF-Sample-Models/2.0/ABeautifulGame/glTF/ABeautifulGame.gltf
+
+In Windows:
+
+    .\build-vs2022\Debug\GLTFImporter.exe ../08_assimp_junk/test_data/BoxTextured-glTF/BoxTextured.gltf
 
 ## REFERENCE
 
