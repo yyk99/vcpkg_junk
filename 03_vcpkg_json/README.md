@@ -20,11 +20,16 @@ In Linux
     cmake --build build-linux
     cmake --build build-linux --target test
 
-In Windows (WIP)
+In Windows
 
-    cmake --preset default -DCMAKE_POLICY_DEFAULT_CMP0167=NEW
+    cmake --preset default
     cmake --build build-vs2022
     cmake --build build-vs2022 --target RUN_TESTS
+
+## Run
+
+    build-linux/GLTFImporter ../08_assimp_junk/test_data/BoxTextured-glTF/BoxTextured.gltf
+    build-linux/GLTFImporter ~/src/glTF-Sample-Models/2.0/ABeautifulGame/glTF/ABeautifulGame.gltf
 
 ## REFERENCE
 

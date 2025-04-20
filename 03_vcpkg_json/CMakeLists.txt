@@ -35,6 +35,7 @@ find_package(VTK COMPONENTS
 	FiltersCore
 	FiltersSources
 	InteractionStyle
+	IOImport
 	RenderingContextOpenGL2
 	RenderingCore
 	RenderingFreeType
