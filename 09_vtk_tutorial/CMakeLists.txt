@@ -84,12 +84,12 @@ if(BUILD_TESTING)
 
     find_package(GTest REQUIRED)
 
-    add_executable(test_boost_09
+    add_executable(test_09
         test_boost.cpp
         test_vtk.cpp
     )
     target_link_libraries(
-        test_boost_09
+        test_09
         PRIVATE
         Boost::program_options
         Boost::filesystem
@@ -100,7 +100,7 @@ if(BUILD_TESTING)
         JsonCpp::JsonCpp
     )
 
-    gtest_discover_tests(test_boost_09)
+    gtest_discover_tests(test_09)
 
-    set_target_properties(test_boost_09 PROPERTIES FOLDER "Tests")
+    set_target_properties(test_09 PROPERTIES FOLDER "Tests")
 endif()
