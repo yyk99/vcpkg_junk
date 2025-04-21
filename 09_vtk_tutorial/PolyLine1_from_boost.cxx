@@ -15,6 +15,16 @@
 #include <vtkRenderWindowInteractor.h>
 #include <vtkRenderer.h>
 
+#include <boost/geometry.hpp>
+#include <boost/geometry/geometries/point_xy.hpp>
+#include <boost/geometry/geometries/polygon.hpp>
+#include <boost/geometry/geometries/segment.hpp>
+#include <boost/polygon/voronoi.hpp>
+
+namespace bg = boost::geometry;
+typedef bg::model::d2::point_xy<double> point2d_t;
+typedef bg::model::polygon<point2d_t> polygon2d_t;
+
 int main(int, char *[]) {
 
     vtkNew<vtkNamedColors> colors;
@@ -23,17 +33,13 @@ int main(int, char *[]) {
     std::array<unsigned char, 4> bkg{{26, 51, 102, 255}};
     colors->SetColor("BkgColor", bkg.data());
 
+    polygon2d_t wkt_polygon;
+    bg::read_wkt("POLYGON((0 0, 0 2, 2 2, 2 0, 0 0))", wkt_polygon);
+
     // vtkPoints represents 3D points. The data model for vtkPoints is an array
     // of vx-vy-vz triplets accessible by (point or cell) id.
     vtkNew<vtkPoints> points;
-    points->SetNumberOfPoints(6);
-    double c = std::cos(vtkMath::Pi() / 6); // helper variable
-    points->SetPoint(0, 0.0, -1.0, 0.0);
-    points->SetPoint(1, c, -0.5, 0.0);
-    points->SetPoint(2, c, 0.5, 0.0);
-    points->SetPoint(3, 0.0, 1.0, 0.0);
-    points->SetPoint(4, -c, 0.5, 0.0);
-    points->SetPoint(5, -c, -0.5, 0.0);
+    points->SetNumberOfPoints(wkt_polygon.outer().size());
 
     // vtkCellArray is a supporting object that explicitly represents cell
     // connectivity.
@@ -42,13 +48,12 @@ int main(int, char *[]) {
     // points in the cell, and id is a zero-offset index into an associated
     // point list.
     vtkNew<vtkCellArray> lines;
-    lines->InsertNextCell(7);
-    lines->InsertCellPoint(0);
-    lines->InsertCellPoint(1);
-    lines->InsertCellPoint(2);
-    lines->InsertCellPoint(3);
-    lines->InsertCellPoint(4);
-    lines->InsertCellPoint(5);
+    lines->InsertNextCell(wkt_polygon.outer().size());
+    for (int i = 0; i != wkt_polygon.outer().size() - 1; ++i) {
+        auto &v = wkt_polygon.outer()[i];
+        points->SetPoint(i, v.get<0>(), v.get<1>(), 0.0);
+        lines->InsertCellPoint(i);
+    }
     lines->InsertCellPoint(0);
 
     // vtkPolyData is a data object that is a concrete implementation of

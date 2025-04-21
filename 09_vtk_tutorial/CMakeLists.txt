@@ -33,23 +33,27 @@ find_package(Boost REQUIRED COMPONENTS
 )
 
 find_package(VTK COMPONENTS
+#    cli11
     CommonColor
     CommonCore
     CommonDataModel
     CommonTransforms
     FiltersCore
     FiltersSources
+#    fmt
     InteractionStyle
     InteractionWidgets
+    RenderingAnnotation
     RenderingContextOpenGL2
     RenderingCore
     RenderingFreeType
     RenderingGL2PSOpenGL2
+    RenderingLabel
     RenderingOpenGL2
 )
 
 if(NOT VTK_FOUND)
-    message(FATAL_ERROR "ConstrainedDelaunay2D: Unable to find the VTK build folder.")
+    message(FATAL_ERROR "Unable to find the VTK build folder.")
 endif()
 
 add_definitions(${Boost_LIB_DIAGNOSTIC_DEFINITIONS})
@@ -85,6 +89,7 @@ add_vtk_example(Polygon)
 add_vtk_example(Pyramid)
 add_vtk_example(PolyLine1)
 add_vtk_example(PolyLine1_from_boost)
+add_vtk_example(LinearCellsDemo)
 
 if(BUILD_TESTING)
     # this is heuristically generated, and may not be correct
