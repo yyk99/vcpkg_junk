@@ -64,12 +64,27 @@ macro(add_vtk_tutorial tutorial_name)
     set_target_properties(${tutorial_name} PROPERTIES FOLDER "VTK Tutorials")
 endmacro()
 
+macro(add_vtk_example tutorial_name)
+    add_executable(${tutorial_name} MACOSX_BUNDLE ${tutorial_name}.cxx)
+    target_link_libraries(${tutorial_name} PRIVATE ${VTK_LIBRARIES})
+    vtk_module_autoinit(
+        TARGETS ${tutorial_name}
+        MODULES ${VTK_LIBRARIES}
+    )
+    set_target_properties(${tutorial_name} PROPERTIES FOLDER "VTK Examples")
+endmacro()
+
 add_vtk_tutorial(Tutorial_Step1)
 add_vtk_tutorial(Tutorial_Step2)
 add_vtk_tutorial(Tutorial_Step3)
 add_vtk_tutorial(Tutorial_Step4)
 add_vtk_tutorial(Tutorial_Step5)
 add_vtk_tutorial(Tutorial_Step6)
+add_vtk_tutorial(Tutorial_Step7_build_mesh)
+add_vtk_example(Polygon)
+add_vtk_example(Pyramid)
+add_vtk_example(PolyLine1)
+add_vtk_example(PolyLine1_from_boost)
 
 if(BUILD_TESTING)
     # this is heuristically generated, and may not be correct
