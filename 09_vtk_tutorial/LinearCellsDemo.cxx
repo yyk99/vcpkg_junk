@@ -46,9 +46,10 @@
 #include <vtkWedge.h>
 
 #if __has_include(<vtk_cli11.h>)
-#   include <vtk_cli11.h>
+#include <vtk_cli11.h>
 #else
-#   include "boost_cli.h"
+#define USE_PROGRAM_OPTIONS
+#include <boost/program_options.hpp>
 #endif
 #include <vtk_fmt.h>
 // clang-format off
@@ -135,6 +136,47 @@ vtkNew<vtkProperty> GetTileProperty();
 } // namespace
 
 int main(int argc, char *argv[]) {
+#ifdef USE_PROGRAM_OPTIONS
+    auto wireframeOn{false};
+    auto backfaceOn{false};
+    unsigned int objectNum = -1;
+    auto plinthOff{false};
+
+    namespace po = boost::program_options;
+    po::options_description desc(
+        "Demonstrate the linear cell types found in VTK."
+        "The numbers define the ordering of the points making the cell."
+        "Allowed options");
+    // clang-format off
+    desc.add_options()
+        ("help", "Produce help message")
+        ("wireframe", "Render a wireframe.")
+        ("backface", "Display the back face in a different colour.")
+        ("noPlinth", "Remove the plinth")
+        ("object_number", po::value<int>(), "The number corresponding to the object");
+    // clang-format on
+    po::variables_map vm;
+    po::store(po::parse_command_line(argc, argv, desc), vm);
+    po::notify(vm);
+
+    if (vm.count("help")) {
+        std::cout << desc << "\n";
+        return EXIT_FAILURE;
+    }
+
+    if (vm.count("noPlinth"))
+        plinthOff = true;
+
+    if (vm.count("backface"))
+        backfaceOn = true;
+
+    if (vm.count("wireframe"))
+        wireframeOn = true;
+
+    if (vm.count("object_number")) {
+        objectNum = vm["object_number"].as<int>();
+    }
+#else
     CLI::App app{
         "Demonstrate the linear cell types found in VTK. "
         "The numbers define the ordering of the points making the cell."};
@@ -151,13 +193,13 @@ int main(int argc, char *argv[]) {
     auto plinthOff{false};
     app.add_flag("-n, --noPlinth", plinthOff, "Remove the plinth.");
     CLI11_PARSE(app, argc, argv);
+#endif
     if (wireframeOn && backfaceOn) {
         std::cerr << "error: argument -b/--backface: not allowed with argument "
                      "-w/--wireframe"
                   << std::endl;
         return EXIT_FAILURE;
     }
-
     auto objects = SpecifyObjects();
     // The order here should match the order in specify_objects().
     std::vector<unsigned int> objectOrder{1, 2,  3,  4,  5,  6,  7,  8,

@@ -33,14 +33,14 @@ find_package(Boost REQUIRED COMPONENTS
 )
 
 find_package(VTK COMPONENTS
-#    cli11
+    #    cli11
     CommonColor
     CommonCore
     CommonDataModel
     CommonTransforms
     FiltersCore
     FiltersSources
-#    fmt
+    fmt
     InteractionStyle
     InteractionWidgets
     RenderingAnnotation
@@ -70,7 +70,9 @@ endmacro()
 
 macro(add_vtk_example tutorial_name)
     add_executable(${tutorial_name} MACOSX_BUNDLE ${tutorial_name}.cxx)
-    target_link_libraries(${tutorial_name} PRIVATE ${VTK_LIBRARIES})
+    target_link_libraries(${tutorial_name}
+        PRIVATE ${VTK_LIBRARIES} Boost::program_options
+    )
     vtk_module_autoinit(
         TARGETS ${tutorial_name}
         MODULES ${VTK_LIBRARIES}
