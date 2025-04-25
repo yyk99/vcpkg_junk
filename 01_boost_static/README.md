@@ -1,4 +1,6 @@
-Preconditions
+# 01_boost_static
+
+## Preconditions
 
 - install vcpkg
 - install boots required packages...
@@ -17,9 +19,18 @@ or the generated cmake configs via:
 ---------------- cut here ----------------------
 
 
-How to configure
-	cmake -S . -B build-vs2022-x64 -DCMAKE_TOOLCHAIN_FILE=E:/opt/vcpkg/scripts/buildsystems/vcpkg.cmake \
+## How to configure
+
+Windows
+
+    cmake -S . -B build-vs2022-x64 -DCMAKE_TOOLCHAIN_FILE=E:/opt/vcpkg/scripts/buildsystems/vcpkg.cmake \
         -DVCPKG_TARGET_TRIPLET=x64-windows-static
+
+Linux
+
+It seems that vcpkg in Linux is static (by default). Nevertheless:
+
+    cmake -S . -B build-linux -DCMAKE_TOOLCHAIN_FILE=/home/yyk/src/vcpkg/scripts/buildsystems/vcpkg.cmake -DVCPKG_TARGET_TRIPLET=x64-linux
 
 
 to be continue...
