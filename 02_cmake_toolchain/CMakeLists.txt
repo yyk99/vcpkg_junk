@@ -12,10 +12,11 @@ find_package(Boost REQUIRED COMPONENTS
 	filesystem
 )
 
-message(STATUS "Boost_LIBRARY_DIRS=${Boost_LIBRARY_DIRS}")
-message(STATUS "Boost_LIB_DIAGNOSTIC_DEFINITIONS=${Boost_LIB_DIAGNOSTIC_DEFINITIONS}")
-    
-add_definitions(${Boost_LIB_DIAGNOSTIC_DEFINITIONS})
+#message(STATUS "Boost_LIBRARY_DIRS=${Boost_LIBRARY_DIRS}")
+#message(STATUS "Boost_LIB_DIAGNOSTIC_DEFINITIONS=${Boost_LIB_DIAGNOSTIC_DEFINITIONS}")
+#message(STATUS "VCPKG_TARGET_TRIPLET=${VCPKG_TARGET_TRIPLET}")
+#    
+#add_definitions(${Boost_LIB_DIAGNOSTIC_DEFINITIONS})
 
 add_executable(
 	cmd_getargs_02
