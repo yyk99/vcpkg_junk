@@ -1,0 +1,14 @@
+{
+  "dependencies": [
+    "boost-geometry",
+    "vtk"
+  ],
+  "features": {
+    "tests": {
+      "description": "Build Tests",
+      "dependencies": [
+        "gtest"
+      ]
+    }
+  }
+}
