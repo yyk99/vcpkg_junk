@@ -6,6 +6,8 @@
 cmake_minimum_required(VERSION 3.25)
 project(04_cgal_tbb)
 
+set_property(GLOBAL PROPERTY USE_FOLDERS TRUE)
+
 find_package(Boost REQUIRED COMPONENTS 
 	program_options
 	filesystem
@@ -22,6 +24,7 @@ add_executable(
 	README.txt
 )
 target_link_libraries(cmd_getargs_06 PRIVATE Boost::program_options)
+set_target_properties(cmd_getargs_06 PROPERTIES FOLDER "Apps")
 
 option(BUILD_TESTING "Build tests" ON)
 if(BUILD_TESTING)
@@ -65,6 +68,7 @@ if(BUILD_TESTING)
 		GTest::gtest 
 		GTest::gtest_main
 	)
+	set_target_properties(test_boost_06 PROPERTIES FOLDER "Tests")
 	if (FALSE)
 		# DEPRECATED
 		CGAL_target_use_TBB(test_boost_06)

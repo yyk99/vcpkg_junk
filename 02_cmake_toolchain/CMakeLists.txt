@@ -5,6 +5,8 @@
 cmake_minimum_required(VERSION 3.25)
 project(cmake_with_boost)
 
+set_property(GLOBAL PROPERTY USE_FOLDERS TRUE)
+
 set(Boost_USE_STATIC_LIBS OFF)
 set(Boost_USE_STATIC_RUNTIME OFF)
 find_package(Boost REQUIRED COMPONENTS 
@@ -25,6 +27,6 @@ add_executable(
 	README.txt
 )
 target_link_libraries(cmd_getargs_02 PRIVATE Boost::program_options)
-
+set_target_properties(cmd_getargs_02 PROPERTIES FOLDER "Apps")
 
 
