@@ -35,37 +35,37 @@ add_executable(
   README.md
 )
 target_link_libraries(cmd_getargs PRIVATE Boost::program_options Boost::geometry)
+set_target_properties(cmd_getargs PROPERTIES FOLDER "Apps")
 if (BUILD_STATIC)
     set_property(TARGET cmd_getargs PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 endif()
 
 if(BUILD_TESTING)
-    enable_testing()
+  enable_testing()
     
-    include(GoogleTest)
+  include(GoogleTest)
 
-    list(APPEND VCPKG_MANIFEST_FEATURES "tests")
+  list(APPEND VCPKG_MANIFEST_FEATURES "tests")
 
-    find_package(GTest REQUIRED)
+  find_package(GTest REQUIRED)
 
-    add_executable(test_boost_01
-        test_boost.cpp
-    )
-    target_link_libraries(
-        test_boost_01
-        PRIVATE 
-        Boost::program_options 
-        Boost::filesystem
-        Boost::geometry
-        GTest::gtest 
-        GTest::gtest_main
-    )
-    if (BUILD_STATIC)
-      set_property(TARGET test_boost_01 PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
-    endif()
+  add_executable(test_boost_01
+    test_boost.cpp
+  )
+  target_link_libraries(
+    test_boost_01
+    PRIVATE 
+    Boost::program_options 
+    Boost::filesystem
+    Boost::geometry
+    GTest::gtest 
+    GTest::gtest_main
+  )
+  if (BUILD_STATIC)
+    set_property(TARGET test_boost_01 PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+  endif()
 
+  gtest_discover_tests(test_boost_01)
 
-    gtest_discover_tests(test_boost_01)
-
-    set_target_properties(test_boost_01 PROPERTIES FOLDER "Tests")
+  set_target_properties(test_boost_01 PROPERTIES FOLDER "Tests")
 endif()
