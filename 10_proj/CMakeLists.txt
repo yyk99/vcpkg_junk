@@ -47,6 +47,8 @@ if(NOT VTK_FOUND)
     message(FATAL_ERROR "ConstrainedDelaunay2D: Unable to find the VTK build folder.")
 endif()
 
+find_package(PROJ CONFIG REQUIRED)
+
 add_executable(
     GLTFImporter
     GLTFImporter.cxx
@@ -68,11 +70,13 @@ if(BUILD_TESTING)
 
     add_executable(test_10
         test_boost.cpp
+        test_proj.cpp
     )
     target_link_libraries(
         test_10
         PRIVATE
         Boost::geometry
+        PROJ::proj
         GTest::gtest
         GTest::gtest_main
     )
