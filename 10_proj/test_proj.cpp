@@ -232,10 +232,59 @@ TEST_F(ProjF, c_error_handling) {
     ASSERT_TRUE(p == 0);
     /* Something is wrong, let's try to get details ... */
     err = proj_context_errno(c);
-    ASSERT_NE (0, err) << "Failed to create transformation, reason unknown";
+    ASSERT_NE(0, err) << "Failed to create transformation, reason unknown";
 
     errstr = proj_context_errno_string(c, err);
     CONSOLE("Failed to create transformation: " << errstr);
 
     proj_context_destroy(c);
+}
+
+///
+///
+///
+
+// EPSG:4326 is a common code in GIS that stands for the WGS84 geographic
+// coordinate system. It's the coordinate system used by GPS and Google Earth,
+// representing the Earth as a three-dimensional ellipsoid with latitude and
+// longitude coordinates. It's often used when accuracy over large areas is
+// important, and it doesn't have the distortions of projected systems like Web
+// Mercator (EPSG:3857).
+
+// EPSG:32631 (WGS 84 / UTM zone 31N).
+
+// EPSG:4978 - WGS 84 - earth centered CS
+
+// Portland, Maine is located in UTM zone 19 North.
+// This zone is used to describe the location of North Deering,
+// Portland, ME using the UTM coordinate system.
+
+// 19N	WGS84 / UTM zone 19N	EPSG:32619
+
+TEST_F(ProjF, frost_hill_rd_68) {
+    PJ_CONTEXT *ctx = proj_context_create();
+    PJ *p = proj_create_crs_to_crs(ctx, "EPSG:4326", "EPSG:32619", NULL);
+    ASSERT_TRUE(p);
+
+    PJ_COORD coord = {{
+        43.717449894149915, // latitude
+        -70.28796806594934, // longitude
+        0,                  // elevation
+        HUGE_VAL            // hz...
+    }};
+
+    PJ *p_norm = proj_normalize_for_visualization(ctx, p);
+
+    auto a = proj_coord(12, 55, 0, 0);
+
+    /* transform to UTM zone 32, then back to geographical */
+    auto b = proj_trans(p_norm, PJ_FWD, a);
+    printf("easting: %.3f, northing: %.3f\n", b.enu.e, b.enu.n);
+
+    b = proj_trans(p_norm, PJ_INV, b);
+    printf("longitude: %g, latitude: %g\n", b.lp.lam, b.lp.phi);
+    EXPECT_DOUBLE_EQ(12, b.lp.lam);
+    EXPECT_DOUBLE_EQ(55, b.lp.phi);
+
+    proj_context_destroy(ctx);
 }

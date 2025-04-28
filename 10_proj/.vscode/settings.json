@@ -5,5 +5,10 @@
         "Interactor",
         "Voronoi",
         "voronoy"
-    ]
+    ],
+    "files.associations": {
+        "random": "cpp",
+        "queue": "cpp",
+        "stack": "cpp"
+    }
 }
