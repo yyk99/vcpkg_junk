@@ -143,8 +143,7 @@ using namespace NS_PROJ::util;
 /// @see https://proj.org/en/stable/development/quickstart_cpp.html
 
 ///
-TEST_F(ProjF, cpp_api)
-{
+TEST_F(ProjF, cpp_api) {
     auto dbContext = DatabaseContext::create();
 
     // Instantiate a generic authority factory, that is not tied to a particular
@@ -166,17 +165,17 @@ TEST_F(ProjF, cpp_api)
 
     // Instantiate target CRS from PROJ.4 string (commented out, the equivalent
     // from the EPSG code)
-    // auto targetCRS =
-    // authFactoryEPSG->createCoordinateReferenceSystem("32631");
+#if 1
+    auto targetCRS = authFactoryEPSG->createCoordinateReferenceSystem("32631");
+#else
     auto targetCRS =
         NN_CHECK_THROW(nn_dynamic_pointer_cast<CRS>(createFromUserInput(
             "+proj=utm +zone=31 +datum=WGS84 +type=crs", dbContext)));
-
+#endif
     // List operations available to transform from EPSG:4326
     // (WGS 84 latitude/longitude) to EPSG:32631 (WGS 84 / UTM zone 31N).
     auto list = CoordinateOperationFactory::create()->createOperations(
         sourceCRS, targetCRS, coord_op_ctxt);
-    ASSERT_TRUE(list.size());
     CONSOLE_EVAL(list.size());
 
     // Check that we got a non-empty list of operations
@@ -186,7 +185,7 @@ TEST_F(ProjF, cpp_api)
     // for more details on the sorting of those operations.
     // For a transformation between a projected CRS and its base CRS, like
     // we do here, there will be only one operation.
-    assert(!list.empty());
+    ASSERT_TRUE(!list.empty());
 
     // Create an execution context (must only be used by one thread at a time)
     PJ_CONTEXT *ctx = proj_context_create();
@@ -216,4 +215,27 @@ TEST_F(ProjF, cpp_api)
 
     // Destroy execution context
     proj_context_destroy(ctx);
+}
+
+#include <proj.h>
+#include <stdio.h>
+
+TEST_F(ProjF, c_error_handling) {
+    PJ_CONTEXT *c;
+    PJ *p;
+    int err;
+    const char *errstr;
+
+    c = proj_context_create();
+    p = proj_create_crs_to_crs(c, "EPSG:4326", "EPSG:XXXX", NULL);
+    /* it is expected to fail */
+    ASSERT_TRUE(p == 0);
+    /* Something is wrong, let's try to get details ... */
+    err = proj_context_errno(c);
+    ASSERT_NE (0, err) << "Failed to create transformation, reason unknown";
+
+    errstr = proj_context_errno_string(c, err);
+    CONSOLE("Failed to create transformation: " << errstr);
+
+    proj_context_destroy(c);
 }
