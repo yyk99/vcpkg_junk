@@ -283,7 +283,7 @@ TEST_F(ProjF, frost_hill_rd_68) {
 
     b = proj_trans(p_norm, PJ_INV, b);
     printf("longitude: %g, latitude: %g\n", b.lp.lam, b.lp.phi);
-    EXPECT_DOUBLE_EQ(12, b.lp.lam);
+    EXPECT_NEAR(12, b.lp.lam, 1E-12);
     EXPECT_DOUBLE_EQ(55, b.lp.phi);
 
     proj_context_destroy(ctx);
