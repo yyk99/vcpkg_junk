@@ -49,6 +49,8 @@ endif()
 
 find_package(PROJ CONFIG REQUIRED)
 
+find_package(Eigen3 CONFIG REQUIRED)
+
 add_executable(
     GLTFImporter
     GLTFImporter.cxx
@@ -71,12 +73,14 @@ if(BUILD_TESTING)
     add_executable(test_10
         test_boost.cpp
         test_proj.cpp
+        test_eigen.cpp
     )
     target_link_libraries(
         test_10
         PRIVATE
         Boost::geometry
         PROJ::proj
+        Eigen3::Eigen
         GTest::gtest
         GTest::gtest_main
     )

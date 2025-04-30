@@ -9,6 +9,7 @@
     "files.associations": {
         "random": "cpp",
         "queue": "cpp",
-        "stack": "cpp"
+        "stack": "cpp",
+        "sparse": "cpp"
     }
 }
