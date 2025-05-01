@@ -11,6 +11,12 @@
 
 class EigenF : public testing::Test {};
 
+TEST_F(EigenF, version) {
+    CONSOLE(EIGEN_WORLD_VERSION);
+    CONSOLE(EIGEN_MAJOR_VERSION);
+    CONSOLE(EIGEN_MINOR_VERSION);
+}
+
 TEST_F(EigenF, t0) {
     CONSOLE("Hello...");
 
@@ -28,4 +34,7 @@ TEST_F(EigenF, t0) {
 
     pos = yup2zup * pos;
     CONSOLE("pos:\n" << pos);
+}
+
+TEST_F(EigenF, translate_transform) {
 }
