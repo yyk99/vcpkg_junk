@@ -46,9 +46,6 @@ TEST_F(EigenF, translate_transform) {
     CONSOLE_EVAL(vv.transpose());
 
     CONSOLE_EVAL(Eigen::Vector4f::Identity());
-<<<<<<< HEAD
-=======
 
     CONSOLE_EVAL(Eigen::Matrix4f::Identity());
->>>>>>> 669873a (Update test)
 }
