@@ -288,3 +288,11 @@ TEST_F(ProjF, frost_hill_rd_68) {
 
     proj_context_destroy(ctx);
 }
+
+//
+// proj4 pipelines
+//
+// 19N	WGS84 / UTM zone 19N	EPSG:32619
+TEST_F(ProjF, pipelines) {
+
+}
