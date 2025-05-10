@@ -28,38 +28,11 @@ find_package(Boost REQUIRED COMPONENTS
     # polygon
 )
 
-find_package(VTK COMPONENTS
-    CommonColor
-    CommonCore
-    CommonDataModel
-    FiltersCore
-    FiltersSources
-    InteractionStyle
-    IOImport
-    RenderingContextOpenGL2
-    RenderingCore
-    RenderingFreeType
-    RenderingGL2PSOpenGL2
-    RenderingOpenGL2
-)
-
-if(NOT VTK_FOUND)
-    message(FATAL_ERROR "ConstrainedDelaunay2D: Unable to find the VTK build folder.")
-endif()
-
 find_package(PROJ CONFIG REQUIRED)
 
 find_package(Eigen3 CONFIG REQUIRED)
 
-add_executable(
-    GLTFImporter
-    GLTFImporter.cxx
-    ../.clang-format
-    README.md
-)
-target_link_libraries(GLTFImporter PRIVATE ${VTK_LIBRARIES})
-vtk_module_autoinit(TARGETS GLTFImporter MODULES ${VTK_LIBRARIES})
-set_target_properties(GLTFImporter PROPERTIES FOLDER "Apps")
+# set_target_properties(GLTFImporter PROPERTIES FOLDER "Apps")
 
 if(BUILD_TESTING)
     enable_testing()

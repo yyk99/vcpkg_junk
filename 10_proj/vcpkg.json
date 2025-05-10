@@ -2,7 +2,7 @@
   "dependencies": [
     "boost-geometry",
     "eigen3",
-    "vtk"
+    "proj"
   ],
   "features": {
     "tests": {
