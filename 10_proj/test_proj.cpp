@@ -498,8 +498,8 @@ TEST_F(ProjF, lv95_GM20040) {
 
         PJ_COORD a = proj_trans(p, PJ_FWD, coord);
 
-        EXPECT_TRUE(std::isinf(a.enu.e));
-        EXPECT_TRUE(std::isinf(a.enu.n));
+        EXPECT_NEAR(2600072, a.enu.e, 0.5);
+        EXPECT_NEAR(1200147, a.enu.n, 0.5);
     }
     {
         // (Sidlerstrasse 5 - 46°57'3.9" N, 7°26'19.1" E).
@@ -515,16 +515,16 @@ TEST_F(ProjF, lv95_GM20040) {
 
         PJ_COORD a = proj_trans(p, PJ_FWD, coord);
 
-        EXPECT_TRUE(std::isinf(a.enu.e));
-        EXPECT_TRUE(std::isinf(a.enu.n));
+        EXPECT_NEAR(2600000, a.enu.e, 0.5);
+        EXPECT_NEAR(1200000, a.enu.n, 0.5);
     }
     {
         // x_0=2600000 +y_0=1200000
         PJ_COORD xy_origin = proj_coord(2600000, 1200000, 0, 0);
         PJ_COORD a = proj_trans(p, PJ_INV, xy_origin);
 
-        EXPECT_TRUE(std::isinf(a.lpzt.lam));
-        EXPECT_TRUE(std::isinf(a.lpzt.phi));
+        EXPECT_NEAR(46.95240555555556, a.lpzt.lam, 5E-3);
+        EXPECT_NEAR(7.439583333333333, a.enu.n, 1E-3);
     }
     proj_context_destroy(ctx);
 }
