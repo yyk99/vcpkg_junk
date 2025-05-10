@@ -47,6 +47,7 @@ if(BUILD_TESTING)
         test_boost.cpp
         test_proj.cpp
         test_eigen.cpp
+        README.md
     )
     target_link_libraries(
         test_10

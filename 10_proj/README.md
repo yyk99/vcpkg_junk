@@ -35,7 +35,14 @@ In Linux:
 
 In Windows:
 
-    .\build-vs2022\Debug\GLTFImporter.exe ../08_assimp_junk/test_data/BoxTextured-glTF/BoxTextured.gltf
+In the Command Line (CMD)
+
+    set PROJ_DATA=vcpkg_installed/x64-windows/share/proj/
+    Debug\test_10.exe
+
+If Visual Studio is used, then set Debugging / Environment property:
+
+    PROJ_DATA=$(ProjectDir)vcpkg_installed/x64-windows/share/proj/
 
 ## REFERENCE
 
