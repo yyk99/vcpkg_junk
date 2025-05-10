@@ -461,45 +461,9 @@ TEST_F(ProjF, lv95) {
 /// @param --gtest_filter=ProjF.lv95_GM20040
 TEST_F(ProjF, lv95_GM20040) {
 #if 0
-    const char *LV95 = R"(PROJCS["CH1903+ / LV95",
-    GEOGCS["CH1903+",
-        DATUM["CH1903+",
-            SPHEROID["Bessel 1841",6377397.155,299.1528128],
-            TOWGS84[674.374,15.056,405.346,0,0,0,0]],
-        PRIMEM["Greenwich",0,AUTHORITY["EPSG","8901"]],
-        UNIT["degree",0.0174532925199433,AUTHORITY["EPSG","9122"]],
-        AUTHORITY["EPSG","4150"]],
-    PROJECTION["Hotine_Oblique_Mercator_Azimuth_Center"],
-    PARAMETER["latitude_of_center",46.9524055555556],
-    PARAMETER["longitude_of_center",7.43958333333333],
-    PARAMETER["azimuth",90],
-    PARAMETER["rectified_grid_angle",90],
-    PARAMETER["scale_factor",1],
-    PARAMETER["false_easting",2600000],
-    PARAMETER["false_northing",1200000],
-    UNIT["metre",1,
-        AUTHORITY["EPSG","9001"]],
-    AXIS["Easting",EAST],
-    AXIS["Northing",NORTH],
-    AUTHORITY["EPSG","2056"]])";
+#   include "lv95_good.h"
 #else
-    const char *LV95 = R"(PROJCS["CH1903+ / LV95",
-    GEOGCS["CH1903+",
-        DATUM["CH1903+",
-            SPHEROID["Bessel 1841",6377397.155,299.1528131060786],
-            TOWGS84[674.374,15.056,405.346,0,0,0,0]],
-        PRIMEM["Greenwich",0],
-        UNIT["degree",0.0174532925199433]],
-    PROJECTION["Swiss_Oblique_Cylindrical"],
-    PARAMETER["scale_factor",1],
-    PARAMETER["azimuth",90],
-    PARAMETER["longitude_of_center",7.439583333333333],
-    PARAMETER["latitude_of_origin",46.95240555555556],
-    PARAMETER["false_easting",2600000],
-    PARAMETER["false_northing",1200000],
-    UNIT["Meter",1],
-    AXIS["Easting",EAST],
-    AXIS["Northing",NORTH]])";
+#   include "lv95_globalmapper.h"
 #endif
     PJ_CONTEXT *ctx = proj_context_create();
     PJ *p = proj_create_crs_to_crs(ctx, "EPSG:4326", LV95, NULL);
