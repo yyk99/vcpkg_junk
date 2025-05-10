@@ -296,3 +296,49 @@ TEST_F(ProjF, frost_hill_rd_68) {
 TEST_F(ProjF, pipelines) {
 
 }
+
+// EPSG:21781 - swiss coordinate system LV03
+// EPSG:4978 - WGS 84 - earth centered CS
+// EPSG:4326 - the WGS84 geographic coordinate system.
+TEST_F(ProjF, lv03) {
+    const char wkt_string[] = R"WKT(
+    PROJCS["CH1903 / LV03",
+        GEOGCS["CH1903",
+        DATUM["CH1903",SPHEROID["Bessel 1841",6377397.155,299.1528128],
+            TOWGS84[674.374,15.056,405.346,0,0,0,0]],
+            PRIMEM["Greenwich",0,AUTHORITY["EPSG","8901"]],
+            UNIT["degree",0.0174532925199433,AUTHORITY["EPSG","9122"]],
+            AUTHORITY["EPSG","4149"]],PROJECTION["Hotine_Oblique_Mercator_Azimuth_Center"],
+            PARAMETER["latitude_of_center",46.9524055555556],
+            PARAMETER["longitude_of_center",7.43958333333333],
+            PARAMETER["azimuth",90],
+            PARAMETER["rectified_grid_angle",90],
+            PARAMETER["scale_factor",1],
+            PARAMETER["false_easting",600000],
+            PARAMETER["false_northing",200000],
+            UNIT["metre",1,
+            AUTHORITY["EPSG","9001"]],
+            AXIS["Easting",EAST],
+            AXIS["Northing",NORTH],
+            AUTHORITY["EPSG","21781"]])WKT";
+
+    PJ_CONTEXT *ctx = proj_context_create();
+    PJ *p = proj_create_crs_to_crs(ctx, "EPSG:4326", "EPSG:21781", NULL);
+    ASSERT_TRUE(p);
+
+    PJ_COORD coord = {{
+        46.9524055555556, // latitude
+        7.43958333333333, // longitude
+        0,                // elevation
+        HUGE_VAL          // hz...
+    }};
+
+    PJ *p_norm = proj_normalize_for_visualization(ctx, p);
+
+    PJ_COORD a = proj_trans(p, PJ_FWD, coord);
+
+    printf("easting: %.3f, northing: %.3f\n", a.enu.e, a.enu.n);
+
+    proj_context_destroy(ctx);
+
+}
