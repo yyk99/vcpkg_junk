@@ -428,13 +428,9 @@ TEST_F(ProjF, lv95) {
             HUGE_VAL          // hz...
         }};
 
-        printf("central (lam,phi) = %.16f, %.16f\n", coord.lpzt.lam, coord.lpzt.phi);
-
-        PJ *p_norm = proj_normalize_for_visualization(ctx, p);
-
         PJ_COORD a = proj_trans(p, PJ_FWD, coord);
-
-        printf("easting: %.3f, northing: %.3f\n", a.enu.e, a.enu.n);
+        EXPECT_NEAR(2600072.390, a.enu.e, 5E-4);
+        EXPECT_NEAR(1200147.056, a.enu.n, 5E-4);
     }
     {
         // (Sidlerstrasse 5 - 46°57'3.9" N, 7°26'19.1" E).
@@ -445,18 +441,78 @@ TEST_F(ProjF, lv95) {
             HUGE_VAL                       // hz...
         }};
 
-        printf("central (lam,phi) = %.16f, %.16f\n", coord.lpzt.lam, coord.lpzt.phi);
+        printf("central (lam,phi) = %.13f, %.13f\n", coord.lpzt.lam, coord.lpzt.phi);
+
+        PJ_COORD a = proj_trans(p, PJ_FWD, coord);
+        EXPECT_NEAR(2600000.493, a.enu.e, 5E-4);
+        EXPECT_NEAR(1200000.064, a.enu.n, 5E-4);
+    }
+    {
+        // x_0=2600000 +y_0=1200000
+        PJ_COORD xy_origin = proj_coord(2600000, 1200000, 0, 0);
+        PJ_COORD a = proj_trans(p, PJ_INV, xy_origin);
+        EXPECT_NEAR(46.9511, a.lp.lam, 5E-5);
+        EXPECT_NEAR(7.43863, a.lp.phi, 5E-6);
+    }
+    proj_context_destroy(ctx);
+}
+
+/// @brief Test related to the GM-20040 case
+/// @param --gtest_filter=ProjF.lv95_GM20040
+TEST_F(ProjF, lv95_GM20040) {
+    const char *LV95 = R"LV95(PROJCS["CH1903+ / LV95",GEOGCS["CH1903+",
+        DATUM["CH1903+",SPHEROID["Bessel 1841",6377397.155,299.1528131060786]],
+        PRIMEM["Greenwich",0],UNIT["degree",0.0174532925199433]],
+        PROJECTION["Swiss_Oblique_Cylindrical"],PARAMETER["scale_factor",1],
+        PARAMETER["azimuth",90],PARAMETER["longitude_of_center",7.439583333333333],
+        PARAMETER["latitude_of_origin",46.95240555555556],PARAMETER["false_easting",2600000],
+        PARAMETER["false_northing",1200000],UNIT["Meter",1]])LV95";
+
+    PJ_CONTEXT *ctx = proj_context_create();
+    PJ *p = proj_create_crs_to_crs(ctx, "EPSG:4326", LV95, NULL);
+    ASSERT_TRUE(p);
+
+    // project same coordinates as in lv03 test
+    {
+        PJ_COORD coord = {{
+            46.9524055555556, // latitude
+            7.43958333333333, // longitude
+            0,                // elevation
+            HUGE_VAL          // hz...
+        }};
+
+        printf("central (lam,phi) = %.16f, %.16f\n", coord.lpzt.lam,
+               coord.lpzt.phi);
 
         PJ_COORD a = proj_trans(p, PJ_FWD, coord);
 
-        printf("easting: %.3f, northing: %.3f\n", a.enu.e, a.enu.n);
+        EXPECT_TRUE(std::isinf(a.enu.e));
+        EXPECT_TRUE(std::isinf(a.enu.n));
+    }
+    {
+        // (Sidlerstrasse 5 - 46°57'3.9" N, 7°26'19.1" E).
+        PJ_COORD coord = {{
+            46.0 + 57 / 60. + 3.9 / 3600., // latitude
+            7.0 + 26 / 60. + 19.1 / 3600., // longitude
+            0,                             // elevation
+            HUGE_VAL                       // hz...
+        }};
+
+        printf("central (lam,phi) = %.16f, %.16f\n", coord.lpzt.lam,
+               coord.lpzt.phi);
+
+        PJ_COORD a = proj_trans(p, PJ_FWD, coord);
+
+        EXPECT_TRUE(std::isinf(a.enu.e));
+        EXPECT_TRUE(std::isinf(a.enu.n));
     }
     {
         // x_0=2600000 +y_0=1200000
         PJ_COORD xy_origin = proj_coord(2600000, 1200000, 0, 0);
         PJ_COORD a = proj_trans(p, PJ_INV, xy_origin);
 
-        printf("easting: %.10f, northing: %.10f\n", a.enu.e, a.enu.n);
+        EXPECT_TRUE(std::isinf(a.lpzt.lam));
+        EXPECT_TRUE(std::isinf(a.lpzt.phi));
     }
     proj_context_destroy(ctx);
 }
