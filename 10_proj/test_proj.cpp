@@ -321,9 +321,105 @@ TEST_F(ProjF, lv03) {
             AUTHORITY["EPSG","21781"]])WKT";
 
     PJ_CONTEXT *ctx = proj_context_create();
-    PJ *p = proj_create_crs_to_crs(ctx, "EPSG:4326", "EPSG:21781", NULL);
+    {
+        PJ *p = proj_create_crs_to_crs(ctx, "EPSG:4326", "EPSG:21781", NULL);
+        ASSERT_TRUE(p);
+
+        {
+            PJ_COORD coord = {{
+                46.9524055555556, // latitude
+                7.43958333333333, // longitude
+                0,                // elevation
+                HUGE_VAL          // hz...
+            }};
+
+            PJ *p_norm = proj_normalize_for_visualization(ctx, p);
+
+            PJ_COORD a = proj_trans(p, PJ_FWD, coord);
+
+            printf("easting: %.3f, northing: %.3f\n", a.enu.e, a.enu.n);
+            EXPECT_DOUBLE_EQ(600072.38970262511, a.enu.e);
+            EXPECT_DOUBLE_EQ(200147.05558247434, a.enu.n);
+        }
+        {
+            // (Sidlerstrasse 5 - 46°57'3.9" N, 7°26'19.1" E).
+            PJ_COORD coord = {{
+                46.0 + 57 / 60. + 3.9 / 3600., // latitude
+                7.0 + 26 / 60. + 19.1 / 3600., // longitude
+                0,                             // elevation
+                HUGE_VAL                       // hz...
+            }};
+
+            PJ *p_norm = proj_normalize_for_visualization(ctx, p);
+
+            PJ_COORD a = proj_trans(p, PJ_FWD, coord);
+
+            printf("easting: %.3f, northing: %.3f\n", a.enu.e, a.enu.n);
+            EXPECT_DOUBLE_EQ(600000.49294705561, a.enu.e);
+            EXPECT_DOUBLE_EQ(200000.0635578575, a.enu.n);
+        }
+    }
+    {
+        PJ *p = proj_create_crs_to_crs(ctx, "EPSG:4326", wkt_string, NULL);
+        ASSERT_TRUE(p);
+
+        {
+            PJ_COORD coord = {{
+                46.9524055555556, // latitude
+                7.43958333333333, // longitude
+                0,                // elevation
+                HUGE_VAL          // hz...
+            }};
+            printf("easting: %.16f, northing: %.16f\n", coord.lpzt.lam, coord.lpzt.phi);
+            
+            PJ *p_norm = proj_normalize_for_visualization(ctx, p);
+
+            PJ_COORD a = proj_trans(p, PJ_FWD, coord);
+
+            printf("easting: %.3f, northing: %.3f\n", a.enu.e, a.enu.n);
+
+        }
+        {
+            // (Sidlerstrasse 5 - 46°57'3.9" N, 7°26'19.1" E).
+            PJ_COORD coord = {{
+                46.0 + 57 / 60. + 3.9 / 3600., // latitude
+                7.0 + 26 / 60. + 19.1 / 3600., // longitude
+                0,                             // elevation
+                HUGE_VAL                       // hz...
+            }};
+
+            printf("easting: %.16f, northing: %.16f\n", coord.lpzt.lam, coord.lpzt.phi);
+
+            PJ *p_norm = proj_normalize_for_visualization(ctx, p);
+
+            PJ_COORD a = proj_trans(p, PJ_FWD, coord);
+
+            printf("easting: %.3f, northing: %.3f\n", a.enu.e, a.enu.n);
+        }
+    }
+
+    proj_context_destroy(ctx);
+}
+
+// https://epsg.io/2056
+// +proj=somerc +lat_0=46.9524055555556 +lon_0=7.43958333333333 +k_0=1
+// +x_0=2600000 +y_0=1200000 +ellps=bessel
+// +towgs84=674.374,15.056,405.346,0,0,0,0 +units=m +no_defs +type=crs
+
+// EPSG:21781 - swiss coordinate system LV03
+// EPSG:4978 - WGS 84 - earth centered CS
+// EPSG:4326 - the WGS84 geographic coordinate system.
+TEST_F(ProjF, lv95) {
+    const char proj4_text[] =
+        R"(+proj=somerc +lat_0=46.9524055555556 +lon_0=7.43958333333333 +k_0=1
+    +x_0=2600000 +y_0=1200000 +ellps=bessel
+    +towgs84=674.374,15.056,405.346,0,0,0,0 +units=m +no_defs +type=crs)";
+
+    PJ_CONTEXT *ctx = proj_context_create();
+    PJ *p = proj_create_crs_to_crs(ctx, "EPSG:4326", proj4_text, NULL);
     ASSERT_TRUE(p);
 
+    // project same coordinates as in lv03 test
     {
         PJ_COORD coord = {{
             46.9524055555556, // latitude
@@ -331,6 +427,8 @@ TEST_F(ProjF, lv03) {
             0,                // elevation
             HUGE_VAL          // hz...
         }};
+
+        printf("central (lam,phi) = %.16f, %.16f\n", coord.lpzt.lam, coord.lpzt.phi);
 
         PJ *p_norm = proj_normalize_for_visualization(ctx, p);
 
@@ -343,20 +441,22 @@ TEST_F(ProjF, lv03) {
         PJ_COORD coord = {{
             46.0 + 57 / 60. + 3.9 / 3600., // latitude
             7.0 + 26 / 60. + 19.1 / 3600., // longitude
-            0,                // elevation
-            HUGE_VAL          // hz...
+            0,                             // elevation
+            HUGE_VAL                       // hz...
         }};
 
-        PJ *p_norm = proj_normalize_for_visualization(ctx, p);
+        printf("central (lam,phi) = %.16f, %.16f\n", coord.lpzt.lam, coord.lpzt.phi);
 
         PJ_COORD a = proj_trans(p, PJ_FWD, coord);
 
         printf("easting: %.3f, northing: %.3f\n", a.enu.e, a.enu.n);
     }
+    {
+        // x_0=2600000 +y_0=1200000
+        PJ_COORD xy_origin = proj_coord(2600000, 1200000, 0, 0);
+        PJ_COORD a = proj_trans(p, PJ_INV, xy_origin);
+
+        printf("easting: %.10f, northing: %.10f\n", a.enu.e, a.enu.n);
+    }
     proj_context_destroy(ctx);
 }
-
-// https://epsg.io/2056
-// +proj=somerc +lat_0=46.9524055555556 +lon_0=7.43958333333333 +k_0=1
-// +x_0=2600000 +y_0=1200000 +ellps=bessel
-// +towgs84=674.374,15.056,405.346,0,0,0,0 +units=m +no_defs +type=crs
