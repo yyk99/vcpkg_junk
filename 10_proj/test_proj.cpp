@@ -466,10 +466,8 @@ TEST_F(ProjF, lv95_GM20040) {
         DATUM["CH1903+",
             SPHEROID["Bessel 1841",6377397.155,299.1528128],
             TOWGS84[674.374,15.056,405.346,0,0,0,0]],
-        PRIMEM["Greenwich",0,
-            AUTHORITY["EPSG","8901"]],
-        UNIT["degree",0.0174532925199433,
-            AUTHORITY["EPSG","9122"]],
+        PRIMEM["Greenwich",0,AUTHORITY["EPSG","8901"]],
+        UNIT["degree",0.0174532925199433,AUTHORITY["EPSG","9122"]],
         AUTHORITY["EPSG","4150"]],
     PROJECTION["Hotine_Oblique_Mercator_Azimuth_Center"],
     PARAMETER["latitude_of_center",46.9524055555556],
@@ -499,11 +497,28 @@ TEST_F(ProjF, lv95_GM20040) {
     PARAMETER["latitude_of_origin",46.95240555555556],
     PARAMETER["false_easting",2600000],
     PARAMETER["false_northing",1200000],
-    UNIT["Meter",1]])";
+    UNIT["Meter",1],
+    AXIS["Easting",EAST],
+    AXIS["Northing",NORTH]])";
 #endif
     PJ_CONTEXT *ctx = proj_context_create();
     PJ *p = proj_create_crs_to_crs(ctx, "EPSG:4326", LV95, NULL);
     ASSERT_TRUE(p);
+
+    {
+        PROJ_STRING_LIST out_warnings{};
+        PROJ_STRING_LIST out_grammar_errors{};
+        PJ *p_verify = proj_create_from_wkt(ctx, LV95, NULL, &out_warnings,
+                                            &out_grammar_errors);
+        ASSERT_TRUE(p_verify);
+        EXPECT_FALSE(out_warnings);
+        EXPECT_FALSE(out_grammar_errors);
+        if (out_grammar_errors)
+        {
+            for(char **lp = out_grammar_errors ; *lp ; ++lp)
+                CONSOLE(*lp);
+        }
+    }
 
     // project same coordinates as in lv03 test
     {
