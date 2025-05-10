@@ -293,9 +293,7 @@ TEST_F(ProjF, frost_hill_rd_68) {
 // proj4 pipelines
 //
 // 19N	WGS84 / UTM zone 19N	EPSG:32619
-TEST_F(ProjF, pipelines) {
-
-}
+TEST_F(ProjF, pipelines) {}
 
 // EPSG:21781 - swiss coordinate system LV03
 // EPSG:4978 - WGS 84 - earth centered CS
@@ -326,19 +324,39 @@ TEST_F(ProjF, lv03) {
     PJ *p = proj_create_crs_to_crs(ctx, "EPSG:4326", "EPSG:21781", NULL);
     ASSERT_TRUE(p);
 
-    PJ_COORD coord = {{
-        46.9524055555556, // latitude
-        7.43958333333333, // longitude
-        0,                // elevation
-        HUGE_VAL          // hz...
-    }};
+    {
+        PJ_COORD coord = {{
+            46.9524055555556, // latitude
+            7.43958333333333, // longitude
+            0,                // elevation
+            HUGE_VAL          // hz...
+        }};
 
-    PJ *p_norm = proj_normalize_for_visualization(ctx, p);
+        PJ *p_norm = proj_normalize_for_visualization(ctx, p);
 
-    PJ_COORD a = proj_trans(p, PJ_FWD, coord);
+        PJ_COORD a = proj_trans(p, PJ_FWD, coord);
 
-    printf("easting: %.3f, northing: %.3f\n", a.enu.e, a.enu.n);
+        printf("easting: %.3f, northing: %.3f\n", a.enu.e, a.enu.n);
+    }
+    {
+        // (Sidlerstrasse 5 - 46°57'3.9" N, 7°26'19.1" E).
+        PJ_COORD coord = {{
+            46.0 + 57 / 60. + 3.9 / 3600., // latitude
+            7.0 + 26 / 60. + 19.1 / 3600., // longitude
+            0,                // elevation
+            HUGE_VAL          // hz...
+        }};
 
+        PJ *p_norm = proj_normalize_for_visualization(ctx, p);
+
+        PJ_COORD a = proj_trans(p, PJ_FWD, coord);
+
+        printf("easting: %.3f, northing: %.3f\n", a.enu.e, a.enu.n);
+    }
     proj_context_destroy(ctx);
-
 }
+
+// https://epsg.io/2056
+// +proj=somerc +lat_0=46.9524055555556 +lon_0=7.43958333333333 +k_0=1
+// +x_0=2600000 +y_0=1200000 +ellps=bessel
+// +towgs84=674.374,15.056,405.346,0,0,0,0 +units=m +no_defs +type=crs
