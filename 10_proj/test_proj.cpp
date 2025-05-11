@@ -528,3 +528,79 @@ TEST_F(ProjF, lv95_GM20040) {
     }
     proj_context_destroy(ctx);
 }
+
+// A `parametrized` test fixture
+
+// clang-format off
+class ProjP : public testing::TestWithParam<const char *> 
+{};
+// clang-format on
+
+TEST_P(ProjP, swiss_wkt)
+{
+    const char *LV95 = GetParam();
+    PJ_CONTEXT *ctx = proj_context_create();
+    PJ *p = proj_create_crs_to_crs(ctx, "EPSG:4326", LV95, NULL);
+    ASSERT_TRUE(p);
+
+    {
+        PROJ_STRING_LIST out_warnings{};
+        PROJ_STRING_LIST out_grammar_errors{};
+        PJ *p_verify = proj_create_from_wkt(ctx, LV95, NULL, &out_warnings,
+                                            &out_grammar_errors);
+        ASSERT_TRUE(p_verify);
+        EXPECT_FALSE(out_warnings);
+        EXPECT_FALSE(out_grammar_errors);
+        if (out_grammar_errors)
+        {
+            for(char **lp = out_grammar_errors ; *lp ; ++lp)
+                CONSOLE(*lp);
+        }
+    }
+
+    // project same coordinates as in lv03 test
+    {
+        PJ_COORD coord = {{
+            46.9524055555556, // latitude
+            7.43958333333333, // longitude
+            0,                // elevation
+            HUGE_VAL          // hz...
+        }};
+
+        printf("central (lam,phi) = %.16f, %.16f\n", coord.lpzt.lam,
+               coord.lpzt.phi);
+
+        PJ_COORD a = proj_trans(p, PJ_FWD, coord);
+
+        EXPECT_NEAR(2600072, a.enu.e, 0.5);
+        EXPECT_NEAR(1200147, a.enu.n, 0.5);
+    }
+}
+
+namespace {
+const char *lv95_good()
+{
+    static
+#include "lv95_good.h"
+    return LV95;
+}
+
+const char *lv95_globalmapper()
+{
+    static
+#include "lv95_globalmapper.h"
+    return LV95;
+}
+
+const char *lv95_original()
+{
+    static
+#include "lv95_original.h"
+    return LV95;
+}
+}
+
+INSTANTIATE_TEST_SUITE_P(two_wkt_definitions, ProjP,
+                         testing::Values(lv95_good(), lv95_globalmapper(), lv95_original()));
+
+//

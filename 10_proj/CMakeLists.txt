@@ -48,6 +48,7 @@ if(BUILD_TESTING)
         test_proj.cpp
         lv95_globalmapper.h
         lv95_good.h
+        lv95_original.h
         test_eigen.cpp
         README.md
     )
