@@ -46,6 +46,8 @@ if(BUILD_TESTING)
     add_executable(test_10
         test_boost.cpp
         test_proj.cpp
+        lv95_globalmapper.h
+        lv95_good.h
         test_eigen.cpp
         README.md
     )
