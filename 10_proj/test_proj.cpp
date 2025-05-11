@@ -370,14 +370,14 @@ TEST_F(ProjF, lv03) {
                 0,                // elevation
                 HUGE_VAL          // hz...
             }};
-            printf("easting: %.16f, northing: %.16f\n", coord.lpzt.lam, coord.lpzt.phi);
-            
+            printf("easting: %.16f, northing: %.16f\n", coord.lpzt.lam,
+                   coord.lpzt.phi);
+
             PJ *p_norm = proj_normalize_for_visualization(ctx, p);
 
             PJ_COORD a = proj_trans(p, PJ_FWD, coord);
 
             printf("easting: %.3f, northing: %.3f\n", a.enu.e, a.enu.n);
-
         }
         {
             // (Sidlerstrasse 5 - 46°57'3.9" N, 7°26'19.1" E).
@@ -388,7 +388,8 @@ TEST_F(ProjF, lv03) {
                 HUGE_VAL                       // hz...
             }};
 
-            printf("easting: %.16f, northing: %.16f\n", coord.lpzt.lam, coord.lpzt.phi);
+            printf("easting: %.16f, northing: %.16f\n", coord.lpzt.lam,
+                   coord.lpzt.phi);
 
             PJ *p_norm = proj_normalize_for_visualization(ctx, p);
 
@@ -441,7 +442,8 @@ TEST_F(ProjF, lv95) {
             HUGE_VAL                       // hz...
         }};
 
-        printf("central (lam,phi) = %.13f, %.13f\n", coord.lpzt.lam, coord.lpzt.phi);
+        printf("central (lam,phi) = %.13f, %.13f\n", coord.lpzt.lam,
+               coord.lpzt.phi);
 
         PJ_COORD a = proj_trans(p, PJ_FWD, coord);
         EXPECT_NEAR(2600000.493, a.enu.e, 5E-4);
@@ -461,9 +463,9 @@ TEST_F(ProjF, lv95) {
 /// @param --gtest_filter=ProjF.lv95_GM20040
 TEST_F(ProjF, lv95_GM20040) {
 #if 0
-#   include "lv95_good.h"
+#include "lv95_good.h"
 #else
-#   include "lv95_globalmapper.h"
+#include "lv95_globalmapper.h"
 #endif
     PJ_CONTEXT *ctx = proj_context_create();
     PJ *p = proj_create_crs_to_crs(ctx, "EPSG:4326", LV95, NULL);
@@ -477,9 +479,8 @@ TEST_F(ProjF, lv95_GM20040) {
         ASSERT_TRUE(p_verify);
         EXPECT_FALSE(out_warnings);
         EXPECT_FALSE(out_grammar_errors);
-        if (out_grammar_errors)
-        {
-            for(char **lp = out_grammar_errors ; *lp ; ++lp)
+        if (out_grammar_errors) {
+            for (char **lp = out_grammar_errors; *lp; ++lp)
                 CONSOLE(*lp);
         }
     }
@@ -536,8 +537,7 @@ class ProjP : public testing::TestWithParam<const char *>
 {};
 // clang-format on
 
-TEST_P(ProjP, swiss_wkt)
-{
+TEST_P(ProjP, swiss_wkt) {
     const char *LV95 = GetParam();
     PJ_CONTEXT *ctx = proj_context_create();
     PJ *p = proj_create_crs_to_crs(ctx, "EPSG:4326", LV95, NULL);
@@ -551,9 +551,8 @@ TEST_P(ProjP, swiss_wkt)
         ASSERT_TRUE(p_verify);
         EXPECT_FALSE(out_warnings);
         EXPECT_FALSE(out_grammar_errors);
-        if (out_grammar_errors)
-        {
-            for(char **lp = out_grammar_errors ; *lp ; ++lp)
+        if (out_grammar_errors) {
+            for (char **lp = out_grammar_errors; *lp; ++lp)
                 CONSOLE(*lp);
         }
     }
@@ -578,29 +577,69 @@ TEST_P(ProjP, swiss_wkt)
 }
 
 namespace {
-const char *lv95_good()
-{
+const char *lv95_good() {
     static
 #include "lv95_good.h"
-    return LV95;
+        return LV95;
 }
 
-const char *lv95_globalmapper()
-{
+const char *lv95_globalmapper() {
     static
 #include "lv95_globalmapper.h"
-    return LV95;
+        return LV95;
 }
 
-const char *lv95_original()
-{
+const char *lv95_original() {
     static
 #include "lv95_original.h"
-    return LV95;
+        return LV95;
 }
 }
 
 INSTANTIATE_TEST_SUITE_P(two_wkt_definitions, ProjP,
-                         testing::Values(lv95_good(), lv95_globalmapper(), lv95_original()));
+                         testing::Values(lv95_good(), lv95_globalmapper()));
 
 //
+
+///
+TEST_F(ProjF, lv95_GM20040_2) {
+
+    auto LV95 = lv95_original();
+    CONSOLE_EVAL(LV95);
+
+    PJ_CONTEXT *ctx = proj_context_create();
+    PJ *p = proj_create_crs_to_crs(ctx, "EPSG:4326", LV95, NULL);
+    ASSERT_TRUE(p);
+
+    {
+        PROJ_STRING_LIST out_warnings{};
+        PROJ_STRING_LIST out_grammar_errors{};
+        PJ *p_verify = proj_create_from_wkt(ctx, LV95, NULL, &out_warnings,
+                                            &out_grammar_errors);
+        ASSERT_TRUE(p_verify);
+        EXPECT_FALSE(out_warnings);
+        EXPECT_FALSE(out_grammar_errors);
+        if (out_grammar_errors) {
+            for (char **lp = out_grammar_errors; *lp; ++lp)
+                CONSOLE(*lp);
+        }
+    }
+
+    // project same coordinates as in lv03 test
+    {
+        PJ_COORD coord = {{
+            46.9524055555556, // latitude
+            7.43958333333333, // longitude
+            0,                // elevation
+            HUGE_VAL          // hz...
+        }};
+
+        printf("central (lam,phi) = %.16f, %.16f\n", coord.lpzt.lam,
+               coord.lpzt.phi);
+
+        PJ_COORD a = proj_trans(p, PJ_FWD, coord);
+
+        EXPECT_NEAR(2600000, a.enu.e, 0.1E-8);
+        EXPECT_NEAR(1200000, a.enu.n, 0.1E-8);
+    }
+}
