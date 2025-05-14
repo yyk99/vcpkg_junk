@@ -16,6 +16,8 @@ endif()
 
 project(assimp_junk)
 
+set_property(GLOBAL PROPERTY USE_FOLDERS TRUE)
+
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
@@ -36,6 +38,7 @@ add_executable(
 	README.md
 )
 target_link_libraries(cmd_getargs_08 PRIVATE Boost::program_options)
+set_target_properties(cmd_getargs_08 PROPERTIES FOLDER "Apps")
 
 if(BUILD_TESTING)
 	enable_testing()
@@ -60,7 +63,7 @@ if(BUILD_TESTING)
 		GTest::gtest
 		GTest::gtest_main
 	)
-
+	set_target_properties(test_boost_08 PROPERTIES FOLDER "Tests")
 	gtest_discover_tests(test_boost_08)
 
 endif()

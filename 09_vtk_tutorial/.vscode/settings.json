@@ -1,7 +1,8 @@
 {
     "cSpell.words": [
-        "getargs",
+        "autoinit",
         "Interactor",
+        "jsoncpp",
         "Voronoi",
         "voronoy"
     ]

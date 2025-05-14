@@ -38,7 +38,7 @@ inline void attachDebugConsole()
 
 #endif
 
-#if _DEBUG
+#ifndef NDEBUG
 #   define CONSOLE(x) do { std::cout << __func__ << ":" << x << '\n';  } while(0)
 #   define CONSOLE_THR(x) do { std::cout << __func__ << ":" << std::this_thread::get_id() << ":" << x << '\n';  } while(0)
 #else

@@ -12,6 +12,8 @@ endif()
 
 project(04_cgal_tbb)
 
+set_property(GLOBAL PROPERTY USE_FOLDERS TRUE)
+
 find_package(Boost REQUIRED COMPONENTS 
 	program_options
 	filesystem
@@ -28,6 +30,7 @@ add_executable(
 	README.txt
 )
 target_link_libraries(cmd_getargs_04 PRIVATE Boost::program_options)
+set_target_properties(cmd_getargs_04 PROPERTIES FOLDER "Apps")
 
 if(BUILD_TESTING)
 	enable_testing()
@@ -57,5 +60,5 @@ if(BUILD_TESTING)
 		CGAL_target_use_TBB(test_boost)
 	endif()
 	gtest_discover_tests(test_boost_04)
-
+	set_target_properties(test_boost_04 PROPERTIES FOLDER "Tests")
 endif()

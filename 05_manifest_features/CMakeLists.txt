@@ -26,6 +26,8 @@ endif()
 
 project(05_manifest_features)
 
+set_property(GLOBAL PROPERTY USE_FOLDERS TRUE)
+
 find_package(Boost REQUIRED COMPONENTS 
 	program_options
 	filesystem
@@ -49,6 +51,7 @@ add_executable(
 	vcpkg.json
 )
 target_link_libraries(cmd_getargs_05 PRIVATE Boost::program_options)
+set_target_properties(cmd_getargs_05 PROPERTIES FOLDER "Apps")
 
 if(BUILD_TESTING)
 	enable_testing()
@@ -71,6 +74,7 @@ if(BUILD_TESTING)
 		GTest::gtest 
 		GTest::gtest_main
 	)
+	set_target_properties(test_boost_05 PROPERTIES FOLDER "Tests")
 	if (FALSE)
 		# DEPRECATED
 		CGAL_target_use_TBB(test_boost_05)
