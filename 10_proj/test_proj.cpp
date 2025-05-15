@@ -292,8 +292,45 @@ TEST_F(ProjF, frost_hill_rd_68) {
 //
 // proj4 pipelines
 //
-// 19N	WGS84 / UTM zone 19N	EPSG:32619
-TEST_F(ProjF, pipelines) {}
+// This code defines a pipeline that performs a coordinate transformation
+// from ED50/UTM32 to ETRS89/UTM33. It initializes a PJ_CONTEXT and a
+// PJ object with the pipeline definition.
+// Then, it defines an input coordinate a and applies the transformation using
+// proj_trans to get the output coordinate b. Finally, it prints the transformed
+// coordinates and cleans up the allocated resources.
+//
+TEST_F(ProjF, pipelines) {
+    PJ_CONTEXT *C;
+    PJ *P;
+    PJ_COORD a, b;
+
+    C = proj_context_create();
+    ASSERT_TRUE(C);
+
+    P = proj_create(
+        C, "+proj=pipeline "
+        "+step +inv +proj=utm +zone=32 +ellps=intl "
+        "+step +proj=cart +ellps=intl "
+        "+step +proj=helmert +x=-81.0703 +y=-89.3603 +z=-115.7526 +rx=-0.48488 +ry=-0.02436 +rz=-0.41321 +s=-0.540645 "
+        "   +convention=coordinate_frame "
+        "+step +inv +proj=cart +ellps=GRS80 "
+        "+step +proj=utm +zone=33 +ellps=GRS80");
+
+    ASSERT_TRUE(P) << "Error creating pipeline: "
+                   << proj_errno_string(proj_context_errno(C));
+
+    a = proj_coord(488200, 5385800, 0, 0);
+    b = proj_trans(P, PJ_FWD, a);
+
+    CONSOLE(std::setprecision(16));
+    CONSOLE("Easting: " << b.enu.e << " Northing: " << b.enu.n);
+
+    EXPECT_DOUBLE_EQ(46077.984547946835, b.enu.e);
+    EXPECT_DOUBLE_EQ(5403933.1579267327, b.enu.n);
+
+    proj_destroy(P);
+    proj_context_destroy(C);
+}
 
 // EPSG:21781 - swiss coordinate system LV03
 // EPSG:4978 - WGS 84 - earth centered CS
