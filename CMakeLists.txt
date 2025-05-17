@@ -13,9 +13,39 @@ if(BUILD_TESTING)
   list(APPEND VCPKG_MANIFEST_FEATURES "tests")
 endif()
 
+option(BUILD_01 "Build 01_boost_static" ON)
+if(BUILD_01)
+  list(APPEND VCPKG_MANIFEST_FEATURES "01-boost-static")
+endif()
+
+option(BUILD_02 "Build 02_cmake_toolchain" ON)
+if(BUILD_02)
+  list(APPEND VCPKG_MANIFEST_FEATURES "02-cmake-toolchain")
+endif()
+
 option(BUILD_03 "Build 03_vcpkg_json" ON)
 if(BUILD_03)
   list(APPEND VCPKG_MANIFEST_FEATURES "03-vcpkg-json")
+endif()
+
+option(BUILD_04 "Build 04_cgal_tbb" ON)
+if(BUILD_04)
+  list(APPEND VCPKG_MANIFEST_FEATURES "04-cgal-tbb")
+endif()
+
+option(BUILD_05 "Build 05_manifest_features" ON)
+if(BUILD_05)
+  list(APPEND VCPKG_MANIFEST_FEATURES "05-manifest-features")
+endif()
+
+option(BUILD_06 "Build 06_cgal_tbb_novcpkg" ON)
+if(BUILD_06)
+  list(APPEND VCPKG_MANIFEST_FEATURES "06-cgal-tbb-novcpkg")
+endif()
+
+option(BUILD_07 "Build 07_cmake_qt" ON)
+if(BUILD_07)
+  list(APPEND VCPKG_MANIFEST_FEATURES "07-cmake-qt")
 endif()
 
 option(BUILD_08 "Build 08_assimp_junk" ON)
