@@ -159,3 +159,16 @@ TEST_F(AssimpF, load_textured_cube) {
         ASSERT_EQ(0, rc);
     }
 }
+
+//
+// 
+//
+
+#include <json-c/json.h>
+
+#include "TilesetJson.h"
+
+TEST_F(AssimpF, json_c_test)
+{
+
+}
