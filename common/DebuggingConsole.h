@@ -5,8 +5,12 @@
 #ifndef DEBUGGINGCONSOLE_H
 #define DEBUGGINGCONSOLE_H
 
-// DEBUGGING 
-#if 0
+// DEBUGGING
+#if _WIN32
+
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+
 inline void attachDebugConsole()
 {
 #if _DEBUG
