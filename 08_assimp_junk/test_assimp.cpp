@@ -16,6 +16,8 @@ namespace fs = std::filesystem;
 
 #include "../common/DebuggingConsole.h"
 
+#include "assimp_aux.h"
+
 /// @brief
 class AssimpF : public testing::Test {
 protected:
@@ -108,11 +110,6 @@ TEST_F(AssimpF, z1) {
                                   (ws / "cube_ply.xml").string());
         ASSERT_EQ(0, rc);
     }
-}
-
-std::ostream &operator<<(std::ostream &ss, aiVector3D const &v) {
-    ss << "{" << v.x << "," << v.y << "," << v.z << "}";
-    return ss;
 }
 
 /// @brief Load a textured cube and save it as assxml
@@ -254,4 +251,43 @@ TEST_F(AssimpF, json_c_test_2) {
 /// @param --gtest_filter=AssimpF.json_c_test_3
 TEST_F(AssimpF, json_c_test_3) {
     EXPECT_THROW(cesiumjs::TilesetJson sot("/dev/null"), std::runtime_error);
+}
+
+#include "meshtoolbox.h"
+
+/// @brief 
+/// @param --gtest_filter=AssimpF.meshtoolbox_t0
+/// @param  
+TEST_F(AssimpF, meshtoolbox_t0) {
+
+    auto ws = create_ws();
+
+    meshtoolbox::Toolbox tb;
+
+    meshtoolbox::box_t b0{{0, 0, 0}, {10, 20, 30}};
+
+    std::vector<meshtoolbox::box_t> boxes{b0};
+
+    auto model = std::unique_ptr<aiScene>(tb.make_boxes(boxes));
+
+    ASSERT_TRUE(model);
+    EXPECT_EQ(1, model->mNumMeshes);
+
+    Assimp::Exporter exp;
+    auto flags = aiProcess_GenNormals | aiProcess_ValidateDataStructure | 0;
+    {
+        std::string filename_glb = (ws / "meshtoolbox_t0.glft").string();
+        auto err = exp.Export(model.get(), "gltf", filename_glb, flags);
+        EXPECT_EQ(AI_SUCCESS, err) << "Failed export to " << filename_glb;
+    }
+    {
+        std::string filename_glb = (ws / "meshtoolbox_t0.glb").string();
+        auto err = exp.Export(model.get(), "glb2", filename_glb, flags);
+        EXPECT_EQ(AI_SUCCESS, err) << "Failed export to " << filename_glb;
+    }
+    {
+        std::string filename_glb = (ws / "meshtoolbox_t0.xml").string();
+        auto err = exp.Export(model.get(), "assxml", filename_glb, flags);
+        EXPECT_EQ(AI_SUCCESS, err) << "Failed export to " << filename_glb;
+    }
 }

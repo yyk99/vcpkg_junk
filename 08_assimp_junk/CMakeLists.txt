@@ -31,6 +31,8 @@ find_package(assimp REQUIRED)
 
 find_package(json-c CONFIG REQUIRED)
 
+find_package(Eigen3 CONFIG REQUIRED)
+
 add_definitions(${Boost_LIB_DIAGNOSTIC_DEFINITIONS})
 
 add_executable(
@@ -64,6 +66,7 @@ if(BUILD_TESTING)
         Boost::geometry
         assimp::assimp
         json-c::json-c
+        Eigen3::Eigen
 
         GTest::gtest
         GTest::gtest_main

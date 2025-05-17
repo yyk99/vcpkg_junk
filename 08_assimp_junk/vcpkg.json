@@ -5,6 +5,7 @@
     "boost-filesystem",
     "boost-geometry",
     "json-c",
+    "eigen3",
     "gtest"
   ],
   "features": {
