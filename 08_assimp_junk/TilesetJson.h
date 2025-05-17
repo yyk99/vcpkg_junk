@@ -6,13 +6,14 @@
 #define TILESETJSON_H
 
 #include <optional>
+#include <list>
 
 #include <json-c/json.h>
 #include <json-c/printbuf.h>
 
 #define SIZE(x) (sizeof(x) / sizeof(*x))
 #ifndef ASSERT
-# define ASSERT(exp) ((VOID) 0)
+# define ASSERT(exp) ((void) 0)
 #endif
 
 namespace cesiumjs
