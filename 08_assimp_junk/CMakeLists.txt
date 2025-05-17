@@ -54,6 +54,7 @@ if(BUILD_TESTING)
     add_executable(test_08
         test_boost.cpp
         test_assimp.cpp
+        .editorconfig
     )
     target_link_libraries(
         test_08

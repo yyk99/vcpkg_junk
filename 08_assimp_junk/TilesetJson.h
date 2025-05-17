@@ -309,11 +309,11 @@ public:
         if ( json_object_object_get_ex( o, "children", &kids_obj )
              && json_object_get_type( kids_obj ) == json_type_array )
         {
-            array_list* kids = json_object_get_array( kids_obj );
-            for ( int i = 0; i < kids->length; ++i )
+            size_t n = json_object_array_length(kids_obj);
+            for ( int i = 0; i < n; ++i )
             {
                 child_t ch;
-                json_object* o = (json_object*)array_list_get_idx( kids, i );
+                json_object *o = json_object_array_get_idx(kids_obj, i);
                 child_from_obj( o, ch );
                 tile.children.push_back( std::move( ch ) );
             }
@@ -679,28 +679,28 @@ protected:
             json_object* box_obj = 0;
             if ( json_object_object_get_ex( bv, "box", &box_obj ) )
             {
-                array_list* box = json_object_get_array( box_obj );
+                size_t arr_size = json_object_array_length(box_obj);
                 auto p = new boundingVolumeBox_t;
-                if ( box->length != SIZE( boundingVolumeBox_t::box ) )
+                if (arr_size != SIZE(boundingVolumeBox_t::box))
                     throw std::runtime_error( "Wrong boundingVolume.box array size" );
 
                 for ( int i = 0; i < SIZE( boundingVolumeBox_t::box ); ++i )
                 {
-                    json_object* oi = (json_object*)array_list_get_idx( box, i );
+                    json_object* oi = json_object_array_get_idx( box_obj, i );
                     p->box[i] = json_object_get_double( oi );
                 }
                 return p;
             }
             else if ( json_object_object_get_ex( bv, "region", &box_obj ) )
             {
-                array_list* box = json_object_get_array( box_obj );
+                auto box_size = json_object_array_length( box_obj );
                 auto p = new boundingVolumeRegion_t;
-                if ( box->length != SIZE( boundingVolumeRegion_t::region ) )
+                if (box_size != SIZE(boundingVolumeRegion_t::region))
                     throw std::runtime_error( "Wrong boundingVolume.region array size" );
 
                 for ( int i = 0; i < SIZE( boundingVolumeRegion_t::region ); ++i )
                 {
-                    json_object* oi = (json_object*)array_list_get_idx( box, i );
+                    json_object* oi = json_object_array_get_idx( box_obj, i );
                     p->region[i] = json_object_get_double( oi );
                 }
                 return p;
@@ -725,12 +725,12 @@ protected:
 
         if ( json_object_get_type( t_obj ) != json_type_array )
             throw std::runtime_error( "transform is not array" );
-        array_list* t_array = json_object_get_array( t_obj );
-        if ( t_array->length != SIZE( t->matrix4x4 ) )
+        size_t t_array_size = json_object_array_length( t_obj );
+        if (t_array_size != SIZE(t->matrix4x4))
             throw std::runtime_error( "transform array wrong size" );
-        for ( int i = 0; i != t_array->length; ++i )
+        for ( int i = 0; i != t_array_size; ++i )
         {
-            json_object* oi = (json_object*)array_list_get_idx( t_array, i );
+            json_object* oi = json_object_array_get_idx( t_obj, i );
             t->matrix4x4[i] = json_object_get_double( oi );
         }
         return t;
