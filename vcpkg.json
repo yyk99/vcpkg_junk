@@ -12,12 +12,46 @@
         "gtest"
       ]
     },
+    "01-boost-static": {
+      "description": "Build 01_boost_static",
+      "dependencies": [
+      ]
+    },
+    "02-cmake-toolchain": {
+      "description": "Build 02_cmake_toolchain",
+      "dependencies": [
+      ]
+    },
     "03-vcpkg-json": {
       "description": "Build 03_vcpkg_json",
       "dependencies": [
         "vtk",
         "tbb",
         "cgal"
+      ]
+    },
+    "04-cgal-tbb": {
+      "description": "Build 04_cgal_tbb",
+      "dependencies": [
+        "tbb",
+        "cgal"
+      ]
+    },
+    "05-manifest-features": {
+      "description": "Build 05_manifest_features",
+      "dependencies": [
+      ]
+    },
+    "06-cgal-tbb-novcpkg": {
+      "description": "Build 06_cgal_tbb_novcpkg",
+      "dependencies": [
+        "tbb",
+        "cgal"
+      ]
+    },
+    "07-cmake-qt": {
+      "description": "Build 07_cmake_qt",
+      "dependencies": [
       ]
     },
     "08-assimp-junk": {
