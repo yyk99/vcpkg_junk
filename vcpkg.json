@@ -1,19 +1,39 @@
 {
   "dependencies": [
-    "assimp",
     "boost-program-options",
     "boost-filesystem",
     "boost-geometry",
-    "boost-polygon",
-    "vtk",
-    "tbb",
-    "cgal"
+    "boost-polygon"
   ],
   "features": {
     "tests": {
       "description": "Build Tests",
       "dependencies": [
         "gtest"
+      ]
+    },
+    "03-vcpkg-json": {
+      "description": "Build 03_vcpkg_json",
+      "dependencies": [
+        "vtk",
+        "tbb",
+        "cgal"
+      ]
+    },
+    "08-assimp-junk": {
+      "description": "Build 08_assimp_junk",
+      "dependencies": [
+        "assimp",
+        "json-c",
+        "eigen3"
+      ]
+    },
+    "09-vtk-tutorial": {
+      "description": "Build 09_vtk_tutorial",
+      "dependencies": [
+        "vtk",
+        "tbb",
+        "cgal"
       ]
     }
   }
