@@ -58,6 +58,11 @@ if(BUILD_09)
   list(APPEND VCPKG_MANIFEST_FEATURES "09-vtk-tutorial")
 endif()
 
+option(BUILD_10 "Build 10_proj" ON)
+if(BUILD_10)
+  list(APPEND VCPKG_MANIFEST_FEATURES "10-proj")
+endif()
+
 project (vcpkg_junk)
 
 if(BUILD_TESTING)
@@ -94,6 +99,10 @@ if(BUILD_08)
 endif()
 if(BUILD_09)
 	add_subdirectory(09_vtk_tutorial)
+endif()
+if(BUILD_10)
+	message("Include 10_proj...")
+	add_subdirectory(10_proj)
 endif()
 
 # end of file
