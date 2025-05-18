@@ -25,9 +25,7 @@
     "03-vcpkg-json": {
       "description": "Build 03_vcpkg_json",
       "dependencies": [
-        "vtk",
-        "tbb",
-        "cgal"
+        "vtk"
       ]
     },
     "04-cgal-tbb": {
