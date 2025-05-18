@@ -4,8 +4,7 @@
     "boost-filesystem",
     "boost-geometry",
     "boost-polygon",
-    "vtk",
-    "gtest"
+    "vtk"
   ],
   "features": {
     "tests": {
