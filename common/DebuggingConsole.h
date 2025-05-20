@@ -5,8 +5,12 @@
 #ifndef DEBUGGINGCONSOLE_H
 #define DEBUGGINGCONSOLE_H
 
-// DEBUGGING 
-#if 0
+// DEBUGGING
+#if _WIN32
+
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+
 inline void attachDebugConsole()
 {
 #if _DEBUG
@@ -38,21 +42,6 @@ inline void attachDebugConsole()
 
 #endif
 
-#if _DEBUG
-#   define CONSOLE(x) do { std::cout << __func__ << ":" << x << '\n';  } while(0)
-#   define CONSOLE_THR(x) do { std::cout << __func__ << ":" << std::this_thread::get_id() << ":" << x << '\n';  } while(0)
-#else
-#   define CONSOLE(x)
-#   define CONSOLE_THR( x )
-#endif
-
-#define CONSOLE_EVAL(x) CONSOLE(#x << " : " << (x))
-
-#define STATUS(x) do { \
-    std::ostringstream ss; \
-    ss << x; \
-    CONSOLE ( ss.str() ); \
-    GM_LOG_MSG_DIRECT(GM_Log_Status, ss.str().c_str()); \
-} while(0)
+#include "CONSOLE.h"
 
 #endif // DEBUGGINGCONSOLE_H
