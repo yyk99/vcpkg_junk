@@ -9,6 +9,17 @@
       }
     },
     {
+      "name": "cherry",
+      "inherits": "vcpkg",
+      "environment": {
+        "VCPKG_ROOT": "e:\\opt\\vcpkg"
+      },
+      "cacheVariables": {
+        "BUILD_09": "OFF",
+        "BUILD_03": "OFF"
+      }
+    },
+    {
       "name": "windows-developmentyk",
       "inherits": "vcpkg",
       "environment": {

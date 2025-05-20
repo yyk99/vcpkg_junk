@@ -8,7 +8,7 @@
 #include <iostream>
 #include <vector>
 
-#include "../common/DebuggingConsole.h"
+#include "../common/CONSOLE.h"
 
 TEST(t1, t1) { std::cout << "Hello...\n"; }
 
