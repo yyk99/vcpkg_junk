@@ -49,12 +49,31 @@ protected:
 
     auto test_data(const char *relative_path) {
         auto test_data_dir = fs::absolute(__FILE__).parent_path() / "test_data";
-        CONSOLE_EVAL(test_data_dir);
-
         return test_data_dir / relative_path;
     }
 
     bool has_failure() const { return ::testing::Test::HasFailure(); }
+
+    bool dump_as_assxml(const char *test_file, const char *out_prefix,
+                        fs::path const &ws)
+    {
+        auto filename_gltf = test_data(test_file);
+        if (!fs::is_regular_file(filename_gltf))
+            return false;
+
+        Assimp::Importer sot;
+        {
+            aiScene const *actual_scene =
+                sot.ReadFile(filename_gltf.string().c_str(), 0);
+            if(!actual_scene)
+                return false;
+
+            Assimp::Exporter exporter;
+            auto rc = exporter.Export(actual_scene, "assxml",
+                (ws / (std::string(out_prefix) + ".xml")).string());
+            return rc == AI_SUCCESS;
+        }
+    }
 };
 
 /// @brief
@@ -158,6 +177,27 @@ TEST_F(AssimpF, load_textured_cube) {
         ASSERT_EQ(0, rc);
     }
 }
+
+/// @brief Compare different ways of texture definitions
+/// @param --gtest_filter=AssimpF.load_textured_cube_variants
+/// @param  
+TEST_F(AssimpF, load_textured_cube_variants) {
+    auto ws = create_ws();
+
+    // clang-format off
+    const char *files [] = { 
+        "BoxTextured-glTF/BoxTextured.gltf",
+        "BoxTextured-glTF-Binary/BoxTextured.glb",
+        "BoxTextured-glTF-Embedded/BoxTextured.gltf",
+        };
+    // clang-format on
+
+    for (auto fp : files) {
+        auto prefix = fs ::path(fp).parent_path();
+        EXPECT_TRUE(dump_as_assxml(fp, prefix.string().c_str(), ws)) << "File: " << fp;
+    }
+}
+
 
 //
 //
