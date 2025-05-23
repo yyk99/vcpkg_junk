@@ -55,8 +55,7 @@ protected:
     bool has_failure() const { return ::testing::Test::HasFailure(); }
 
     bool dump_as_assxml(const char *test_file, const char *out_prefix,
-                        fs::path const &ws)
-    {
+                        fs::path const &ws) {
         auto filename_gltf = test_data(test_file);
         if (!fs::is_regular_file(filename_gltf))
             return false;
@@ -65,11 +64,12 @@ protected:
         {
             aiScene const *actual_scene =
                 sot.ReadFile(filename_gltf.string().c_str(), 0);
-            if(!actual_scene)
+            if (!actual_scene)
                 return false;
 
             Assimp::Exporter exporter;
-            auto rc = exporter.Export(actual_scene, "assxml",
+            auto rc = exporter.Export(
+                actual_scene, "assxml",
                 (ws / (std::string(out_prefix) + ".xml")).string());
             return rc == AI_SUCCESS;
         }
@@ -180,7 +180,7 @@ TEST_F(AssimpF, load_textured_cube) {
 
 /// @brief Compare different ways of texture definitions
 /// @param --gtest_filter=AssimpF.load_textured_cube_variants
-/// @param  
+/// @param
 TEST_F(AssimpF, load_textured_cube_variants) {
     auto ws = create_ws();
 
@@ -194,10 +194,10 @@ TEST_F(AssimpF, load_textured_cube_variants) {
 
     for (auto fp : files) {
         auto prefix = fs ::path(fp).parent_path();
-        EXPECT_TRUE(dump_as_assxml(fp, prefix.string().c_str(), ws)) << "File: " << fp;
+        EXPECT_TRUE(dump_as_assxml(fp, prefix.string().c_str(), ws))
+            << "File: " << fp;
     }
 }
-
 
 //
 //
@@ -295,9 +295,9 @@ TEST_F(AssimpF, json_c_test_3) {
 
 #include "meshtoolbox.h"
 
-/// @brief 
+/// @brief
 /// @param --gtest_filter=AssimpF.meshtoolbox_t0
-/// @param  
+/// @param
 TEST_F(AssimpF, meshtoolbox_t0) {
 
     auto ws = create_ws();
@@ -329,5 +329,76 @@ TEST_F(AssimpF, meshtoolbox_t0) {
         std::string filename_glb = (ws / "meshtoolbox_t0.xml").string();
         auto err = exp.Export(model.get(), "assxml", filename_glb, flags);
         EXPECT_EQ(AI_SUCCESS, err) << "Failed export to " << filename_glb;
+    }
+}
+
+void PrintTo(aiVector3D const &v, std::ostream* os) {
+    *os << "(" << v.x << "," << v.y << "," << v.z << ")";
+}
+
+class TransF : public AssimpF {
+public:
+    aiMatrix4x4 translate(ai_real x, ai_real y, ai_real z) {
+        aiMatrix4x4 t;
+        aiVector3D v(x, y, z);
+        aiMatrix4Translation(&t, &v);
+        return t;
+    }
+
+    aiMatrix4x4 scaling(ai_real x, ai_real y, ai_real z) {
+        aiMatrix4x4 t;
+        aiVector3D v(x, y, z);
+        aiMatrix4Scaling(&t, &v);
+        return t;
+    }
+
+    aiMatrix4x4 scaling(ai_real m) { return scaling(m, m, m); }
+};
+
+/// @brief test the matrix transforms
+/// @param --gtest_filter=AssimpF.matrix_transforms
+/// @param
+TEST_F(TransF, matrix_transforms) {
+    {
+        aiVector3D v0{1, 2, 3};
+        aiMatrix4x4 transform;
+
+        aiVector3D off(10, 20, 0);
+        aiMatrix4Translation(&transform, &off);
+        aiVector3D v1 = transform * v0;
+        CONSOLE_EVAL(v1);
+        EXPECT_EQ(aiVector3D(11, 22, 3), v1);
+    }
+    {
+        aiVector3D v0{1, 2, 3};
+        auto v1 = translate(10, 20, 0) * v0;
+        CONSOLE_EVAL(v1);
+        EXPECT_EQ(aiVector3D(11, 22, 3), v1);
+    }
+    {
+        aiVector3D v0{1, 2, 3};
+        aiMatrix4x4 transform;
+
+        aiVector3D S(2, 2, 2);
+        aiMatrix4Scaling(&transform, &S);
+        aiVector3D v1 = transform * v0;
+        CONSOLE_EVAL(v1);
+        EXPECT_EQ(aiVector3D(2, 4, 6), v1);
+    }
+    {
+        aiVector3D v0{1, 2, 3};
+        aiVector3D v1 = scaling(2.0) * v0;
+        CONSOLE_EVAL(v1);
+        EXPECT_EQ(aiVector3D(2, 4, 6), v1);
+    }
+    {
+        aiVector3D v0{1, 2, 3};
+        aiVector3D v1 = scaling(2.0) * translate(10, 20, 0) * v0;
+        CONSOLE_EVAL(v1);
+    }
+    {
+        aiVector3D v0{1, 2, 3};
+        aiVector3D v1 = translate(10, 20, 0) * scaling(2.0) * v0;
+        CONSOLE_EVAL(v1);
     }
 }
