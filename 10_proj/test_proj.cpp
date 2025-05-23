@@ -22,6 +22,35 @@ TEST_F(ProjF, version) {
     EXPECT_EQ(9, PROJ_VERSION_MAJOR);
 }
 
+/// @brief Set the location of proj.db
+/// @param --gtest_filter=ProjF.c_api_primer_find_proj_db
+/// @param
+TEST_F(ProjF, c_api_primer_find_proj_db) {
+    PJ_CONTEXT *C;
+    PJ *P;
+    PJ *norm;
+    PJ_COORD a, b;
+
+    /* or you may set C=PJ_DEFAULT_CTX if you are sure you will     */
+    /* use PJ objects from only one thread                          */
+    C = proj_context_create();
+
+    /* */
+#ifdef PROJ_DIR
+    char const *data_path[] = {PROJ_DIR};
+    proj_context_set_search_paths(C, 1, data_path);
+#endif
+    P = proj_create_crs_to_crs(
+        C, "EPSG:4326", "+proj=utm +zone=32 +datum=WGS84", /* or EPSG:32632 */
+        NULL);
+
+    ASSERT_TRUE(P) << "Failed to create transformation object";
+
+    /* Clean up */
+    proj_destroy(P);
+    proj_context_destroy(C); /* may be omitted in the single threaded case */
+}
+
 /// @brief A c-api primer
 /// @param --gtest_filter=ProjF.c_api_primer
 /// @param
@@ -34,6 +63,11 @@ TEST_F(ProjF, c_api_primer) {
     /* or you may set C=PJ_DEFAULT_CTX if you are sure you will     */
     /* use PJ objects from only one thread                          */
     C = proj_context_create();
+    /* */
+#ifdef PROJ_DIR
+    char const *data_path[] = {PROJ_DIR};
+    proj_context_set_search_paths(C, 1, data_path);
+#endif
 
     P = proj_create_crs_to_crs(
         C, "EPSG:4326", "+proj=utm +zone=32 +datum=WGS84", /* or EPSG:32632 */
@@ -79,6 +113,11 @@ TEST_F(ProjF, c_api_primer_2) {
     /* You may set C=PJ_DEFAULT_CTX if you are sure you will     */
     /* use PJ objects from only one thread                       */
     PJ_CONTEXT *C = proj_context_create();
+    /* */
+#ifdef PROJ_DIR
+    char const *data_path[] = {PROJ_DIR};
+    proj_context_set_search_paths(C, 1, data_path);
+#endif
 
     /* Create a projection. */
     PJ *P = proj_create(C, "+proj=utm +zone=32 +datum=WGS84 +type=crs");
@@ -144,7 +183,7 @@ using namespace NS_PROJ::util;
 
 ///
 TEST_F(ProjF, cpp_api) {
-    auto dbContext = DatabaseContext::create();
+    auto dbContext = DatabaseContext::create(); 
 
     // Instantiate a generic authority factory, that is not tied to a particular
     // authority, to be able to get transformations registered by different
@@ -307,14 +346,15 @@ TEST_F(ProjF, pipelines) {
     C = proj_context_create();
     ASSERT_TRUE(C);
 
-    P = proj_create(
-        C, "+proj=pipeline "
-        "+step +inv +proj=utm +zone=32 +ellps=intl "
-        "+step +proj=cart +ellps=intl "
-        "+step +proj=helmert +x=-81.0703 +y=-89.3603 +z=-115.7526 +rx=-0.48488 +ry=-0.02436 +rz=-0.41321 +s=-0.540645 "
-        "   +convention=coordinate_frame "
-        "+step +inv +proj=cart +ellps=GRS80 "
-        "+step +proj=utm +zone=33 +ellps=GRS80");
+    P = proj_create(C,
+                    "+proj=pipeline "
+                    "+step +inv +proj=utm +zone=32 +ellps=intl "
+                    "+step +proj=cart +ellps=intl "
+                    "+step +proj=helmert +x=-81.0703 +y=-89.3603 +z=-115.7526 "
+                    "+rx=-0.48488 +ry=-0.02436 +rz=-0.41321 +s=-0.540645 "
+                    "   +convention=coordinate_frame "
+                    "+step +inv +proj=cart +ellps=GRS80 "
+                    "+step +proj=utm +zone=33 +ellps=GRS80");
 
     ASSERT_TRUE(P) << "Error creating pipeline: "
                    << proj_errno_string(proj_context_errno(C));
@@ -631,7 +671,7 @@ const char *lv95_original() {
 #include "lv95_original.h"
         return LV95;
 }
-}
+} // namespace
 
 INSTANTIATE_TEST_SUITE_P(two_wkt_definitions, ProjP,
                          testing::Values(lv95_good(), lv95_globalmapper()));

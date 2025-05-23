@@ -52,6 +52,12 @@ if(BUILD_TESTING)
         test_eigen.cpp
         README.md
     )
+
+    target_compile_definitions(test_10
+        PRIVATE
+        "PROJ_DIR=\"${PROJ_DIR}\""
+    )
+
     target_link_libraries(
         test_10
         PRIVATE
