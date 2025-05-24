@@ -362,8 +362,21 @@ public:
     }
 
     /// @brief Convert Z-up coordinates to Y-up (my version)
+    ///
+    /// | 1  0  0  0 |
+    /// | 0  0  1  0 |
+    /// | 0 -1  0  0 |
+    /// | 0  0  0  1 |
+    ///
     aiMatrix4x4 y_up() const {
-        aiMatrix4x4 t = {1, 0, 0, 0, 0, 0, 1, 0, 0, -1, 0, 0, 0, 0, 0, 1};
+        // clang-format off
+        aiMatrix4x4 t = {
+            1, 0, 0, 0,
+            0, 0, 1, 0,
+            0, -1, 0, 0,
+            0, 0, 0, 1
+        };
+        // clang-format on
         return t;
     }
 };
