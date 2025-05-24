@@ -332,7 +332,7 @@ TEST_F(AssimpF, meshtoolbox_t0) {
     }
 }
 
-void PrintTo(aiVector3D const &v, std::ostream* os) {
+void PrintTo(aiVector3D const &v, std::ostream *os) {
     *os << "(" << v.x << "," << v.y << "," << v.z << ")";
 }
 
@@ -356,7 +356,7 @@ public:
 };
 
 /// @brief test the matrix transforms
-/// @param --gtest_filter=AssimpF.matrix_transforms
+/// @param --gtest_filter=TransF.matrix_transforms
 /// @param
 TEST_F(TransF, matrix_transforms) {
     {
@@ -395,10 +395,12 @@ TEST_F(TransF, matrix_transforms) {
         aiVector3D v0{1, 2, 3};
         aiVector3D v1 = scaling(2.0) * translate(10, 20, 0) * v0;
         CONSOLE_EVAL(v1);
+        EXPECT_EQ(aiVector3D(22, 44, 6), v1);
     }
     {
         aiVector3D v0{1, 2, 3};
         aiVector3D v1 = translate(10, 20, 0) * scaling(2.0) * v0;
         CONSOLE_EVAL(v1);
+        EXPECT_EQ(aiVector3D(12, 24, 6), v1);
     }
 }
