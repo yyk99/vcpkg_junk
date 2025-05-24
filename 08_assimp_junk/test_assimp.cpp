@@ -332,7 +332,7 @@ TEST_F(AssimpF, meshtoolbox_t0) {
 }
 
 void PrintTo(aiVector3D const &v, std::ostream *os) {
-    *os << "(" << v.x << "," << v.y << "," << v.z << ")";
+    *os << v;
 }
 
 class TransF : public AssimpF {
