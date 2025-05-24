@@ -331,6 +331,38 @@ TEST_F(AssimpF, meshtoolbox_t0) {
     }
 }
 
+/// @brief Create a GLB model w/o normals
+TEST_F(AssimpF, meshtoolbox_wo_normals) {
+
+    auto ws = create_ws();
+
+    meshtoolbox::Toolbox tb;
+
+    // Real world coordinates, Z-Up
+    meshtoolbox::box_t b0{{0, 0, 0}, {10, 20, 30}};
+
+    std::vector<meshtoolbox::box_t> boxes{b0};
+
+    auto model = std::unique_ptr<aiScene>(tb.make_boxes_yup(boxes));
+
+    ASSERT_TRUE(model);
+    EXPECT_EQ(1, model->mNumMeshes);
+
+    Assimp::Exporter exp;
+    auto flags = aiProcess_ValidateDataStructure | 0;
+    {
+        std::string filename_glb = (ws / "model.glb").string();
+        auto err = exp.Export(model.get(), "glb2", filename_glb, flags);
+        EXPECT_EQ(AI_SUCCESS, err) << "Failed export to " << filename_glb;
+    }
+    {
+        std::string filename_glb = (ws / "model.xml").string();
+        auto err = exp.Export(model.get(), "assxml", filename_glb, flags);
+        EXPECT_EQ(AI_SUCCESS, err) << "Failed export to " << filename_glb;
+    }
+}
+
+
 void PrintTo(aiVector3D const &v, std::ostream *os) {
     *os << v;
 }

@@ -253,9 +253,10 @@ public:
     /// @brief Create a multi-object scene
     /// @param boxes object coordinates
     /// @return
-    aiScene *make_boxes(std::vector<box_t> const &boxes) {
+    aiScene *make_boxes(std::vector<box_t> const &boxes, aiMatrix4x4 const &root_transform) {
         std::unique_ptr<aiScene> model = std::make_unique<aiScene>();
         model->mRootNode = new aiNode("ROOT");
+        model->mRootNode->mTransformation = root_transform;
         if (boxes.size()) {
             model->mRootNode->mNumChildren = unsigned(boxes.size());
             model->mRootNode->mChildren =
@@ -275,6 +276,28 @@ public:
             }
         }
         return model.release();
+    }
+
+    aiScene *make_boxes(std::vector<box_t> const &boxes)
+    {
+        aiMatrix4x4 t(
+            1,0,0,0,
+            0,1,0,0,
+            0,0,1,0,
+            0,0,0,1
+        );
+        return make_boxes(boxes, t);
+    }
+
+    aiScene *make_boxes_yup(std::vector<box_t> const &boxes)
+    {
+        aiMatrix4x4 t(
+            1,0,0,0,
+            0,0,1,0,
+            0,-1,0,0,
+            0,0,0,1
+        );
+        return make_boxes(boxes, t);
     }
 
     /// @brief Create a multi-object scene
