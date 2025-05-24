@@ -25,7 +25,7 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/build-linux/bin/GLTFImporter",
-            "args": [],
+            "args": ["/home/yyk/src/vcpkg_junk/08_assimp_junk/build-linux/out/AssimpF/meshtoolbox_wo_normals/model.glb"],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],
