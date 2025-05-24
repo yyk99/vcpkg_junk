@@ -43,6 +43,7 @@ find_package(VTK COMPONENTS
     fmt
     InteractionStyle
     InteractionWidgets
+    IOImport
     RenderingAnnotation
     RenderingContextOpenGL2
     RenderingCore
@@ -92,6 +93,7 @@ add_vtk_example(Pyramid)
 add_vtk_example(PolyLine1)
 add_vtk_example(PolyLine1_from_boost)
 add_vtk_example(LinearCellsDemo)
+add_vtk_example(GLTFImporter)
 
 if(BUILD_TESTING)
     # this is heuristically generated, and may not be correct
