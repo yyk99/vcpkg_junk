@@ -464,12 +464,45 @@ TEST_F(AssimpF, meshtoolbox_cone0) {
 
     meshtoolbox::Toolbox tb;
 
-    auto cone0 = tb.mesh_cone(10, 30);
+    auto cone0 = tb.mesh_cone(30, 10, 6);
 
     auto model = std::unique_ptr<aiScene>(tb.make_scene({cone0}));
 
     ASSERT_TRUE(model);
     EXPECT_EQ(1, model->mNumMeshes);
+
+    Assimp::Exporter exp;
+    auto flags = aiProcess_ValidateDataStructure | 0;
+    {
+        std::string filename = (ws / "model.glb").string();
+        auto err = exp.Export(model.get(), "glb2", filename, flags);
+        EXPECT_EQ(AI_SUCCESS, err) << "Failed export to " << filename;
+        ASSERT_TRUE(fs::is_regular_file(filename)) << filename;
+    }
+    {
+        std::string filename = (ws / "model.xml").string();
+        auto err = exp.Export(model.get(), "assxml", filename, flags);
+        EXPECT_EQ(AI_SUCCESS, err) << "Failed export to " << filename;
+        ASSERT_TRUE(fs::is_regular_file(filename)) << filename;
+    }
+}
+
+/// @brief Create a scene with a cone and a cylinder
+/// @param --gtest_filter=AssimpF.meshtoolbox_cone_and_cylinder
+///
+TEST_F(AssimpF, meshtoolbox_cone_and_cylinder) {
+
+    auto ws = create_ws();
+
+    meshtoolbox::Toolbox tb;
+
+    auto cone0 = tb.mesh_cone(30, 10, 6);
+    auto cyl0 = tb.mesh_cylinder(100, 1, 4, "cyl0");
+
+    auto model = std::unique_ptr<aiScene>(tb.make_scene({cone0, cyl0}));
+
+    ASSERT_TRUE(model);
+    EXPECT_EQ(2, model->mNumMeshes);
 
     Assimp::Exporter exp;
     auto flags = aiProcess_ValidateDataStructure | 0;
