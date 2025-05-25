@@ -331,6 +331,43 @@ TEST_F(AssimpF, meshtoolbox_t0) {
     }
 }
 
+
+/// @brief
+/// @param --gtest_filter=AssimpF.meshtoolbox_box_with_axis
+/// @param
+TEST_F(AssimpF, meshtoolbox_box_with_axis) {
+
+    auto ws = create_ws();
+
+    meshtoolbox::Toolbox tb;
+
+    meshtoolbox::box_t b0{{0, 0, 0}, {10, 20, 30}};
+    meshtoolbox::box_t b1{{10, 0, 0}, {1, 1, 1}};
+    meshtoolbox::box_t b2{{0, 10, 0}, {1, 1, 1}};
+    meshtoolbox::box_t b3{{0, 0, 10}, {1, 1, 1}};
+
+    std::vector<meshtoolbox::box_t> boxes{b0, b1, b2, b3};
+
+    auto model = std::unique_ptr<aiScene>(tb.make_boxes(boxes));
+
+    ASSERT_TRUE(model);
+    EXPECT_EQ(4, model->mNumMeshes);
+
+    Assimp::Exporter exp;
+    auto flags = aiProcess_ValidateDataStructure | 0;
+    {
+        std::string filename_glb = (ws / "model.glb").string();
+        auto err = exp.Export(model.get(), "glb2", filename_glb, flags);
+        EXPECT_EQ(AI_SUCCESS, err) << "Failed export to " << filename_glb;
+    }
+    {
+        std::string filename_glb = (ws / "model.xml").string();
+        auto err = exp.Export(model.get(), "assxml", filename_glb, flags);
+        EXPECT_EQ(AI_SUCCESS, err) << "Failed export to " << filename_glb;
+    }
+}
+
+
 void PrintTo(aiVector3D const &v, std::ostream *os) {
     *os << v;
 }
