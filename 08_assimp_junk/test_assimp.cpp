@@ -472,7 +472,7 @@ TEST_F(AssimpF, meshtoolbox_cone0) {
     EXPECT_EQ(1, model->mNumMeshes);
 
     Assimp::Exporter exp;
-    auto flags = aiProcess_GenNormals | aiProcess_ValidateDataStructure | 0;
+    auto flags = aiProcess_ValidateDataStructure | 0;
     {
         std::string filename = (ws / "model.glb").string();
         auto err = exp.Export(model.get(), "glb2", filename, flags);
