@@ -16,6 +16,9 @@ namespace fs = std::filesystem;
 #include <assimp/DefaultLogger.hpp>
 #include <assimp/Logger.hpp>
 
+#if _WIN32
+#   define STB_IMAGE_IMPLEMENTATION
+#endif
 #include <stb_image.h>
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include <stb_image_write.h>
