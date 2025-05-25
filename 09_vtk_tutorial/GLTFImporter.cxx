@@ -29,7 +29,7 @@ int main(int argc, char* argv[])
   renderer->UseHiddenLineRemovalOn();
 
   vtkNew<vtkRenderWindow> renderWindow;
-  renderWindow->SetSize(640, 512);
+  renderWindow->SetSize(800, 600);
   renderWindow->AddRenderer(renderer);
   renderWindow->SetWindowName("GLTFImporter");
 

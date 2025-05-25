@@ -94,6 +94,7 @@ add_vtk_example(PolyLine1)
 add_vtk_example(PolyLine1_from_boost)
 add_vtk_example(LinearCellsDemo)
 add_vtk_example(GLTFImporter)
+add_vtk_example(Axis)
 
 if(BUILD_TESTING)
     # this is heuristically generated, and may not be correct
