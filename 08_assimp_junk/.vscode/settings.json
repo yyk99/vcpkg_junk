@@ -5,6 +5,7 @@
         "Eigen",
         "georeferenced",
         "getargs",
+        "glft",
         "meshtoolbox",
         "stbi",
         "STREQ"

@@ -17,6 +17,8 @@ namespace fs = std::filesystem;
 #include <assimp/Logger.hpp>
 
 #include <stb_image.h>
+#define STB_IMAGE_WRITE_IMPLEMENTATION
+#include <stb_image_write.h>
 
 #include "TilesetJson.h"
 #include "meshtoolbox.h"
@@ -308,17 +310,17 @@ TEST_F(AssimpF, meshtoolbox_t0) {
     Assimp::Exporter exp;
     auto flags = aiProcess_GenNormals | aiProcess_ValidateDataStructure | 0;
     {
-        std::string filename_glb = (ws / "meshtoolbox_t0.glft").string();
+        std::string filename_glb = (ws / "model.glft").string();
         auto err = exp.Export(model.get(), "gltf", filename_glb, flags);
         EXPECT_EQ(AI_SUCCESS, err) << "Failed export to " << filename_glb;
     }
     {
-        std::string filename_glb = (ws / "meshtoolbox_t0.glb").string();
+        std::string filename_glb = (ws / "model.glb").string();
         auto err = exp.Export(model.get(), "glb2", filename_glb, flags);
         EXPECT_EQ(AI_SUCCESS, err) << "Failed export to " << filename_glb;
     }
     {
-        std::string filename_glb = (ws / "meshtoolbox_t0.xml").string();
+        std::string filename_glb = (ws / "model.xml").string();
         auto err = exp.Export(model.get(), "assxml", filename_glb, flags);
         EXPECT_EQ(AI_SUCCESS, err) << "Failed export to " << filename_glb;
     }
@@ -419,6 +421,35 @@ TEST_F(AssimpF, meshtoolbox_stb_image) {
 
     // Free the image memory
     stbi_image_free(data);
+}
+
+/// @brief Create a PNG file
+/// @param --gtest_filter=AssimpF.meshtoolbox_write_stb_image
+TEST_F(AssimpF, meshtoolbox_write_stb_image) {
+    auto ws = create_ws();
+
+    int width = 256;
+    int height = 128;
+    int channels = 3;
+    std::vector<unsigned char> image(width * height * channels, 0);
+
+    // Fill with a gradient
+    for (int y = 0; y < height; ++y) {
+        for (int x = 0; x < width; ++x) {
+            int idx = (y * width + x) * channels;
+            image[idx + 0] =
+                static_cast<unsigned char>(x * 255 / (width - 1)); // R
+            image[idx + 1] =
+                static_cast<unsigned char>(y * 255 / (height - 1)); // G
+            image[idx + 2] = 128;                                   // B
+        }
+    }
+
+    auto out_png = ws / "gradient.png";
+    int rc = stbi_write_png(out_png.string().c_str(), width, height, channels,
+                            image.data(), width * channels);
+    ASSERT_TRUE(rc != 0) << "Failed to write PNG: " << out_png;
+    ASSERT_TRUE(fs::is_regular_file(out_png));
 }
 
 void PrintTo(aiVector3D const &v, std::ostream *os) { *os << v; }
