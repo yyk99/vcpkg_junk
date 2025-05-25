@@ -362,8 +362,6 @@ TEST_F(AssimpF, meshtoolbox_wo_normals) {
     }
 }
 
-
-
 /// @brief
 /// @param --gtest_filter=AssimpF.meshtoolbox_box_with_axis
 /// @param
@@ -399,10 +397,7 @@ TEST_F(AssimpF, meshtoolbox_box_with_axis) {
     }
 }
 
-
-void PrintTo(aiVector3D const &v, std::ostream *os) {
-    *os << v;
-}
+void PrintTo(aiVector3D const &v, std::ostream *os) { *os << v; }
 
 class TransF : public AssimpF {
 public:
