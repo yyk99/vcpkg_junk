@@ -501,8 +501,88 @@ TEST_F(AssimpF, meshtoolbox_cone_and_cylinder) {
 
     auto model = std::unique_ptr<aiScene>(tb.make_scene({cone0, cyl0}));
 
+    for(auto const *np : tb.list_nodes(model.get()))
+    {
+        CONSOLE_EVAL(np->mName);
+    }
+
     ASSERT_TRUE(model);
     EXPECT_EQ(2, model->mNumMeshes);
+
+    auto *mp0 = model->mRootNode->FindNode("mesh_0");
+    ASSERT_TRUE(mp0);
+
+    auto *mp1 = model->mRootNode->FindNode("mesh_1");
+    ASSERT_TRUE(mp1);
+
+    tb.shift_down(mp1, 100);
+
+    Assimp::Exporter exp;
+    auto flags = aiProcess_ValidateDataStructure | 0;
+    {
+        std::string filename = (ws / "model.glb").string();
+        auto err = exp.Export(model.get(), "glb2", filename, flags);
+        EXPECT_EQ(AI_SUCCESS, err) << "Failed export to " << filename;
+        ASSERT_TRUE(fs::is_regular_file(filename)) << filename;
+    }
+    {
+        std::string filename = (ws / "model.xml").string();
+        auto err = exp.Export(model.get(), "assxml", filename, flags);
+        EXPECT_EQ(AI_SUCCESS, err) << "Failed export to " << filename;
+        ASSERT_TRUE(fs::is_regular_file(filename)) << filename;
+    }
+}
+
+/// @brief Create a scene with three coordinate axis
+/// @param --gtest_filter=AssimpF.meshtoolbox_axis
+TEST_F(AssimpF, meshtoolbox_axis) {
+
+    auto ws = create_ws();
+
+    meshtoolbox::Toolbox tb;
+
+    auto cone0 = tb.mesh_cone(30, 10, 6);
+    auto cyl0 = tb.mesh_cylinder(100, 1, 4, "cyl0");
+    auto cone1 = tb.mesh_cone(30, 10, 6);
+    auto cyl1 = tb.mesh_cylinder(100, 1, 4, "cyl1");
+    auto cone2 = tb.mesh_cone(30, 10, 6);
+    auto cyl2 = tb.mesh_cylinder(100, 1, 4, "cyl2");
+
+    auto model = std::unique_ptr<aiScene>(
+        tb.make_scene({cone0, cyl0, cone1, cyl1, cone2, cyl2}));
+
+    for(auto const *np : tb.list_nodes(model.get()))
+    {
+        CONSOLE_EVAL(np->mName);
+    }
+
+    ASSERT_TRUE(model);
+    EXPECT_EQ(6, model->mNumMeshes);
+
+    auto *mp_con0 = model->mRootNode->FindNode("mesh_0");
+    ASSERT_TRUE(mp_con0);
+    auto *mp_cyl0 = model->mRootNode->FindNode("mesh_1");
+    ASSERT_TRUE(mp_cyl0);
+
+    auto *mp_con1 = model->mRootNode->FindNode("mesh_2");
+    ASSERT_TRUE(mp_con0);
+    auto *mp_cyl1 = model->mRootNode->FindNode("mesh_3");
+    ASSERT_TRUE(mp_cyl0);
+
+    auto *mp_con2 = model->mRootNode->FindNode("mesh_4");
+    ASSERT_TRUE(mp_con0);
+    auto *mp_cyl2 = model->mRootNode->FindNode("mesh_5");
+    ASSERT_TRUE(mp_cyl0);
+
+    tb.shift_up(mp_con0, 100);
+    tb.shift_up(mp_con1, 100);
+    tb.shift_up(mp_con2, 100);
+
+    tb.turn_around_X(mp_con1, 90);
+    tb.turn_around_X(mp_cyl1, 90);
+
+    tb.turn_around_Z(mp_con2, -90);
+    tb.turn_around_Z(mp_cyl2, -90);
 
     Assimp::Exporter exp;
     auto flags = aiProcess_ValidateDataStructure | 0;

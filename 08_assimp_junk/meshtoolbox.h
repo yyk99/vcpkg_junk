@@ -603,6 +603,40 @@ public:
         }
         return model.release();
     }
+
+    std::vector<aiNode const *> list_nodes(aiScene const *model) {
+        std::vector<aiNode const *> r;
+
+        for (int i = 0; i != model->mRootNode->mNumChildren; ++i)
+            r.push_back(model->mRootNode->mChildren[i]);
+        return r;
+    }
+
+    void shift_down(aiNode *node, ai_real off) {
+        aiMatrix4x4 t;
+        aiVector3D v{0, -off, 0};
+        aiMatrix4Translation(&t, &v);
+
+        node->mTransformation = t * node->mTransformation;
+    }
+
+    void shift_up(aiNode *node, ai_real off) { return shift_down(node, -off); }
+
+    void turn_around_X(aiNode *node, ai_real angle_deg)
+    {
+        aiMatrix4x4 t;
+        aiMatrix4RotationX(&t, AI_MATH_PI * angle_deg / 180.0);
+
+        node->mTransformation = t * node->mTransformation;
+    }
+
+    void turn_around_Z(aiNode *node, ai_real angle_deg)
+    {
+        aiMatrix4x4 t;
+        aiMatrix4RotationZ(&t, AI_MATH_PI * angle_deg / 180.0);
+
+        node->mTransformation = t * node->mTransformation;
+    }
 };
 
 }; // namespace meshtoolbox

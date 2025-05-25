@@ -20,5 +20,11 @@ std::ostream &operator<<(std::ostream &ss, aiMatrix4x4 const &m) {
     return ss;
 }
 
+std::ostream &operator<<(std::ostream &ss, aiString const &s)
+{
+    ss << s.C_Str();
+    return ss;
+}
+
 } // namespace
 
