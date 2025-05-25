@@ -455,6 +455,38 @@ TEST_F(AssimpF, meshtoolbox_write_stb_image) {
     ASSERT_TRUE(fs::is_regular_file(out_png));
 }
 
+/// @brief Create a scene with a cone
+/// @param --gtest_filter=AssimpF.meshtoolbox_cone0
+///
+TEST_F(AssimpF, meshtoolbox_cone0) {
+
+    auto ws = create_ws();
+
+    meshtoolbox::Toolbox tb;
+
+    auto cone0 = tb.mesh_cone(10, 30);
+
+    auto model = std::unique_ptr<aiScene>(tb.make_scene({cone0}));
+
+    ASSERT_TRUE(model);
+    EXPECT_EQ(1, model->mNumMeshes);
+
+    Assimp::Exporter exp;
+    auto flags = aiProcess_GenNormals | aiProcess_ValidateDataStructure | 0;
+    {
+        std::string filename = (ws / "model.glb").string();
+        auto err = exp.Export(model.get(), "glb2", filename, flags);
+        EXPECT_EQ(AI_SUCCESS, err) << "Failed export to " << filename;
+        ASSERT_TRUE(fs::is_regular_file(filename)) << filename;
+    }
+    {
+        std::string filename = (ws / "model.xml").string();
+        auto err = exp.Export(model.get(), "assxml", filename, flags);
+        EXPECT_EQ(AI_SUCCESS, err) << "Failed export to " << filename;
+        ASSERT_TRUE(fs::is_regular_file(filename)) << filename;
+    }
+}
+
 void PrintTo(aiVector3D const &v, std::ostream *os) { *os << v; }
 
 class TransF : public AssimpF {
