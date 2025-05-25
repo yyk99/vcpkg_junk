@@ -13,7 +13,13 @@ namespace fs = std::filesystem;
 #include <assimp/Exporter.hpp>
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
+#include <assimp/DefaultLogger.hpp>
+#include <assimp/Logger.hpp>
 
+#include <stb_image.h>
+
+#include "TilesetJson.h"
+#include "meshtoolbox.h"
 #include "assimp_aux.h"
 
 #include "../common/CONSOLE.h"
@@ -94,9 +100,6 @@ TEST_F(AssimpF, toolkit_create_ws) {
     save_as("hello2\n", ws2 / "foo2.txt");
     ASSERT_TRUE(fs::is_regular_file(ws2 / "foo2.txt"));
 }
-
-#include <assimp/DefaultLogger.hpp>
-#include <assimp/Logger.hpp>
 
 /// @brief
 /// @param
@@ -198,12 +201,6 @@ TEST_F(AssimpF, load_textured_cube_variants) {
     }
 }
 
-//
-//
-//
-
-#include <json-c/json.h>
-
 /// @brief a quick json-c sample
 /// @param --gtest_filter=AssimpF.json_c_test
 TEST_F(AssimpF, json_c_test) {
@@ -265,8 +262,6 @@ TEST_F(AssimpF, json_c_test_array) {
     json_object_put(json_obj);
 }
 
-#include "TilesetJson.h"
-
 /// @brief One more json-c test
 /// @param --gtest_filter=AssimpF.json_c_test_2
 /// @param
@@ -291,8 +286,6 @@ TEST_F(AssimpF, json_c_test_2) {
 TEST_F(AssimpF, json_c_test_3) {
     EXPECT_THROW(cesiumjs::TilesetJson sot("/dev/null"), std::runtime_error);
 }
-
-#include "meshtoolbox.h"
 
 /// @brief
 /// @param --gtest_filter=AssimpF.meshtoolbox_t0
@@ -395,6 +388,37 @@ TEST_F(AssimpF, meshtoolbox_box_with_axis) {
         auto err = exp.Export(model.get(), "assxml", filename_glb, flags);
         EXPECT_EQ(AI_SUCCESS, err) << "Failed export to " << filename_glb;
     }
+}
+
+/// @brief Use stb_image.h
+/// @param --gtest_filter=AssimpF.meshtoolbox_stb_image
+/// @param
+TEST_F(AssimpF, meshtoolbox_stb_image) {
+    auto logo_png = test_data("BoxTextured-glTF/CesiumLogoFlat.png");
+    ASSERT_TRUE(fs::is_regular_file(logo_png));
+
+    int width, height, channels;
+    unsigned char *data =
+        stbi_load(logo_png.string().c_str(), &width, &height, &channels, 0);
+    ASSERT_TRUE(data != nullptr) << "Failed to load image: " << logo_png;
+
+    ASSERT_EQ(211, width);
+    ASSERT_EQ(211, height);
+    ASSERT_EQ(3, channels);
+
+    // Optionally, check a pixel value
+    if (width > 0 && height > 0 && channels >= 3) {
+        int idx = 0; // top-left pixel
+        unsigned char r = data[idx * channels + 0];
+        unsigned char g = data[idx * channels + 1];
+        unsigned char b = data[idx * channels + 2];
+        CONSOLE_EVAL(unsigned(r));
+        CONSOLE_EVAL(unsigned(g));
+        CONSOLE_EVAL(unsigned(b));
+    }
+
+    // Free the image memory
+    stbi_image_free(data);
 }
 
 void PrintTo(aiVector3D const &v, std::ostream *os) { *os << v; }

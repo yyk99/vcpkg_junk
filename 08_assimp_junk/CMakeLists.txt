@@ -29,6 +29,8 @@ find_package(Boost REQUIRED COMPONENTS
 
 find_package(assimp REQUIRED)
 
+find_package(Stb REQUIRED)
+
 find_package(json-c CONFIG REQUIRED)
 
 find_package(Eigen3 CONFIG REQUIRED)
@@ -58,6 +60,7 @@ if(BUILD_TESTING)
         test_assimp.cpp
         .editorconfig
     )
+    target_include_directories(test_08 PRIVATE ${Stb_INCLUDE_DIR})
     target_link_libraries(
         test_08
         PRIVATE

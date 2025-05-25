@@ -2,7 +2,11 @@
     "cSpell.words": [
         "assxml",
         "cesiumjs",
+        "Eigen",
+        "georeferenced",
+        "getargs",
         "meshtoolbox",
+        "stbi",
         "STREQ"
     ],
     "files.associations": {
