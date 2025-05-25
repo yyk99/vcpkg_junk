@@ -372,9 +372,9 @@ TEST_F(AssimpF, meshtoolbox_box_with_axis) {
     meshtoolbox::Toolbox tb;
 
     meshtoolbox::box_t b0{{0, 0, 0}, {10, 20, 30}};
-    meshtoolbox::box_t b1{{10, 0, 0}, {1, 1, 1}};
-    meshtoolbox::box_t b2{{0, 10, 0}, {1, 1, 1}};
-    meshtoolbox::box_t b3{{0, 0, 10}, {1, 1, 1}};
+    meshtoolbox::box_t b1{{11, 0, 0}, {1, 1, 1}};
+    meshtoolbox::box_t b2{{0, 21, 0}, {1, 1, 1}};
+    meshtoolbox::box_t b3{{0, 0, 31}, {1, 1, 1}};
 
     std::vector<meshtoolbox::box_t> boxes{b0, b1, b2, b3};
 
