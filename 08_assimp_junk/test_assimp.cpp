@@ -455,6 +455,41 @@ TEST_F(AssimpF, meshtoolbox_write_stb_image) {
     ASSERT_TRUE(fs::is_regular_file(out_png));
 }
 
+/// @brief Create a scene with a tile and texture
+/// @param --gtest_filter=AssimpF.meshtoolbox_tile0
+///
+TEST_F(AssimpF, meshtoolbox_tile0) {
+
+    auto logo_png = test_data("BoxTextured-glTF/CesiumLogoFlat.png");
+    ASSERT_TRUE(fs::is_regular_file(logo_png));
+
+    auto ws = create_ws();
+
+    meshtoolbox::Toolbox tb;
+
+    auto tile0 = tb.mesh_tile(211, 211);
+
+    auto model = std::unique_ptr<aiScene>(tb.make_scene({tile0}));
+
+    ASSERT_TRUE(model);
+    EXPECT_EQ(1, model->mNumMeshes);
+
+    Assimp::Exporter exp;
+    auto flags = aiProcess_ValidateDataStructure | 0;
+    {
+        std::string filename = (ws / "model.glb").string();
+        auto err = exp.Export(model.get(), "glb2", filename, flags);
+        EXPECT_EQ(AI_SUCCESS, err) << "Failed export to " << filename;
+        ASSERT_TRUE(fs::is_regular_file(filename)) << filename;
+    }
+    {
+        std::string filename = (ws / "model.xml").string();
+        auto err = exp.Export(model.get(), "assxml", filename, flags);
+        EXPECT_EQ(AI_SUCCESS, err) << "Failed export to " << filename;
+        ASSERT_TRUE(fs::is_regular_file(filename)) << filename;
+    }
+}
+
 /// @brief Create a scene with a cone
 /// @param --gtest_filter=AssimpF.meshtoolbox_cone0
 ///

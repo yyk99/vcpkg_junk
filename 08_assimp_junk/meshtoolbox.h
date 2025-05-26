@@ -185,6 +185,29 @@ public:
         return box;
     };
 
+    aiMesh *mesh_tile(ai_real width, ai_real height)
+    {
+        auto box = new aiMesh{};
+        box->mName= "tile";
+        box->mNumVertices = 4;
+        box->mVertices = new aiVector3D[box->mNumVertices];
+        box->mPrimitiveTypes = aiPrimitiveType_POLYGON;
+
+        auto origin = aiVector3D{0, 0, 0};
+        auto v = aiVector3D{width, height, 0};
+        box->mVertices[0] = origin;
+        box->mVertices[1] = aiVector3D{origin.x + v.x, origin.y, origin.z};
+        box->mVertices[2] = aiVector3D{origin.x + v.x, origin.y + v.y, origin.z};
+        box->mVertices[3] = aiVector3D{origin.x, origin.y + v.y, origin.z};
+
+        box->mNumFaces = 1;
+        box->mFaces = new aiFace[box->mNumFaces];
+        box->mFaces[0].mNumIndices = 4;
+        box->mFaces[0].mIndices = new unsigned[4]{0, 1, 2, 3};
+
+        return box;
+    }
+
     /// @brief Create a box point cloud "mesh"
     /// @param origin a corner
     /// @param dimensions another corner
