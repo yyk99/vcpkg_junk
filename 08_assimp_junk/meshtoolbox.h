@@ -637,6 +637,14 @@ public:
 
         node->mTransformation = t * node->mTransformation;
     }
+
+    void paint_mesh(aiMesh *mesh, aiColor4D const &color)
+    {
+        if(!mesh->mColors[0])
+            mesh->mColors[0] = new aiColor4D[mesh->mNumVertices];
+        for (int i = 0 ; i != mesh->mNumVertices ; ++i)
+            mesh->mColors[0][i] = color;
+    }
 };
 
 }; // namespace meshtoolbox

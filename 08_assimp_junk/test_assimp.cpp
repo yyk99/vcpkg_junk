@@ -542,10 +542,13 @@ TEST_F(AssimpF, meshtoolbox_axis) {
     meshtoolbox::Toolbox tb;
 
     auto cone0 = tb.mesh_cone(30, 10, 6);
+    tb.paint_mesh(cone0, aiColor4D(0.0f, 1.0f, 0.0f, 1.0f)); // green
     auto cyl0 = tb.mesh_cylinder(100, 1, 4, "cyl0");
     auto cone1 = tb.mesh_cone(30, 10, 6);
+    tb.paint_mesh(cone1, aiColor4D(0.0f, 0.0f, 1.0f, 1.0f)); // blue
     auto cyl1 = tb.mesh_cylinder(100, 1, 4, "cyl1");
     auto cone2 = tb.mesh_cone(30, 10, 6);
+    tb.paint_mesh(cone2, aiColor4D(1.0f, 0.0f, 0.0f, 1.0f)); // red
     auto cyl2 = tb.mesh_cylinder(100, 1, 4, "cyl2");
 
     auto model = std::unique_ptr<aiScene>(
