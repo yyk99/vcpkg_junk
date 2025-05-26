@@ -329,6 +329,47 @@ TEST_F(AssimpF, meshtoolbox_t0) {
     }
 }
 
+/// @brief Create a georeferenced "graveyard" scene (the test data)
+/// @param
+/// --gtest_filter=AssimpF.meshtoolbox_t1
+///
+TEST_F(AssimpF, meshtoolbox_t1) {
+
+    auto ws = create_ws();
+
+    meshtoolbox::Toolbox tb;
+
+    // A "graveyard"
+    ai_real max_X = 2000;
+    ai_real max_Z = 1000;
+    ai_real step = 50; // 50m interval between "obelisks"
+
+    std::vector<meshtoolbox::box_t> boxes;
+    boxes.reserve(size_t(max_X / step + 1) * size_t(max_Z / step + 1));
+    for (int i = 0; i < max_X / step; ++i) {
+        for (int j = 0; j < max_Z / step; ++j) {
+            boxes.emplace_back(meshtoolbox::box_t{{i * step, 0, j * step},
+                                                  {step / 5, step, 4}});
+        }
+    }
+
+    boxes.emplace_back(
+        meshtoolbox::box_t{{max_X, 0, max_Z}, {step, step * 10, step}});
+    boxes.emplace_back(
+        meshtoolbox::box_t{{max_X, 0, 0}, {step, step * 10, step}});
+    boxes.emplace_back(
+        meshtoolbox::box_t{{0, 0, max_Z}, {step, step * 10, step}});
+
+    auto actual = std::unique_ptr<aiScene>(tb.make_boxes(boxes));
+    ASSERT_TRUE((bool)actual);
+
+    {
+        Assimp::Exporter exp;
+        exp.Export(actual.get(), "glb2", (ws / "actual.glb").string());
+        exp.Export(actual.get(), "assxml", (ws / "actual.xml").string());
+    }
+}
+
 /// @brief Create a GLB model w/o normals
 TEST_F(AssimpF, meshtoolbox_wo_normals) {
 
