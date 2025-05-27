@@ -185,6 +185,69 @@ TEST_F(AssimpF, load_textured_cube) {
     }
 }
 
+/// @brief Load a textured cube and save it as assxml
+/// @param --gtest_filter=AssimpF.load_textured_cube_embedded
+TEST_F(AssimpF, load_textured_cube_embedded) {
+
+    auto BoxTextured_gltf = test_data("BoxTextured-glTF-Embedded/BoxTextured.gltf");
+    ASSERT_TRUE(fs::is_regular_file(BoxTextured_gltf));
+
+    auto ws = create_ws();
+
+    Assimp::Importer sot;
+    {
+        aiScene const *actual_scene =
+            sot.ReadFile(BoxTextured_gltf.string().c_str(), 0);
+        ASSERT_TRUE(actual_scene);
+        ASSERT_EQ(1, actual_scene->mNumMeshes);
+        ASSERT_EQ(1, actual_scene->mNumTextures);
+        ASSERT_EQ(2, actual_scene->mNumMaterials);
+        ASSERT_EQ(0, actual_scene->mNumSkeletons);
+        {
+            // dump the mesh
+            aiMesh const *mp = actual_scene->mMeshes[0];
+            CONSOLE_EVAL(mp->mNumUVComponents[0]);
+            CONSOLE_EVAL(mp->mNumUVComponents[1]);
+            CONSOLE_EVAL(mp->mNumUVComponents[2]);
+            CONSOLE_EVAL(mp->mNumUVComponents[3]);
+
+            aiVector3D *textCoord_0 = mp->mTextureCoords[0];
+            CONSOLE_EVAL(textCoord_0[0]);
+            CONSOLE_EVAL(textCoord_0[1]);
+            CONSOLE_EVAL(textCoord_0[2]);
+            CONSOLE_EVAL(textCoord_0[3]);
+            CONSOLE_EVAL(textCoord_0[4]);
+        }
+
+        {
+            // dump the texture
+            CONSOLE_EVAL(actual_scene->mTextures[0]->achFormatHint);
+            CONSOLE_EVAL(actual_scene->mTextures[0]->mFilename);
+            CONSOLE_EVAL(actual_scene->mTextures[0]->mHeight);
+            CONSOLE_EVAL(actual_scene->mTextures[0]->mWidth);
+        }
+        {
+            // dump the materials
+            for (int i = 0; i != actual_scene->mNumMaterials; ++i) {
+                CONSOLE("========= i = " << i << " =========");
+                CONSOLE_EVAL(actual_scene->mMaterials[i]->GetName());
+                CONSOLE_EVAL(actual_scene->mMaterials[i]->mNumProperties);
+                auto props = actual_scene->mMaterials[i]->mProperties;
+                auto n_props = actual_scene->mMaterials[i]->mNumProperties;
+                for (int j = 0; j != n_props; ++j)
+                {
+                    CONSOLE_EVAL(props[j]->mKey);
+                }
+            }
+        }
+
+        Assimp::Exporter exporter;
+        auto rc = exporter.Export(actual_scene, "assxml",
+                                  (ws / "model.xml").string());
+        ASSERT_EQ(0, rc);
+    }
+}
+
 /// @brief Compare different ways of texture definitions
 /// @param --gtest_filter=AssimpF.load_textured_cube_variants
 /// @param
@@ -204,6 +267,33 @@ TEST_F(AssimpF, load_textured_cube_variants) {
         EXPECT_TRUE(dump_as_assxml(fp, prefix.string().c_str(), ws))
             << "File: " << fp;
     }
+}
+
+/// @brief Load a mesh with external texture and save embedded
+/// @param --gtest_filter=AssimpF.save_texture_embedded
+/// @param
+TEST_F(AssimpF, save_texture_embedded) {
+    const char *test_file = "BoxTextured-glTF/BoxTextured.gltf";
+
+    auto filename_gltf = test_data(test_file);
+    if (!fs::is_regular_file(filename_gltf))
+        GTEST_SKIP();
+
+    auto ws = create_ws();
+
+    Assimp::Importer sot;
+
+    aiScene const *actual_scene =
+        sot.ReadFile(filename_gltf.string().c_str(), 0);
+    ASSERT_TRUE(actual_scene);
+
+    Assimp::Exporter exporter;
+    auto rc =
+        exporter.Export(actual_scene, "gltf2", (ws / "model.glb").string(),
+                        aiProcess_EmbedTextures);
+    ASSERT_EQ(AI_SUCCESS, rc);
+    // TODO: verify the export is valid
+    //       apparently it is not
 }
 
 /// @brief a quick json-c sample
@@ -498,7 +588,6 @@ TEST_F(AssimpF, meshtoolbox_write_stb_image) {
 
 /// @brief Create a scene with a tile and texture
 /// @param --gtest_filter=AssimpF.meshtoolbox_tile0
-///
 TEST_F(AssimpF, meshtoolbox_tile0) {
 
     auto logo_png = test_data("BoxTextured-glTF/CesiumLogoFlat.png");
@@ -514,6 +603,29 @@ TEST_F(AssimpF, meshtoolbox_tile0) {
 
     ASSERT_TRUE(model);
     EXPECT_EQ(1, model->mNumMeshes);
+
+    // Let's attach a "texture"
+    {
+        int width, height, channels;
+        unsigned char *data =
+            stbi_load(logo_png.string().c_str(), &width, &height, &channels, 0);
+        ASSERT_TRUE(data != nullptr) << "Failed to load image: " << logo_png;
+
+        ASSERT_EQ(211, width);
+        ASSERT_EQ(211, height);
+        ASSERT_EQ(3, channels);
+
+        // TODO: implement...
+        ASSERT_EQ(0, model->mNumMaterials);
+        model->mNumMaterials = 1;
+        model->mMaterials = new aiMaterial *[model->mNumMaterials];
+        model->mMaterials[0] = new aiMaterial{};
+
+        ASSERT_EQ(0, model->mNumTextures);
+        model->mNumTextures = 1;
+        model->mTextures = new aiTexture *[model->mNumTextures];
+        model->mTextures[0] = new aiTexture{};
+    }
 
     Assimp::Exporter exp;
     auto flags = aiProcess_ValidateDataStructure | 0;
