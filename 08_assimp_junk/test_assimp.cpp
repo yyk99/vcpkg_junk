@@ -626,11 +626,12 @@ TEST_F(AssimpF, meshtoolbox_tile0) {
         model->mTextures = new aiTexture *[model->mNumTextures];
         model->mTextures[0] = new aiTexture{};
         auto *tex = model->mTextures[0];
-        tex->mWidth = width * height * channels;
-        tex->mHeight = 0; // compressed (PNG/JPEG), 0 means compressed
-        tex->pcData = (aiTexel *)malloc(tex->mWidth);
-        memcpy(tex->pcData, data, tex->mWidth);
-        strcpy(tex->achFormatHint, "png");
+        tex->mWidth = width ;
+        tex->mHeight = height;
+        size_t n = width * height * channels;
+        tex->pcData = (aiTexel *)malloc(n);
+        memcpy(tex->pcData, data, n);
+        strcpy(tex->achFormatHint, "rgba8880");
 
         // Set the material to use the texture
         aiString texPath;
@@ -651,6 +652,18 @@ TEST_F(AssimpF, meshtoolbox_tile0) {
         auto err = exp.Export(model.get(), "assxml", filename, flags);
         EXPECT_EQ(AI_SUCCESS, err) << "Failed export to " << filename;
         ASSERT_TRUE(fs::is_regular_file(filename)) << filename;
+    }
+
+    // self-check
+    {
+        std::string filename = (ws / "model.glb").string();
+        ASSERT_TRUE(fs::is_regular_file(filename));
+        Assimp::Importer imp;
+        aiScene const *model = imp.ReadFile(filename.c_str(), 0);
+        ASSERT_TRUE(model);
+
+        CONSOLE_EVAL(model->mNumTextures);
+        ASSERT_EQ(1, model->mNumTextures);
     }
 }
 
