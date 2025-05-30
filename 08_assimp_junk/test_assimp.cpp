@@ -625,6 +625,17 @@ TEST_F(AssimpF, meshtoolbox_tile0) {
         model->mNumTextures = 1;
         model->mTextures = new aiTexture *[model->mNumTextures];
         model->mTextures[0] = new aiTexture{};
+        auto *tex = model->mTextures[0];
+        tex->mWidth = width * height * channels;
+        tex->mHeight = 0; // compressed (PNG/JPEG), 0 means compressed
+        tex->pcData = (aiTexel *)malloc(tex->mWidth);
+        memcpy(tex->pcData, data, tex->mWidth);
+        strcpy(tex->achFormatHint, "png");
+
+        // Set the material to use the texture
+        aiString texPath;
+        texPath.Set("*0"); // Embedded texture reference
+        model->mMaterials[0]->AddProperty(&texPath, AI_MATKEY_TEXTURE_DIFFUSE(0));
     }
 
     Assimp::Exporter exp;
