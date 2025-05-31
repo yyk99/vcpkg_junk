@@ -84,6 +84,19 @@ protected:
             return rc == AI_SUCCESS;
         }
     }
+
+    std::vector<char> read_file(const char *filename)
+    {
+        std::ifstream file(filename, std::ios::binary | std::ios::ate);
+        if (!file)
+            throw std::runtime_error(std::string("Cannot open file: ") + filename);
+        std::streamsize size = file.tellg();
+        file.seekg(0, std::ios::beg);
+        std::vector<char> buffer(size);
+        if (!file.read(buffer.data(), size))
+            throw std::runtime_error(std::string("Failed to read file: ") + filename);
+        return buffer;
+    }
 };
 
 /// @brief
@@ -606,16 +619,9 @@ TEST_F(AssimpF, meshtoolbox_tile0) {
 
     // Let's attach a "texture"
     {
-        int width, height, channels;
-        unsigned char *data =
-            stbi_load(logo_png.string().c_str(), &width, &height, &channels, 0);
-        ASSERT_TRUE(data != nullptr) << "Failed to load image: " << logo_png;
+        auto data = read_file(logo_png.string().c_str());
+        ASSERT_EQ(2433, data.size());
 
-        ASSERT_EQ(211, width);
-        ASSERT_EQ(211, height);
-        ASSERT_EQ(3, channels);
-
-        // TODO: implement...
         ASSERT_EQ(0, model->mNumMaterials);
         model->mNumMaterials = 1;
         model->mMaterials = new aiMaterial *[model->mNumMaterials];
@@ -626,17 +632,24 @@ TEST_F(AssimpF, meshtoolbox_tile0) {
         model->mTextures = new aiTexture *[model->mNumTextures];
         model->mTextures[0] = new aiTexture{};
         auto *tex = model->mTextures[0];
-        tex->mWidth = width ;
-        tex->mHeight = height;
-        size_t n = width * height * channels;
-        tex->pcData = (aiTexel *)malloc(n);
-        memcpy(tex->pcData, data, n);
-        strcpy(tex->achFormatHint, "rgba8880");
+        tex->mWidth = data.size();
+        tex->mHeight = 0;
+        tex->pcData = (aiTexel *)malloc(data.size());
+        memcpy(tex->pcData, data.data(), data.size());
+        strcpy(tex->achFormatHint, "png");
 
         // Set the material to use the texture
         aiString texPath;
         texPath.Set("*0"); // Embedded texture reference
         model->mMaterials[0]->AddProperty(&texPath, AI_MATKEY_TEXTURE_DIFFUSE(0));
+
+        tile0->mMaterialIndex = 0;
+        tile0->mNumUVComponents[0] = 2;
+        tile0->mTextureCoords[0] = new aiVector3D[4];
+        tile0->mTextureCoords[0][0] = {0, 0, 0};
+        tile0->mTextureCoords[0][1] = {1, 0, 0};
+        tile0->mTextureCoords[0][2] = {1, 1, 0};
+        tile0->mTextureCoords[0][3] = {0, 1, 0};
     }
 
     Assimp::Exporter exp;
