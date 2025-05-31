@@ -667,6 +667,20 @@ TEST_F(AssimpF, meshtoolbox_tile0) {
     }
 }
 
+/// @brief Research DRACO compressing algo
+/// @param --gtest_filter=AssimpF.meshtoolbox_tile1
+TEST_F( AssimpF, meshtoolbox_tile1 ) {
+    auto filename = test_data( "draco/2CylinderEngine.gltf" );
+    ASSERT_TRUE( fs::is_regular_file( filename ) );
+
+    auto ws = create_ws();
+
+    Assimp::Importer sot;
+    aiScene const *model = sot.ReadFile(filename.string().c_str(), 0);
+    ASSERT_EQ(nullptr, model);
+    EXPECT_STREQ("GLTF: Draco mesh compression not supported.", sot.GetErrorString());
+}
+
 /// @brief Create a scene with a cone
 /// @param --gtest_filter=AssimpF.meshtoolbox_cone0
 ///
