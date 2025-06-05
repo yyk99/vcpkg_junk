@@ -10,22 +10,22 @@
 
 namespace fs = std::filesystem;
 
+#include <assimp/DefaultLogger.hpp>
 #include <assimp/Exporter.hpp>
 #include <assimp/Importer.hpp>
-#include <assimp/scene.h>
-#include <assimp/DefaultLogger.hpp>
 #include <assimp/Logger.hpp>
+#include <assimp/scene.h>
 
 #if _WIN32
-#   define STB_IMAGE_IMPLEMENTATION
+#define STB_IMAGE_IMPLEMENTATION
 #endif
 #include <stb_image.h>
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include <stb_image_write.h>
 
 #include "TilesetJson.h"
-#include "meshtoolbox.h"
 #include "assimp_aux.h"
+#include "meshtoolbox.h"
 
 #include "../common/CONSOLE.h"
 
@@ -85,19 +85,110 @@ protected:
         }
     }
 
-    std::vector<char> read_file(const char *filename)
-    {
+    std::vector<char> read_file(const char *filename) {
         std::ifstream file(filename, std::ios::binary | std::ios::ate);
         if (!file)
-            throw std::runtime_error(std::string("Cannot open file: ") + filename);
+            throw std::runtime_error(std::string("Cannot open file: ") +
+                                     filename);
         std::streamsize size = file.tellg();
         file.seekg(0, std::ios::beg);
         std::vector<char> buffer(size);
         if (!file.read(buffer.data(), size))
-            throw std::runtime_error(std::string("Failed to read file: ") + filename);
+            throw std::runtime_error(std::string("Failed to read file: ") +
+                                     filename);
         return buffer;
     }
+
+    /**
+     * @brief Finds the longest common substring among all strings in the given
+     * vector.
+     *
+     * This function searches for the longest substring that is present in every
+     * string in the input vector. If multiple substrings of the same maximum
+     * length exist, the first one found in the first string is returned. If the
+     * input vector is empty, an empty string is returned.
+     *
+     * @param s A vector of strings to search for the longest common substring.
+     * @return The longest common substring found in all strings, or an empty
+     * string if none exists.
+     */
+    std::string get_longest_substring(std::vector<std::string> const &s) {
+        if (s.empty())
+            return "";
+
+        const std::string &first = s[0];
+        for (size_t len = first.size(); len > 0; --len) {
+            for (size_t start = 0; start + len <= first.size(); ++start) {
+                std::string_view candidate(first.data() + start, len);
+                bool found = true;
+                for (size_t i = 1; i < s.size(); ++i) {
+                    if (s[i].find(candidate) == std::string::npos) {
+                        found = false;
+                        break;
+                    }
+                }
+                if (found)
+                    return std::string(candidate);
+            }
+        }
+        return "";
+    }
+
+    std::string get_longest_substring(std::string const &s1,
+                                      std::string const &s2) {
+        if (s1.empty() || s2.empty())
+            return "";
+        size_t max_len = 0;
+        size_t max_pos = 0;
+        for (size_t len = s1.size(); len > 0; --len) {
+            for (size_t start = 0; start + len <= s1.size(); ++start) {
+                std::string_view candidate(s1.data() + start, len);
+                if (s2.find(candidate) != std::string::npos) {
+                    // Return the first found (longest, leftmost)
+                    return std::string(candidate);
+                }
+            }
+        }
+        return "";
+    }
 };
+
+TEST_F(AssimpF, get_longest_substring_test) {
+    {
+        std::vector<std::string> v{};
+        EXPECT_EQ("", get_longest_substring(v));
+    }
+    {
+        std::vector<std::string> v{
+            "export2x2_A0",
+        };
+        EXPECT_EQ("export2x2_A0", get_longest_substring(v));
+    }
+    {
+        std::vector<std::string> v{
+            "export2x2_A0",
+            "export2x2_A1",
+        };
+        EXPECT_EQ("export2x2_A", get_longest_substring(v));
+    }
+    {
+        std::vector<std::string> v{
+            "export2x2_A0",
+            "export2x2_A1",
+            "export2x2_B0",
+            "export2x2_B1",
+        };
+        EXPECT_EQ("export2x2_", get_longest_substring(v));
+    }
+}
+
+TEST_F(AssimpF, get_longest_substring_test_2) {
+    EXPECT_EQ("", get_longest_substring("", ""));
+    EXPECT_EQ("export2x2_A0",
+              get_longest_substring("export2x2_A0", "export2x2_A0"));
+    EXPECT_EQ("export2x2_A",
+              get_longest_substring("export2x2_A0", "export2x2_A1"));
+}
 
 /// @brief
 /// @param
@@ -202,7 +293,8 @@ TEST_F(AssimpF, load_textured_cube) {
 /// @param --gtest_filter=AssimpF.load_textured_cube_embedded
 TEST_F(AssimpF, load_textured_cube_embedded) {
 
-    auto BoxTextured_gltf = test_data("BoxTextured-glTF-Embedded/BoxTextured.gltf");
+    auto BoxTextured_gltf =
+        test_data("BoxTextured-glTF-Embedded/BoxTextured.gltf");
     ASSERT_TRUE(fs::is_regular_file(BoxTextured_gltf));
 
     auto ws = create_ws();
@@ -247,8 +339,7 @@ TEST_F(AssimpF, load_textured_cube_embedded) {
                 CONSOLE_EVAL(actual_scene->mMaterials[i]->mNumProperties);
                 auto props = actual_scene->mMaterials[i]->mProperties;
                 auto n_props = actual_scene->mMaterials[i]->mNumProperties;
-                for (int j = 0; j != n_props; ++j)
-                {
+                for (int j = 0; j != n_props; ++j) {
                     CONSOLE_EVAL(props[j]->mKey);
                 }
             }
@@ -414,7 +505,8 @@ TEST_F(AssimpF, meshtoolbox_t0) {
     EXPECT_EQ(1, model->mNumMeshes);
 
     Assimp::Exporter exp;
-    auto flags = /*aiProcess_GenNormals | */aiProcess_ValidateDataStructure | 0;
+    auto flags =
+        /*aiProcess_GenNormals | */ aiProcess_ValidateDataStructure | 0;
     {
         std::string filename_glb = (ws / "model.glft").string();
         auto err = exp.Export(model.get(), "gltf", filename_glb, flags);
@@ -641,7 +733,8 @@ TEST_F(AssimpF, meshtoolbox_tile0) {
         // Set the material to use the texture
         aiString texPath;
         texPath.Set("*0"); // Embedded texture reference
-        model->mMaterials[0]->AddProperty(&texPath, AI_MATKEY_TEXTURE_DIFFUSE(0));
+        model->mMaterials[0]->AddProperty(&texPath,
+                                          AI_MATKEY_TEXTURE_DIFFUSE(0));
 
         tile0->mMaterialIndex = 0;
         tile0->mNumUVComponents[0] = 2;
@@ -682,16 +775,17 @@ TEST_F(AssimpF, meshtoolbox_tile0) {
 
 /// @brief Research DRACO compressing algo
 /// @param --gtest_filter=AssimpF.meshtoolbox_tile1
-TEST_F( AssimpF, meshtoolbox_tile1 ) {
-    auto filename = test_data( "draco/2CylinderEngine.gltf" );
-    ASSERT_TRUE( fs::is_regular_file( filename ) );
+TEST_F(AssimpF, meshtoolbox_tile1) {
+    auto filename = test_data("draco/2CylinderEngine.gltf");
+    ASSERT_TRUE(fs::is_regular_file(filename));
 
     auto ws = create_ws();
 
     Assimp::Importer sot;
     aiScene const *model = sot.ReadFile(filename.string().c_str(), 0);
     ASSERT_EQ(nullptr, model);
-    EXPECT_STREQ("GLTF: Draco mesh compression not supported.", sot.GetErrorString());
+    EXPECT_STREQ("GLTF: Draco mesh compression not supported.",
+                 sot.GetErrorString());
 }
 
 /// @brief Create a scene with a cone
@@ -740,8 +834,7 @@ TEST_F(AssimpF, meshtoolbox_cone_and_cylinder) {
 
     auto model = std::unique_ptr<aiScene>(tb.make_scene({cone0, cyl0}));
 
-    for(auto const *np : tb.list_nodes(model.get()))
-    {
+    for (auto const *np : tb.list_nodes(model.get())) {
         CONSOLE_EVAL(np->mName);
     }
 
@@ -793,8 +886,7 @@ TEST_F(AssimpF, meshtoolbox_axis) {
     auto model = std::unique_ptr<aiScene>(
         tb.make_scene({cone0, cyl0, cone1, cyl1, cone2, cyl2}));
 
-    for(auto const *np : tb.list_nodes(model.get()))
-    {
+    for (auto const *np : tb.list_nodes(model.get())) {
         CONSOLE_EVAL(np->mName);
     }
 
