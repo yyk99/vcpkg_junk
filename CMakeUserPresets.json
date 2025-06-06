@@ -44,6 +44,9 @@
       "binaryDir": "${sourceDir}/build-linux",
       "environment": {
         "VCPKG_ROOT": "/home/yyk/src/vcpkg"
+      },
+      "cacheVariables": {
+        "BUILD_03": "OFF"
       }
     },
     {
