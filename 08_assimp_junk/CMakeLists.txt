@@ -29,6 +29,8 @@ find_package(Boost REQUIRED COMPONENTS
 
 find_package(assimp REQUIRED)
 
+find_package(Stb REQUIRED)
+
 find_package(json-c CONFIG REQUIRED)
 
 find_package(Eigen3 CONFIG REQUIRED)
@@ -54,10 +56,15 @@ if(BUILD_TESTING)
     find_package(GTest REQUIRED)
 
     add_executable(test_08
-        test_boost.cpp
+        TilesetJson.h
+        assimp_aux.h
+        meshtoolbox.h
         test_assimp.cpp
+        test_boost.cpp
+
         .editorconfig
     )
+    target_include_directories(test_08 PRIVATE ${Stb_INCLUDE_DIR})
     target_link_libraries(
         test_08
         PRIVATE
