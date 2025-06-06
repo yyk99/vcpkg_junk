@@ -1,0 +1,16 @@
+{
+    "cSpell.words": [
+        "Eigen",
+        "EPSG",
+        "getargs",
+        "Interactor",
+        "Voronoi",
+        "voronoy"
+    ],
+    "files.associations": {
+        "random": "cpp",
+        "queue": "cpp",
+        "stack": "cpp",
+        "sparse": "cpp"
+    }
+}
