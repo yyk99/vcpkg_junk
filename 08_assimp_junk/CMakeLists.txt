@@ -56,8 +56,12 @@ if(BUILD_TESTING)
     find_package(GTest REQUIRED)
 
     add_executable(test_08
-        test_boost.cpp
+        TilesetJson.h
+        assimp_aux.h
+        meshtoolbox.h
         test_assimp.cpp
+        test_boost.cpp
+
         .editorconfig
     )
     target_include_directories(test_08 PRIVATE ${Stb_INCLUDE_DIR})

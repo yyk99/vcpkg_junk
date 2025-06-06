@@ -133,6 +133,24 @@ protected:
         }
         return "";
     }
+
+    std::string get_longest_substring(std::string const &s1,
+                                      std::string const &s2) {
+        if (s1.empty() || s2.empty())
+            return "";
+        size_t max_len = 0;
+        size_t max_pos = 0;
+        for (size_t len = s1.size(); len > 0; --len) {
+            for (size_t start = 0; start + len <= s1.size(); ++start) {
+                std::string_view candidate(s1.data() + start, len);
+                if (s2.find(candidate) != std::string::npos) {
+                    // Return the first found (longest, leftmost)
+                    return std::string(candidate);
+                }
+            }
+        }
+        return "";
+    }
 };
 
 TEST_F(AssimpF, get_longest_substring_test) {
@@ -162,6 +180,14 @@ TEST_F(AssimpF, get_longest_substring_test) {
         };
         EXPECT_EQ("export2x2_", get_longest_substring(v));
     }
+}
+
+TEST_F(AssimpF, get_longest_substring_test_2) {
+    EXPECT_EQ("", get_longest_substring("", ""));
+    EXPECT_EQ("export2x2_A0",
+              get_longest_substring("export2x2_A0", "export2x2_A0"));
+    EXPECT_EQ("export2x2_A",
+              get_longest_substring("export2x2_A0", "export2x2_A1"));
 }
 
 /// @brief
@@ -479,7 +505,8 @@ TEST_F(AssimpF, meshtoolbox_t0) {
     EXPECT_EQ(1, model->mNumMeshes);
 
     Assimp::Exporter exp;
-    auto flags = aiProcess_GenNormals | aiProcess_ValidateDataStructure | 0;
+    auto flags =
+        /*aiProcess_GenNormals | */ aiProcess_ValidateDataStructure | 0;
     {
         std::string filename_glb = (ws / "model.glft").string();
         auto err = exp.Export(model.get(), "gltf", filename_glb, flags);
