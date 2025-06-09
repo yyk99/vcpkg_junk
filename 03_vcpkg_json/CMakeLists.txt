@@ -47,7 +47,6 @@ if(NOT VTK_FOUND)
     message(FATAL_ERROR "ConstrainedDelaunay2D: Unable to find the VTK build folder.")
 endif()
 
-
 add_definitions(${Boost_LIB_DIAGNOSTIC_DEFINITIONS})
 
 add_executable(
@@ -66,37 +65,44 @@ add_executable(
 )
 target_link_libraries(voronoi_basic_tutorial PRIVATE Boost::geometry Boost::polygon)
 
-add_executable(
-    ConstrainedDelaunay2D
-    ConstrainedDelaunay2D.cxx
-    ../.clang-format
-    README.md
-)
-target_link_libraries(ConstrainedDelaunay2D PRIVATE ${VTK_LIBRARIES} Boost::geometry Boost::polygon)
-vtk_module_autoinit(TARGETS ConstrainedDelaunay2D MODULES ${VTK_LIBRARIES})
+if ( NOT TARGET ConstrainedDelaunay2D)
+    add_executable(
+        ConstrainedDelaunay2D
+        ConstrainedDelaunay2D.cxx
+        ../.clang-format
+        README.md
+    )
+    target_link_libraries(ConstrainedDelaunay2D PRIVATE ${VTK_LIBRARIES} Boost::geometry Boost::polygon)
+    vtk_module_autoinit(TARGETS ConstrainedDelaunay2D MODULES ${VTK_LIBRARIES})
+endif()
 
-add_executable(
-    Triangulate
-    Triangulate.cxx
-    ../.clang-format
-    README.md
-)
-target_link_libraries(Triangulate PRIVATE ${VTK_LIBRARIES} Boost::geometry Boost::polygon)
-vtk_module_autoinit(TARGETS Triangulate MODULES ${VTK_LIBRARIES})
+if ( NOT TARGET Triangulate)
+    add_executable(
+        Triangulate
+        Triangulate.cxx
+        ../.clang-format
+        README.md
+    )
+    target_link_libraries(Triangulate PRIVATE ${VTK_LIBRARIES} Boost::geometry Boost::polygon)
+    vtk_module_autoinit(TARGETS Triangulate MODULES ${VTK_LIBRARIES})
+    set_target_properties(Triangulate PROPERTIES FOLDER "Apps")
+endif()
+
+if ( NOT TARGET GLTFImporter)
+    add_executable(
+        GLTFImporter
+        GLTFImporter.cxx
+        ../.clang-format
+        README.md
+    )
+    target_link_libraries(GLTFImporter PRIVATE ${VTK_LIBRARIES})
+    vtk_module_autoinit(TARGETS GLTFImporter MODULES ${VTK_LIBRARIES})
+    set_target_properties(GLTFImporter PROPERTIES FOLDER "Apps")
+endif()
 
 set_target_properties(
-    Triangulate ConstrainedDelaunay2D voronoi_basic_tutorial cmd_getargs_03
+    voronoi_basic_tutorial cmd_getargs_03
     PROPERTIES FOLDER "Apps")
-
-add_executable(
-    GLTFImporter
-    GLTFImporter.cxx
-    ../.clang-format
-    README.md
-)
-target_link_libraries(GLTFImporter PRIVATE ${VTK_LIBRARIES})
-vtk_module_autoinit(TARGETS GLTFImporter MODULES ${VTK_LIBRARIES})
-set_target_properties(GLTFImporter PROPERTIES FOLDER "Apps")
 
 if(BUILD_TESTING)
     enable_testing()
