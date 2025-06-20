@@ -11,8 +11,9 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 find_package(Qt6 REQUIRED COMPONENTS Core Widgets Gui)
 qt_standard_project_setup()
 
-qt_add_executable(07_helloworld
+qt_add_executable(helloworld_07
     main.cpp
 )
 
-target_link_libraries(07_helloworld PRIVATE Qt6::Core Qt6::Widgets Qt6::Gui)
+target_link_libraries(helloworld_07 PRIVATE Qt6::Core Qt6::Widgets Qt6::Gui)
+set_target_properties(helloworld_07 PROPERTIES FOLDER "Apps")

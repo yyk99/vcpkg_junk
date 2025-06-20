@@ -74,6 +74,7 @@ if ( NOT TARGET ConstrainedDelaunay2D)
     )
     target_link_libraries(ConstrainedDelaunay2D PRIVATE ${VTK_LIBRARIES} Boost::geometry Boost::polygon)
     vtk_module_autoinit(TARGETS ConstrainedDelaunay2D MODULES ${VTK_LIBRARIES})
+    set_target_properties(ConstrainedDelaunay2D PROPERTIES FOLDER "Apps")
 endif()
 
 if ( NOT TARGET Triangulate)

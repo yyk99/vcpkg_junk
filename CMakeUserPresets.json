@@ -60,6 +60,15 @@
       "cacheVariables": {
         "VCPKG_INSTALLED_DIR": "$env{VCPKG_ROOT}/installed"
       }
+    },
+    {
+      "name": "windows-quagga-qt",
+      "inherits": "default",
+      "environment": {
+        "Qt6_DIR": "c:/qt6/6.8.1/msvc2022_64/lib/cmake/Qt6",
+        "Qt6GuiTools_DIR": "c:/qt6/6.8.1/msvc2022_64/lib/cmake/Qt6GuiTools",
+        "Qt6Widgets_DIR": "c:/qt6/6.8.1/msvc2022_64/lib/cmake/Qt6Widgets"
+      }
     }
   ]
 }
