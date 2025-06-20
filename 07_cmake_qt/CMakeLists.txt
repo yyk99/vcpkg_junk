@@ -1,32 +1,18 @@
 #
 #
 #
+cmake_minimum_required(VERSION 3.16)
 
-cmake_minimum_required(VERSION 3.25)
-project(cmake_qt)
+project(07_cmake_qt VERSION 1.0.0 LANGUAGES CXX)
 
-if(BUILD_WITH_BOOST)
-	set(Boost_USE_STATIC_LIBS OFF)
-	set(Boost_USE_STATIC_RUNTIME OFF)
-	find_package(Boost REQUIRED COMPONENTS 
-		program_options
-		filesystem
-	)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-	message(STATUS "Boost_LIBRARY_DIRS=${Boost_LIBRARY_DIRS}")
-	message(STATUS "Boost_LIB_DIAGNOSTIC_DEFINITIONS=${Boost_LIB_DIAGNOSTIC_DEFINITIONS}")
-	    
-	add_definitions(${Boost_LIB_DIAGNOSTIC_DEFINITIONS})
-	add_executable(
-		cmd_getargs_07
-		cmd_getargs.cpp
-		../.clang-format
-		README.txt
-	)
-	target_link_libraries(cmd_getargs_07 PRIVATE Boost::program_options)
-else()
-	message(STATUS "Nothing is here...")
-endif()
+find_package(Qt6 REQUIRED COMPONENTS Core Widgets Gui)
+qt_standard_project_setup()
 
+qt_add_executable(07_helloworld
+    main.cpp
+)
 
-
+target_link_libraries(07_helloworld PRIVATE Qt6::Core Qt6::Widgets Qt6::Gui)
