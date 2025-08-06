@@ -67,6 +67,14 @@
         "tbb",
         "cgal"
       ]
+    },
+    "10-proj": {
+      "description": "Build 10_proj",
+      "dependencies": [
+        "boost-geometry",
+        "eigen3",
+        "proj"
+      ]
     }
   }
 }

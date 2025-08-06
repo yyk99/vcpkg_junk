@@ -1,0 +1,15 @@
+{
+  "dependencies": [
+    "boost-geometry",
+    "eigen3",
+    "proj"
+  ],
+  "features": {
+    "tests": {
+      "description": "Build Tests",
+      "dependencies": [
+        "gtest"
+      ]
+    }
+  }
+}

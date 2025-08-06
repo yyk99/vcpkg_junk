@@ -22,7 +22,7 @@ How to configure
 
 	or
 
-	cmake -S . -B build-vs2022-x64 -DCMAKE_TOOLCHAIN_FILE=/home/yyk/src/vcpkg/scripts/buildsystems/vcpkg.cmake
+	cmake -S . -B build-linux -DCMAKE_TOOLCHAIN_FILE=/home/yyk/src/vcpkg/scripts/buildsystems/vcpkg.cmake
 
 
 to be continue...
