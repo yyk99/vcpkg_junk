@@ -1,19 +1,79 @@
 {
   "dependencies": [
-    "assimp",
     "boost-program-options",
     "boost-filesystem",
     "boost-geometry",
-    "boost-polygon",
-    "vtk",
-    "tbb",
-    "cgal"
+    "boost-polygon"
   ],
   "features": {
     "tests": {
       "description": "Build Tests",
       "dependencies": [
         "gtest"
+      ]
+    },
+    "01-boost-static": {
+      "description": "Build 01_boost_static",
+      "dependencies": [
+      ]
+    },
+    "02-cmake-toolchain": {
+      "description": "Build 02_cmake_toolchain",
+      "dependencies": [
+      ]
+    },
+    "03-vcpkg-json": {
+      "description": "Build 03_vcpkg_json",
+      "dependencies": [
+        "vtk"
+      ]
+    },
+    "04-cgal-tbb": {
+      "description": "Build 04_cgal_tbb",
+      "dependencies": [
+        "tbb",
+        "cgal"
+      ]
+    },
+    "05-manifest-features": {
+      "description": "Build 05_manifest_features",
+      "dependencies": [
+      ]
+    },
+    "06-cgal-tbb-novcpkg": {
+      "description": "Build 06_cgal_tbb_novcpkg",
+      "dependencies": [
+        "tbb",
+        "cgal"
+      ]
+    },
+    "07-cmake-qt": {
+      "description": "Build 07_cmake_qt",
+      "dependencies": [
+      ]
+    },
+    "08-assimp-junk": {
+      "description": "Build 08_assimp_junk",
+      "dependencies": [
+        "assimp",
+        "json-c",
+        "eigen3"
+      ]
+    },
+    "09-vtk-tutorial": {
+      "description": "Build 09_vtk_tutorial",
+      "dependencies": [
+        "vtk",
+        "tbb",
+        "cgal"
+      ]
+    },
+    "10-proj": {
+      "description": "Build 10_proj",
+      "dependencies": [
+        "boost-geometry",
+        "eigen3",
+        "proj"
       ]
     }
   }

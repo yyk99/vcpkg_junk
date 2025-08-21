@@ -16,6 +16,13 @@
       }
     },
     {
+      "name": "cherry",
+      "inherits": "vcpkg",
+      "environment": {
+        "VCPKG_ROOT": "e:\\opt\\vcpkg"
+      }
+    },
+    {
       "name": "windows-developmentyk",
       "inherits": "vcpkg",
       "environment": {
