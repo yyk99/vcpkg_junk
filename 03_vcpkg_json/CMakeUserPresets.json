@@ -23,6 +23,13 @@
       }
     },
     {
+      "name": "windows-developmentyk",
+      "inherits": "vcpkg",
+      "environment": {
+        "VCPKG_ROOT": "c:\\opt\\vcpkg"
+      }
+    },
+    {
       "name": "kestrel",
       "inherits": "vcpkg",
       "generator": "Unix Makefiles",
