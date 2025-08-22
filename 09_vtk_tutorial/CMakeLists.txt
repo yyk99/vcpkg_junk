@@ -14,6 +14,10 @@ if(BUILD_TESTING)
     list(APPEND VCPKG_MANIFEST_FEATURES "tests")
 endif()
 
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
 project(09_vtk_tutorial)
 
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
@@ -43,6 +47,8 @@ find_package(VTK COMPONENTS
     fmt
     InteractionStyle
     InteractionWidgets
+    IOCesium3DTiles
+    IOGeometry
     IOImport
     RenderingAnnotation
     RenderingContextOpenGL2
@@ -112,6 +118,7 @@ if(BUILD_TESTING)
     add_executable(test_09
         test_boost.cpp
         test_vtk.cpp
+        README.md
     )
     target_link_libraries(
         test_09
