@@ -1,0 +1,38 @@
+{
+  "version": 2,
+  "configurePresets": [
+    {
+      "name": "default",
+      "inherits": "vcpkg",
+      "environment": {
+        "VCPKG_ROOT": "g:\\opt\\vcpkg"
+      }
+    },
+    {
+      "name": "windows-developmentyk",
+      "inherits": "vcpkg",
+      "environment": {
+        "VCPKG_ROOT": "c:\\opt\\vcpkg"
+      }
+    },
+    {
+      "name": "cherry",
+      "inherits": "vcpkg",
+      "environment": {
+        "VCPKG_ROOT": "e:\\opt\\vcpkg"
+      }
+    },
+    {
+      "name": "kestrel",
+      "inherits": "vcpkg",
+      "generator": "Unix Makefiles",
+      "binaryDir": "${sourceDir}/build-linux",
+      "environment": {
+        "VCPKG_ROOT": "/home/yyk/src/vcpkg"
+      },
+      "cacheVariables": {
+        "VCPKG_INSTALLED_DIR": "$env{VCPKG_ROOT}/installed"
+      }
+    }
+  ]
+}

@@ -44,7 +44,7 @@ find_package(VTK COMPONENTS
 )
 
 if(NOT VTK_FOUND)
-    message(FATAL_ERROR "ConstrainedDelaunay2D: Unable to find the VTK build folder.")
+    message(FATAL_ERROR "Unable to find the VTK build folder.")
 endif()
 
 

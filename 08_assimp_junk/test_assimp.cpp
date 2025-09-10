@@ -27,6 +27,16 @@ namespace fs = std::filesystem;
 #include "assimp_aux.h"
 #include "meshtoolbox.h"
 
+// Define implementation macros once per project.
+#define TINYGLTF_IMPLEMENTATION
+
+#define TINYGLTF_NO_INCLUDE_STB_IMAGE
+#define TINYGLTF_NO_INCLUDE_STB_IMAGE_WRITE
+
+//#define STB_IMAGE_IMPLEMENTATION // is already defined above
+//#define STB_IMAGE_WRITE_IMPLEMENTATION
+#include <tiny_gltf.h>
+
 #include "../common/CONSOLE.h"
 
 class AssimpF : public testing::Test {
@@ -151,6 +161,72 @@ protected:
         }
         return "";
     }
+
+    /// @brief Compute the bounding volume of a scene with respect to node
+    /// transforms
+    /// @param scene
+    /// @return aiAABB (axis-aligned bounding box in world space)
+    aiAABB compute_aabb_with_transform(const aiScene *scene) {
+        aiVector3D sceneMin(std::numeric_limits<float>::max(),
+                            std::numeric_limits<float>::max(),
+                            std::numeric_limits<float>::max());
+        aiVector3D sceneMax(std::numeric_limits<float>::lowest(),
+                            std::numeric_limits<float>::lowest(),
+                            std::numeric_limits<float>::lowest());
+
+        std::function<void(const aiNode *, const aiMatrix4x4 &)> traverse;
+        traverse = [&](const aiNode *node, const aiMatrix4x4 &parentTransform) {
+            aiMatrix4x4 transform = parentTransform * node->mTransformation;
+            for (unsigned int i = 0; i < node->mNumMeshes; ++i) {
+                const aiMesh *mesh = scene->mMeshes[node->mMeshes[i]];
+                for (unsigned int v = 0; v < mesh->mNumVertices; ++v) {
+                    aiVector3D vertex = mesh->mVertices[v];
+                    vertex *= transform;
+                    sceneMin.x = std::min(sceneMin.x, vertex.x);
+                    sceneMin.y = std::min(sceneMin.y, vertex.y);
+                    sceneMin.z = std::min(sceneMin.z, vertex.z);
+                    sceneMax.x = std::max(sceneMax.x, vertex.x);
+                    sceneMax.y = std::max(sceneMax.y, vertex.y);
+                    sceneMax.z = std::max(sceneMax.z, vertex.z);
+                }
+            }
+            for (unsigned int i = 0; i < node->mNumChildren; ++i) {
+                traverse(node->mChildren[i], transform);
+            }
+        };
+
+        if (scene && scene->mRootNode) {
+            traverse(scene->mRootNode, aiMatrix4x4());
+        }
+        return aiAABB{sceneMin, sceneMax};
+    }
+
+    /// @brief Compute the bounding volume of a scene w/o respect to transforms
+    /// @param actual
+    /// @return
+    aiAABB compute_aabb(aiScene const *actual) {
+        aiVector3D sceneMin(std::numeric_limits<float>::max(),
+                            std::numeric_limits<float>::max(),
+                            std::numeric_limits<float>::max());
+        aiVector3D sceneMax(std::numeric_limits<float>::lowest(),
+                            std::numeric_limits<float>::lowest(),
+                            std::numeric_limits<float>::lowest());
+
+        for (unsigned int i = 0; i < actual->mNumMeshes; ++i) {
+            const aiMesh *mesh = actual->mMeshes[i];
+            for (unsigned int v = 0; v < mesh->mNumVertices; ++v) {
+                const aiVector3D &vertex = mesh->mVertices[v];
+                sceneMin.x = std::min(sceneMin.x, vertex.x);
+                sceneMin.y = std::min(sceneMin.y, vertex.y);
+                sceneMin.z = std::min(sceneMin.z, vertex.z);
+                sceneMax.x = std::max(sceneMax.x, vertex.x);
+                sceneMax.y = std::max(sceneMax.y, vertex.y);
+                sceneMax.z = std::max(sceneMax.z, vertex.z);
+            }
+        }
+        // CONSOLE("Scene AABB min: " << sceneMin << " max: " << sceneMax);
+        return aiAABB{sceneMin, sceneMax};
+    };
 };
 
 TEST_F(AssimpF, get_longest_substring_test) {
@@ -251,6 +327,51 @@ TEST_F(AssimpF, load_textured_cube) {
     // test_data/BoxTextured-glTF/BoxTextured.gltf
 
     auto BoxTextured_gltf = test_data("BoxTextured-glTF/BoxTextured.gltf");
+    ASSERT_TRUE(fs::is_regular_file(BoxTextured_gltf));
+
+    Assimp::Importer sot;
+    {
+        aiScene const *actual_scene =
+            sot.ReadFile(BoxTextured_gltf.string().c_str(), 0);
+        ASSERT_NE(nullptr, actual_scene);
+
+        CONSOLE_EVAL(actual_scene->mNumMeshes);
+        CONSOLE_EVAL(actual_scene->mNumTextures);
+        CONSOLE_EVAL(actual_scene->mNumMaterials);
+        CONSOLE_EVAL(actual_scene->mNumSkeletons);
+        // CONSOLE_EVAL(actual_scene->mNumTextures);
+
+        ASSERT_EQ(1, actual_scene->mNumMeshes);
+        {
+            // dump the mesh
+            aiMesh const *mp = actual_scene->mMeshes[0];
+            CONSOLE_EVAL(mp->mNumUVComponents[0]);
+            CONSOLE_EVAL(mp->mNumUVComponents[1]);
+            CONSOLE_EVAL(mp->mNumUVComponents[2]);
+            CONSOLE_EVAL(mp->mNumUVComponents[3]);
+
+            aiVector3D *textCoord_0 = mp->mTextureCoords[0];
+            CONSOLE_EVAL(textCoord_0[0]);
+            CONSOLE_EVAL(textCoord_0[1]);
+            CONSOLE_EVAL(textCoord_0[2]);
+            CONSOLE_EVAL(textCoord_0[3]);
+            CONSOLE_EVAL(textCoord_0[4]);
+        }
+
+        Assimp::Exporter exporter;
+        auto rc = exporter.Export(actual_scene, "assxml",
+                                  (ws / "BoxTextured.gltf.xml").string());
+        ASSERT_EQ(0, rc);
+    }
+}
+
+/// @brief Load a textured (jpg) cube and save it as assxml
+/// @param --gtest_filter=AssimpF.load_textured_cube_jpg
+/// @param
+TEST_F(AssimpF, load_textured_cube_jpg) {
+    auto ws = create_ws();
+
+    auto BoxTextured_gltf = test_data("BoxTextured-glTF_jpg/BoxTextured.gltf");
     ASSERT_TRUE(fs::is_regular_file(BoxTextured_gltf));
 
     Assimp::Importer sot;
@@ -662,6 +783,67 @@ TEST_F(AssimpF, meshtoolbox_stb_image) {
     stbi_image_free(data);
 }
 
+/// @brief Load a large JPG file
+/// @param --gtest_filter=AssimpF.meshtoolbox_stb_image_jpg
+/// @param  
+TEST_F(AssimpF, meshtoolbox_stb_image_jpg) {
+    const char *filename_jpg = R"(C:\home\work\GM-19017\out\scene_0_dense_mesh_material_0_map_kd.jpg)";
+    if (!fs::is_regular_file(filename_jpg))
+        GTEST_SKIP();
+
+    int width, height, channels;
+    auto data = stbi_load(filename_jpg, &width, &height, &channels, 0);
+    ASSERT_TRUE(data) << "Failed to load image: " << filename_jpg;
+#if 0
+    ASSERT_EQ(211, width);
+    ASSERT_EQ(211, height);
+    ASSERT_EQ(3, channels);
+
+    // Optionally, check a pixel value
+    if (width > 0 && height > 0 && channels >= 3) {
+        int idx = 0; // top-left pixel
+        unsigned char r = data[idx * channels + 0];
+        unsigned char g = data[idx * channels + 1];
+        unsigned char b = data[idx * channels + 2];
+        CONSOLE_EVAL(unsigned(r));
+        CONSOLE_EVAL(unsigned(g));
+        CONSOLE_EVAL(unsigned(b));
+    }
+#endif
+    // Free the image memory
+    stbi_image_free(data);
+}
+
+/// @brief Read a small jpg file with stb library
+/// @param --gtest_filter=AssimpF.stb_read_jpg
+/// @param  
+TEST_F(AssimpF, stb_read_jpg) {
+    auto logo_jpg = test_data("BoxTextured-glTF_jpg/CesiumLogoFlat.jpg");
+    ASSERT_TRUE(fs::is_regular_file(logo_jpg));
+
+    int width, height, channels;
+    auto stbi_uc_deleter = [](stbi_uc *p) { if (p) stbi_image_free(p); };
+    auto data = std::unique_ptr<stbi_uc, decltype(stbi_uc_deleter)>(
+        stbi_load(logo_jpg.string().c_str(), &width, &height, &channels, 0), 
+        stbi_uc_deleter);
+    ASSERT_TRUE(data) << "Failed to load image: " << logo_jpg;
+
+    ASSERT_EQ(211, width);
+    ASSERT_EQ(211, height);
+    ASSERT_EQ(3, channels);
+
+    // Optionally, check a pixel value
+    if (width > 0 && height > 0 && channels >= 3) {
+        int idx = 0; // top-left pixel
+        unsigned char r = data.get()[idx * channels + 0];
+        unsigned char g = data.get()[idx * channels + 1];
+        unsigned char b = data.get()[idx * channels + 2];
+        CONSOLE_EVAL(unsigned(r));
+        CONSOLE_EVAL(unsigned(g));
+        CONSOLE_EVAL(unsigned(b));
+    }
+}
+
 /// @brief Create a PNG file
 /// @param --gtest_filter=AssimpF.meshtoolbox_write_stb_image
 TEST_F(AssimpF, meshtoolbox_write_stb_image) {
@@ -980,6 +1162,33 @@ public:
         // clang-format on
         return t;
     }
+
+    struct Geodetic {
+        double lon_deg, lat_deg, height;
+    };
+
+    auto ecef_to_geodetic (double x, double y, double z) {
+        // WGS84 constants
+        constexpr double a = 6378137.0;           // semi-major axis
+        constexpr double f = 1.0 / 298.257223563; // flattening
+        constexpr double b = a * (1 - f);         // semi-minor axis
+        constexpr double e2 = 1 - (b * b) / (a * a);
+        constexpr double ep2 = (a * a - b * b) / (b * b);
+
+        double p = sqrt(x * x + y * y);
+        double theta = atan2(z * a, p * b);
+        double lon = atan2(y, x);
+        double lat = atan2(z + ep2 * b * pow(sin(theta), 3),
+                           p - e2 * a * pow(cos(theta), 3));
+        double N = a / sqrt(1 - e2 * sin(lat) * sin(lat));
+        double height = p / cos(lat) - N;
+
+        Geodetic geo;
+        geo.lon_deg = lon * 180.0 / M_PI;
+        geo.lat_deg = lat * 180.0 / M_PI;
+        geo.height = height;
+        return geo;
+    };
 };
 
 /// @brief test the matrix transforms
@@ -1053,5 +1262,528 @@ TEST_F(TransF, matrix_transforms) {
         EXPECT_FLOAT_EQ(1, v1.x);
         EXPECT_FLOAT_EQ(3, v1.y);
         EXPECT_FLOAT_EQ(-2, v1.z);
+    }
+}
+
+/// @brief
+/// @param --gtest_filter=TransF.c3dprototype_t0
+/// @param
+TEST_F(TransF, c3dprototype_t0) {
+    ASSERT_TRUE(fs::is_regular_file(test_data("tileset2/tileset2.json")));
+    ASSERT_TRUE(fs::is_regular_file(test_data("tileset2/bounding_boxes.glb")));
+
+    auto ws = create_ws();
+
+    auto bounding_boxes_glb = test_data("tileset2/bounding_boxes.glb").string();
+    Assimp::Importer importer;
+    // clang-format off
+    unsigned int postprocess_flags = 0 
+            | aiProcess_GenBoundingBoxes
+            ;
+    // clang-format on
+    auto actual = importer.ReadFile(bounding_boxes_glb, postprocess_flags);
+    ASSERT_TRUE(actual);
+
+    CONSOLE_EVAL(actual->HasMeshes());
+    CONSOLE_EVAL(actual->mNumMeshes);
+
+    for (unsigned int i = 0; i < actual->mNumMeshes; ++i) {
+        const aiMesh *mesh = actual->mMeshes[i];
+
+        CONSOLE("Mesh " << i << " AABB min: " << mesh->mAABB.mMin
+                        << " max: " << mesh->mAABB.mMin);
+    }
+
+    // dump mesh[0]
+    {
+        /*
+            EPSG:32613 -- WGS 84 / UTM zone 13N
+        */
+
+        aiMesh const *mesh = actual->mMeshes[0];
+
+        for (unsigned int v = 0; v < mesh->mNumVertices; ++v) {
+            const aiVector3D &vertex = mesh->mVertices[v];
+            std::cout << "Vertex " << v << ": (" << vertex.x << ", " << vertex.y
+                      << ", " << vertex.z << ")\n";
+        }
+    }
+
+    auto bounding_box = compute_aabb(actual);
+    CONSOLE("Scene AABB min: " << bounding_box.mMin
+                               << " max: " << bounding_box.mMax);
+
+    Assimp::Exporter exporter;
+
+    auto status =
+        exporter.Export(actual, "assxml", (ws / "actual.xml").string());
+    EXPECT_EQ(0, status);
+}
+
+/// @brief
+/// @param --gtest_filter=TransF.c3dprototype_bb
+/// @param
+TEST_F(TransF, c3dprototype_bb) {
+    auto actual_bb = aiAABB{{496805.969, 4420721.5, 1625.33777},
+                            {496866.031, 4420784, 1636.51453}};
+
+    aiVector3D longitude_latitude_min = {-105.0373839395, 39.9366031861, 0.0};
+
+    // echo "496805.969 4420721.5" | cs2cs +proj=utm +zone=13 +datum=WGS84
+    // +units=m +to +proj=latlong +datum=WGS84 -f "%.10f" echo "496866.031
+    // 4420784" | cs2cs +proj=utm +zone=13 +datum=WGS84 +units=m +to
+    // +proj=latlong +datum=WGS84 -f "%.10f"
+
+    /*
+        Cesium 3D Tiles boundingVolume.box format:
+        [centerX, centerY, centerZ, halfAxisXx, halfAxisXy, halfAxisXz,
+       halfAxisYx, halfAxisYy, halfAxisYz, halfAxisZx, halfAxisZy, halfAxisZz]
+        where:
+        - center: midpoint of AABB
+        - half axes: half the size along each axis (for axis-aligned box, these
+       are half extents along X, Y, Z)
+    */
+
+    aiVector3D center = (actual_bb.mMin + actual_bb.mMax) * 0.5f;
+    aiVector3D half_extent = (actual_bb.mMax - actual_bb.mMin) * 0.5f;
+
+    // Axis-aligned box: half axes are just half extents along X, Y, Z
+    std::array<double, 12> cesium_box = {
+        center.x, center.y, center.z, half_extent.x, 0, 0, 0, half_extent.y,
+        0,        0,        0,        half_extent.z};
+
+    CONSOLE("Cesium boundingVolume.box: ["
+            << std::setprecision(16) << cesium_box[0] << ", " << cesium_box[1]
+            << ", " << cesium_box[2] << ", " << cesium_box[3] << ", "
+            << cesium_box[4] << ", " << cesium_box[5] << ", " << cesium_box[6]
+            << ", " << cesium_box[7] << ", " << cesium_box[8] << ", "
+            << cesium_box[9] << ", " << cesium_box[10] << ", " << cesium_box[11]
+            << "]");
+
+    /*
+        To transform from local coordinates (e.g., UTM) to ECEF (Earth-Centered,
+       Earth-Fixed), you need to:
+        1. Convert local coordinates to geodetic (longitude, latitude, height).
+        2. Convert geodetic to ECEF.
+
+        This requires a geodetic library (e.g., proj, GeographicLib).
+        Here is a simple ECEF conversion for WGS84 ellipsoid.
+    */
+
+    struct Geodetic {
+        double lon_deg;
+        double lat_deg;
+        double height;
+    };
+
+    struct ECEF {
+        double x;
+        double y;
+        double z;
+    };
+
+    auto geodetic_to_ecef = [](const Geodetic &geo) -> ECEF {
+        // WGS84 constants
+        constexpr double a = 6378137.0;           // semi-major axis
+        constexpr double f = 1.0 / 298.257223563; // flattening
+        constexpr double b = a * (1 - f);         // semi-minor axis
+        constexpr double e2 = 1 - (b * b) / (a * a);
+
+        double lon = geo.lon_deg * M_PI / 180.0;
+        double lat = geo.lat_deg * M_PI / 180.0;
+        double N = a / sqrt(1 - e2 * sin(lat) * sin(lat));
+        double x = (N + geo.height) * cos(lat) * cos(lon);
+        double y = (N + geo.height) * cos(lat) * sin(lon);
+        double z = ((b * b) / (a * a) * N + geo.height) * sin(lat);
+        return {x, y, z};
+    };
+
+    // Example: convert bounding box center from UTM to ECEF
+    // You need to convert UTM to lon/lat first (use proj or similar).
+    // Here, we use the provided longitude_latitude_min as an example.
+
+    Geodetic geo_center;
+    geo_center.lon_deg = longitude_latitude_min.x; // longitude
+    geo_center.lat_deg = longitude_latitude_min.y; // latitude
+    geo_center.height = center.z;                  // use Z as height
+
+    auto ecef_center = geodetic_to_ecef(geo_center);
+
+    CONSOLE("ECEF center: x=" << ecef_center.x << " y=" << ecef_center.y
+                              << " z=" << ecef_center.z);
+}
+
+/// @brief
+/// @param --gtest_filter=TransF.c3dprototype_triangulate
+/// @param
+TEST_F(TransF, c3dprototype_triangulate) {
+    ASSERT_TRUE(fs::is_regular_file(test_data("tileset2/tileset2.json")));
+    ASSERT_TRUE(fs::is_regular_file(test_data("tileset2/bounding_boxes.glb")));
+
+    auto ws = create_ws();
+
+    auto bounding_boxes_glb = test_data("tileset2/bounding_boxes.glb").string();
+    Assimp::Importer importer;
+    // clang-format off
+        unsigned int postprocess_flags = 0 
+            // | aiProcess_GenBoundingBoxes
+            // | aiProcess_ValidateDataStructure
+            // | aiProcess_CalcTangentSpace
+            | aiProcess_Triangulate
+            // | aiProcess_GenNormals
+            // | aiProcess_JoinIdenticalVertices
+            ;
+    // clang-format on
+    auto actual = importer.ReadFile(bounding_boxes_glb, postprocess_flags);
+    ASSERT_TRUE(actual);
+
+    CONSOLE_EVAL(actual->HasMeshes());
+    CONSOLE_EVAL(actual->mNumMeshes);
+
+    Assimp::Exporter exporter;
+
+    auto status = exporter.Export(actual, "glb", (ws / "actual.glb").string());
+    EXPECT_EQ(0, status);
+}
+
+/// @brief Load the original GLB model and translate the coordinates to (0,0,0)
+/// @param --gtest_filter=TransF.c3dprototype_translate_coordinates
+/// @param
+TEST_F(TransF, c3dprototype_translate_coordinates) {
+    ASSERT_TRUE(fs::is_regular_file(test_data("tileset2/tileset2.json")));
+    ASSERT_TRUE(fs::is_regular_file(test_data("tileset2/bounding_boxes.glb")));
+
+    auto ws = create_ws();
+    {
+        auto bounding_boxes_glb =
+            test_data("tileset2/bounding_boxes.glb").string();
+        Assimp::Importer importer;
+        // clang-format off
+        unsigned int postprocess_flags = 0 
+            //| aiProcess_GenBoundingBoxes
+            //| aiProcess_ValidateDataStructure
+            //| aiProcess_CalcTangentSpace
+            //| aiProcess_Triangulate
+            //| aiProcess_GenNormals
+            //| aiProcess_JoinIdenticalVertices
+            ;
+        // clang-format on
+
+        // The original coordinates are in UTM 13N
+        auto actual = importer.ReadFile(bounding_boxes_glb, postprocess_flags);
+        ASSERT_TRUE(actual);
+
+        CONSOLE(std::setprecision(15));
+
+        CONSOLE_EVAL(actual->mMeshes[0]->mAABB);
+        CONSOLE_EVAL(actual->mRootNode->mTransformation);
+
+        EXPECT_EQ(aiMatrix4x4(1, 0, 0, 0, 0, 0, 1, 0, 0, -1, 0, 0, 0, 0, 0,
+                                1), actual->mRootNode->mTransformation);
+
+        auto bounding_box = compute_aabb(actual);
+        CONSOLE_EVAL(bounding_box.mMin);
+        CONSOLE_EVAL(bounding_box.mMax);
+        //mMin : {496805.969, 4420721.5, 1625.33777}
+        //mMax : {496866.031, 4420784, 1636.51453}
+
+        aiMatrix4x4 translate;
+        aiMatrix4x4::Translation(-bounding_box.mMin, translate);
+        CONSOLE_EVAL(translate);
+        {
+            // Verify sure the transform works as expected - moves min_point to (0,0,0)
+            aiVector3D min_point{496805.969, 4420721.5, 1625.33777};
+            EXPECT_EQ(min_point, bounding_box.mMin);
+            CONSOLE_EVAL(translate * min_point);
+            EXPECT_TRUE(aiVector3D(0, 0, 0) == translate * min_point);
+            aiVector3D max_point { 496866.031, 4420784, 1636.51453 };
+            CONSOLE_EVAL(translate * max_point);
+            EXPECT_TRUE(aiVector3D(60.0625, 62.5, 11.1767578) ==
+                        translate * max_point);
+            EXPECT_TRUE(max_point - min_point == translate * max_point);
+        }
+
+        /* update the root transform to map min to (0,0,0) */
+        actual->mRootNode->mTransformation =
+            translate * actual->mRootNode->mTransformation;
+        CONSOLE_EVAL(actual->mRootNode->mTransformation);
+
+        Assimp::Exporter exporter;
+        auto actual_status =
+            exporter.Export(actual, "glb2", (ws / "actual.glb").string());
+        ASSERT_EQ(0, actual_status);
+        ASSERT_EQ(0, exporter.Export(actual, "assxml", (ws / "actual.xml").string()));
+        ASSERT_EQ(0, exporter.Export(actual, "ply", (ws / "actual.ply").string()));
+    }
+    // verify the saved model
+    {
+#if 0
+        // Create default logger that outputs to console
+        Assimp::DefaultLogger::create("", Assimp::Logger::VERBOSE,
+                                      aiDefaultLogStream_STDOUT);
+
+#endif
+        Assimp::Importer importer;
+        auto model = importer.ReadFile((ws / "actual.glb").string(), 0);
+        ASSERT_TRUE(model);
+        CONSOLE_EVAL(model->mRootNode->mTransformation);
+        CONSOLE_EVAL(model->mNumMeshes);
+        EXPECT_EQ(9, model->mNumMeshes);
+    }
+    {
+        // verify with tinygltf::TinyGLTF
+        {
+            tinygltf::TinyGLTF loader;
+            tinygltf::Model model;
+            std::string err, warn;
+
+            bool success = loader.LoadBinaryFromFile(
+                &model, &err, &warn, (ws / "actual.glb").string());
+
+            ASSERT_TRUE(success) << "Failed to load GLTF: " << err;
+            EXPECT_TRUE(warn.empty()) << "Warning: " << warn;
+            CONSOLE_EVAL(model.meshes.size());
+            EXPECT_EQ(9, model.meshes.size());
+            EXPECT_EQ(10, model.nodes.size());
+
+            auto vector2str = [](std::vector<double> const &v) {
+                std::ostringstream ss;
+                ss << "{";
+                auto vv = v.begin();
+                if (vv != v.end())
+                    ss << *vv++;
+                while (vv != v.end())
+                    ss << ", " << *vv++;
+                ss << "}";
+                return ss.str();
+            };
+
+            for (auto const &np : model.nodes) {
+                CONSOLE_EVAL(np.extensions_json_string);
+                CONSOLE_EVAL(np.children.size());
+                CONSOLE_EVAL(vector2str(np.matrix));
+                CONSOLE("\n");
+            }
+        }
+    }
+}
+
+/*
+    echo "EASTING NORTHING" | cs2cs +proj=utm +zone=13 +ellps=WGS84 +to +proj=latlong +datum=WGS84
+
+    in decimal format
+
+    echo "EASTING NORTHING" | cs2cs +proj=utm +zone=13 +ellps=WGS84 +to +proj=latlong +ellps=WGS84 -f "%.8f"
+
+    To produce a tileset json
+
+    npx 3d-tiles-tools createTilesetJson -f -i cropped/model.glb -o cropped/model.json --cartographicPositionDegrees -105.03697644 39.93681616 0.00000000
+*/
+
+
+static const char *cropped_model_glb = R"({
+  "asset": {
+    "version": "1.1"
+  },
+  "geometricError": 4096,
+  "root": {
+    "boundingVolume": {
+      "box": [
+        496840.7947318554,
+        4420745.123109758,
+        1628.3355102539062,
+        1.4763270616531372,
+        0,
+        0,
+        0,
+        1.3503844738006592,
+        0,
+        0,
+        0,
+        1.38446044921875
+      ]
+    },
+    "geometricError": 512,
+    "content": {
+      "uri": "model.glb"
+    },
+    "refine": "ADD",
+    "transform": [
+      0.9657585935309204,
+      -0.2594423616551052,
+      0,
+      0,
+      0.16654706558975313,
+      0.6199614388126924,
+      0.7667528215329492,
+      0,
+      -0.1989281628242237,
+      -0.7404981265095258,
+      0.6419424512144849,
+      0,
+      -1270544.8042035468,
+      -4729526.648222642,
+      4072608.8590562753,
+      1
+    ]
+  }
+})";
+
+/// @brief Load a GLB file and generate tileset.json
+/// @param --gtest_filter=TransF.c3dprototype_make_tileset_json
+/// @param  
+TEST_F(TransF, c3dprototype_make_tileset_json) {
+    auto ws = create_ws();
+    {
+        // Assimp::DefaultLogger::create("", Assimp::Logger::VERBOSE, aiDefaultLogStream_STDOUT);
+        auto model_glb =
+            test_data("CesiumTilesF/GM20993_export_cropped_as_cesium3d_tile/model.glb").string();
+        ASSERT_TRUE(fs::is_regular_file(model_glb));
+
+        Assimp::Importer importer;
+        // clang-format off
+        unsigned int postprocess_flags = 0 
+            //| aiProcess_GenBoundingBoxes
+            //| aiProcess_ValidateDataStructure
+            //| aiProcess_CalcTangentSpace
+            //| aiProcess_Triangulate
+            //| aiProcess_GenNormals
+            //| aiProcess_JoinIdenticalVertices
+            ;
+        // clang-format on
+
+        // The original coordinates are in UTM 13N
+        auto actual = importer.ReadFile(model_glb, postprocess_flags);
+        ASSERT_TRUE(actual) << importer.GetErrorString();
+
+        CONSOLE_EVAL(compute_aabb(actual));
+        CONSOLE_EVAL(compute_aabb_with_transform(actual));
+    }
+    {
+        double b[] = {496840.7947318554,
+                        4420745.123109758,
+                        1628.3355102539062,
+                        1.4763270616531372,
+                        0,
+                        0,
+                        0,
+                        1.3503844738006592,
+                        0,
+                        0,
+                        0,
+                        1.38446044921875};
+
+        double t[] = {0.9657585935309204,
+                      -0.2594423616551052,
+                      0,
+                      0,
+                      0.16654706558975313,
+                      0.6199614388126924,
+                      0.7667528215329492,
+                      0,
+                      -0.1989281628242237,
+                      -0.7404981265095258,
+                      0.6419424512144849,
+                      0,
+                      -1270544.8042035468,
+                      -4729526.648222642,
+                      4072608.8590562753,
+                      1};
+        aiVector3t<double> center {t[0], t[1], t[2]};
+        aiMatrix4x4t<double> transform{
+            t[0], t[4], t[8], t[12],
+            t[1], t[5], t[9], t[13],
+            t[2], t[6], t[10], t[14],
+            t[3], t[7], t[11], t[15]
+        };
+        
+        auto center_transformed = transform * center;
+        CONSOLE_EVAL(center_transformed);
+
+        // original: -105.03697644 39.93681616 0.00000000
+        // Geodetic: lon=-105.036965 lat=39.9368138 height=7.72997737e-08
+
+        auto geo = ecef_to_geodetic(center_transformed.x, center_transformed.y, center_transformed.z);
+        CONSOLE("Geodetic: lon=" << geo.lon_deg << " lat=" << geo.lat_deg << " height=" << geo.height);
+    }
+}
+
+/// @brief
+/// @param --gtest_filter=TransF.c3dprototype_box_utm_13N_coordinates
+/// @param
+TEST_F(TransF, c3dprototype_box_utm_13N_coordinates) {
+
+    aiVector3d p0{496840, 0, -4420750}; // Y-UP coordinates
+
+    {
+
+        auto ws = create_ws();
+
+        meshtoolbox::Toolbox tb;
+
+        meshtoolbox::box_t b0{p0, {10, 20, 30}};
+
+        std::vector<meshtoolbox::box_t> boxes{b0};
+
+        auto model = std::unique_ptr<aiScene>(tb.make_boxes(boxes));
+
+        ASSERT_TRUE(model);
+        EXPECT_EQ(1, model->mNumMeshes);
+
+        Assimp::Exporter exp;
+        auto flags =
+            /*aiProcess_GenNormals | */ aiProcess_ValidateDataStructure | 0;
+        {
+            std::string filename_glb = (ws / "model.glft").string();
+            auto err = exp.Export(model.get(), "gltf", filename_glb, flags);
+            EXPECT_EQ(AI_SUCCESS, err) << "Failed export to " << filename_glb;
+        }
+        {
+            std::string filename_glb = (ws / "model.glb").string();
+            auto err = exp.Export(model.get(), "glb2", filename_glb, flags);
+            EXPECT_EQ(AI_SUCCESS, err) << "Failed export to " << filename_glb;
+        }
+        {
+            std::string filename_glb = (ws / "model.xml").string();
+            auto err = exp.Export(model.get(), "assxml", filename_glb, flags);
+            EXPECT_EQ(AI_SUCCESS, err) << "Failed export to " << filename_glb;
+        }
+    }
+    {
+        double t[] = {
+            0.965758551283516,
+            -0.259442518918477,
+            0,
+            0,
+            0.16654731910137624,
+            0.6199619795783732,
+            0.7667523292285515,
+            0,
+            -0.19892815568166483,
+            -0.7404976186690275,
+            0.641943039235251,
+            0,
+            -1270544.7618038643,
+            -4729523.416653709,
+            4072612.5998952053,
+            1
+        };
+
+        static_assert(sizeof(t) / sizeof(*t) == 16);
+
+        aiMatrix4x4t<double> transform{
+            t[0], t[4], t[8], t[12],
+            t[1], t[5], t[9], t[13],
+            t[2], t[6], t[10], t[14],
+            t[3], t[7], t[11], t[15]
+        };
+
+        aiVector3d p0_zup{496840, 4420750, 0}; // Y-UP coordinates
+        
+        auto p0_transformed = transform * p0_zup;
+        CONSOLE_EVAL(p0_transformed);
+
+        auto geo = ecef_to_geodetic(p0_transformed.x, p0_transformed.y, p0_transformed.z);
+        CONSOLE("Geodetic: lon=" << geo.lon_deg << " lat=" << geo.lat_deg << " height=" << geo.height);
     }
 }
