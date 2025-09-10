@@ -56,6 +56,8 @@
       "description": "Build 08_assimp_junk",
       "dependencies": [
         "assimp",
+	      "tinygltf",
+    	  "glm",
         "json-c",
         "eigen3"
       ]
@@ -74,6 +76,14 @@
         "boost-geometry",
         "eigen3",
         "proj"
+      ]
+    },
+    "11-vs": {
+      "description": "Build 11_vs",
+      "dependencies": [
+        "fmt",
+        "pcl",
+        "boost-geometry"
       ]
     }
   }
