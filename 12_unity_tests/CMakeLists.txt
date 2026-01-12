@@ -1,0 +1,20 @@
+cmake_minimum_required(VERSION 3.20)
+project(unity_example C)
+
+set(CMAKE_C_STANDARD 11)
+
+# Add Unity test framework from submodule
+add_subdirectory(Unity)
+
+# Add the calculator library
+add_library(calculator calculator.c calculator.h)
+
+# Add the test executable
+add_executable(test_calculator test_calculator.c)
+
+# Link the calculator library and Unity
+target_link_libraries(test_calculator PRIVATE calculator unity::framework)
+
+# Enable testing
+enable_testing()
+add_test(NAME calculator_tests COMMAND test_calculator)
