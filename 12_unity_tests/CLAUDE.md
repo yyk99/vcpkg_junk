@@ -8,41 +8,63 @@ This is a Unity test framework example project that demonstrates how to use the 
 
 ## Build System
 
-The project uses CMake with custom presets defined in `CMakePresets.json`:
+The project uses CMake with custom presets defined in `CMakePresets.json`.
+
+**Note:** Unix Makefiles presets (debug/release) can be used on Windows if `make` is available (e.g., from Cygwin, MinGW, or MSYS2). For native Windows development, use the vs2022 preset.
 
 **Configure:**
 ```bash
-# Debug build (default)
+# Debug build (Unix Makefiles)
 cmake --preset debug
 
-# Release build
+# Release build (Unix Makefiles)
 cmake --preset release
+
+# Visual Studio 2022 (multi-config generator)
+cmake --preset vs2022
 ```
 
 **Build:**
 ```bash
-# Build debug
+# Build debug (Unix Makefiles)
 cmake --build --preset debug
 
-# Build release
+# Build release (Unix Makefiles)
 cmake --build --preset release
+
+# Build with Visual Studio 2022 (specify config with --config)
+cmake --build --preset vs2022 --config Debug
+cmake --build --preset vs2022 --config Release
 ```
 
 **Build outputs** are organized as follows:
-- Executables: `build/{debug|release}/bin/`
-- Libraries: `build/{debug|release}/lib/`
+- Unix Makefiles: Executables in `build/{debug|release}/bin/`, libraries in `build/{debug|release}/lib/`
+- Visual Studio: Multi-config output in `build/vs2022/bin/{Debug|Release}/` and `build/vs2022/lib/{Debug|Release}/`
 
 ## Testing
 
 **Run all tests via CTest:**
 ```bash
+# Unix Makefiles
 ctest --preset debug
+
+# Visual Studio 2022 (uses Debug config by default)
+ctest --preset vs2022
+
+# Visual Studio 2022 with specific configuration
+ctest --preset vs2022 -C Release
 ```
 
 **Run test executable directly:**
 ```bash
+# Unix Makefiles
 ./build/debug/bin/test_calculator
+
+# Visual Studio 2022
+./build/vs2022/bin/Debug/test_calculator.exe
 ```
+
+**Note:** Visual Studio is a multi-configuration generator, so you must specify the configuration (Debug/Release) when building and can override it when testing using `-C <config>`.
 
 ## Project Architecture
 

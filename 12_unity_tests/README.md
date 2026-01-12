@@ -12,18 +12,41 @@ This project demonstrates how to use the Unity test framework (from ThrowTheSwit
 
 ## Building and Running
 
+### Using Unix Makefiles (Linux/MinGW/Cygwin)
+
+**Note:** Unix Makefiles preset can be used on Windows if `make` is available (e.g., from Cygwin, MinGW, or MSYS2).
+
 ```bash
 # Configure with CMake preset
-cmake --preset default
+cmake --preset debug
 
 # Build
-cmake --build --preset default
+cmake --build --preset debug
 
 # Run tests
-ctest --preset default
+ctest --preset debug
 
 # Or run the test executable directly
-./build/test_calculator
+./build/debug/bin/test_calculator
+```
+
+### Using Visual Studio 2022 (Windows)
+
+```bash
+# Configure with Visual Studio 2022
+cmake --preset vs2022
+
+# Build (Debug configuration)
+cmake --build --preset vs2022 --config Debug
+
+# Build (Release configuration)
+cmake --build --preset vs2022 --config Release
+
+# Run tests (uses Debug configuration by default)
+ctest --preset vs2022
+
+# Run tests with specific configuration
+ctest --preset vs2022 -C Release
 ```
 
 ## Example Output

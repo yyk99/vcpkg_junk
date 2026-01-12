@@ -29,6 +29,13 @@
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Release"
       }
+    },
+    {
+      "name": "vs2022",
+      "displayName": "Visual Studio 2022",
+      "description": "Visual Studio 2022 generator",
+      "generator": "Visual Studio 17 2022",
+      "binaryDir": "${sourceDir}/build/vs2022"
     }
   ],
   "buildPresets": [
@@ -39,12 +46,24 @@
     {
       "name": "release",
       "configurePreset": "release"
+    },
+    {
+      "name": "vs2022",
+      "configurePreset": "vs2022"
     }
   ],
   "testPresets": [
     {
       "name": "debug",
       "configurePreset": "debug",
+      "output": {
+        "outputOnFailure": true
+      }
+    },
+    {
+      "name": "vs2022",
+      "configurePreset": "vs2022",
+      "configuration": "Debug",
       "output": {
         "outputOnFailure": true
       }
