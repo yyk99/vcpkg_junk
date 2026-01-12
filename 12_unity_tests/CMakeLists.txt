@@ -3,6 +3,10 @@ project(unity_example C)
 
 set(CMAKE_C_STANDARD 11)
 
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+
 # Add Unity test framework from submodule
 add_subdirectory(Unity)
 

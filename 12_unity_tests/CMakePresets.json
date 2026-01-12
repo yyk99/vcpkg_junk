@@ -4,17 +4,16 @@
     {
       "name": "default",
       "displayName": "Default Config",
-      "description": "Default build using Unix Makefiles and vcpkg",
+      "description": "Default build using Unix Makefiles",
       "generator": "Unix Makefiles",
       "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "Debug",
-        "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
+        "CMAKE_BUILD_TYPE": "Debug"
       }
     },
     {
       "name": "debug",
       "displayName": "Debug Config",
-      "description": "Debug build using Unix Makefiles and vcpkg",
+      "description": "Debug build using Unix Makefiles",
       "inherits": "default",
       "binaryDir": "${sourceDir}/build/debug",
       "cacheVariables": {
@@ -24,7 +23,7 @@
     {
       "name": "release",
       "displayName": "Release Config",
-      "description": "Release build using Unix Makefiles and vcpkg",
+      "description": "Release build using Unix Makefiles",
       "inherits": "default",
       "binaryDir": "${sourceDir}/build/release",
       "cacheVariables": {
