@@ -31,6 +31,30 @@
       }
     },
     {
+      "name": "clang-debug",
+      "displayName": "Clang Debug",
+      "description": "Debug build using Clang compiler",
+      "inherits": "default",
+      "binaryDir": "${sourceDir}/build/clang-debug",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "CMAKE_C_COMPILER": "clang",
+        "CMAKE_CXX_COMPILER": "clang++"
+      }
+    },
+    {
+      "name": "clang-release",
+      "displayName": "Clang Release",
+      "description": "Release build using Clang compiler",
+      "inherits": "default",
+      "binaryDir": "${sourceDir}/build/clang-release",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "CMAKE_C_COMPILER": "clang",
+        "CMAKE_CXX_COMPILER": "clang++"
+      }
+    },
+    {
       "name": "vs2022",
       "displayName": "Visual Studio 2022",
       "description": "Visual Studio 2022 generator",
@@ -48,6 +72,14 @@
       "configurePreset": "release"
     },
     {
+      "name": "clang-debug",
+      "configurePreset": "clang-debug"
+    },
+    {
+      "name": "clang-release",
+      "configurePreset": "clang-release"
+    },
+    {
       "name": "vs2022",
       "configurePreset": "vs2022"
     }
@@ -56,6 +88,13 @@
     {
       "name": "debug",
       "configurePreset": "debug",
+      "output": {
+        "outputOnFailure": true
+      }
+    },
+    {
+      "name": "clang-debug",
+      "configurePreset": "clang-debug",
       "output": {
         "outputOnFailure": true
       }
