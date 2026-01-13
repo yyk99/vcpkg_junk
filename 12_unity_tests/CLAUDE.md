@@ -13,7 +13,9 @@ This is a Unity test framework example project that demonstrates how to use the 
 - **Ruby interpreter** - Required for auto-generating test runners
   - Install on Ubuntu/Debian: `sudo apt install ruby`
   - Install on macOS: `brew install ruby` (or use system Ruby)
-  - Install on Windows: Download from [ruby-lang.org](https://www.ruby-lang.org/en/downloads/)
+  - Install on Windows:
+    - Download from [ruby-lang.org](https://www.ruby-lang.org/en/downloads/), or
+    - Install via Cygwin (select the `ruby` package during Cygwin setup)
 
 ## Build System
 
