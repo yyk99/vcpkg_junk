@@ -13,8 +13,29 @@ add_subdirectory(Unity)
 # Add the calculator library
 add_library(calculator calculator.c calculator.h)
 
-# Add the test executable
-add_executable(test_calculator test_calculator.c)
+# Find Ruby for generating test runners
+find_program(RUBY_EXECUTABLE ruby REQUIRED)
+
+# Generate test runner for test_calculator.c
+set(TEST_CALCULATOR_RUNNER ${CMAKE_BINARY_DIR}/test_calculator_Runner.c)
+add_custom_command(
+    OUTPUT ${TEST_CALCULATOR_RUNNER}
+    COMMAND ${RUBY_EXECUTABLE} ${CMAKE_SOURCE_DIR}/Unity/auto/generate_test_runner.rb
+            ${CMAKE_SOURCE_DIR}/test_calculator.c
+            ${TEST_CALCULATOR_RUNNER}
+    DEPENDS test_calculator.c
+    COMMENT "Generating test runner for test_calculator.c"
+    VERBATIM
+)
+
+# Add the test executable with generated runner
+add_executable(test_calculator
+    test_calculator.c
+    ${TEST_CALCULATOR_RUNNER}
+)
+
+# Add include directories so the generated runner can find headers
+target_include_directories(test_calculator PRIVATE ${CMAKE_SOURCE_DIR})
 
 # Link the calculator library and Unity
 target_link_libraries(test_calculator PRIVATE calculator unity::framework)

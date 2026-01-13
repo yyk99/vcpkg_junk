@@ -30,14 +30,3 @@ void test_multiply(void) {
     TEST_ASSERT_EQUAL(-10, multiply(-2, 5));
     TEST_ASSERT_EQUAL(0, multiply(0, 5));
 }
-
-int main(void) {
-    UNITY_BEGIN();
-
-    RUN_TEST(test_add_positive_numbers);
-    RUN_TEST(test_add_negative_numbers);
-    RUN_TEST(test_subtract);
-    RUN_TEST(test_multiply);
-
-    return UNITY_END();
-}
