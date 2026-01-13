@@ -16,27 +16,40 @@ set(CMAKE_C_EXTENSIONS OFF)
 # Unity root directory (relative to this CMakeLists.txt)
 set(UNITY_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/../../Unity)
 
-# Compiler warning flags (matching makefile)
-set(WARNING_FLAGS
-    -Wall
-    -Wextra
-    -Wpointer-arith
-    -Wcast-align
-    -Wwrite-strings
-    -Wswitch-default
-    -Wunreachable-code
-    -Winit-self
-    -Wmissing-field-initializers
-    -Wno-unknown-pragmas
-    -Wstrict-prototypes
-    -Wundef
-    -Wold-style-definition
-)
+# Compiler warning flags (compiler-dependent)
+if(CMAKE_C_COMPILER_ID MATCHES "GNU|Clang")
+    # GCC/Clang warning flags (matching makefile)
+    set(WARNING_FLAGS
+        -Wall
+        -Wextra
+        -Wpointer-arith
+        -Wcast-align
+        -Wwrite-strings
+        -Wswitch-default
+        -Wunreachable-code
+        -Winit-self
+        -Wmissing-field-initializers
+        -Wno-unknown-pragmas
+        -Wstrict-prototypes
+        -Wundef
+        -Wold-style-definition
+    )
+elseif(CMAKE_C_COMPILER_ID MATCHES "MSVC")
+    # MSVC warning flags
+    set(WARNING_FLAGS
+        /W4                 # High warning level (equivalent to -Wall -Wextra)
+        /wd4068             # Disable unknown pragma warning (equivalent to -Wno-unknown-pragmas)
+    )
+endif()
 
-# Optional: Add -Werror for CI builds
+# Optional: Add -Werror/WX for CI builds
 option(UNITY_WERROR "Treat warnings as errors" OFF)
 if(UNITY_WERROR)
-    list(APPEND WARNING_FLAGS -Werror)
+    if(CMAKE_C_COMPILER_ID MATCHES "GNU|Clang")
+        list(APPEND WARNING_FLAGS -Werror)
+    elseif(CMAKE_C_COMPILER_ID MATCHES "MSVC")
+        list(APPEND WARNING_FLAGS /WX)
+    endif()
 endif()
 
 # Test executable 1: TestProductionCode
