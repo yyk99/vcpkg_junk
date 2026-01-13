@@ -17,10 +17,11 @@ int NumbersToFind[9] = { 0, 34, 55, 66, 32, 11, 1, 77, 888 }; /* some obnoxious 
 int FindFunction_WhichIsBroken(int NumberToFind)
 {
     int i = 0;
-    while (i < 8) /* Notice I should have been in braces */
+    while (i < 8) { /* FIXED: Notice I should have been in braces */
         i++;
         if (NumbersToFind[i] == NumberToFind) /* Yikes!  I'm getting run after the loop finishes instead of during it! */
             return i;
+    }
     return 0;
 }
 
