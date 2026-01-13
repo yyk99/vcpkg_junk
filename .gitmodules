@@ -4,4 +4,4 @@
 	shallow = true
 [submodule "12_unity_tests/Unity"]
 	path = 12_unity_tests/Unity
-	url = git@github.com:ThrowTheSwitch/Unity.git
+	url = git@github.com:yyk99/Unity.git
