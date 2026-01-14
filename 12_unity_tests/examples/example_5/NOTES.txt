@@ -1,0 +1,100 @@
+Example 5 - Unity Details Stack
+================================
+
+Purpose:
+--------
+Demonstrates Unity's "Details Stack" feature for enhanced error reporting.
+Provides context similar to a stack trace, helping locate errors faster in
+complex branching/iterating code.
+
+Key Features:
+-------------
+
+1. C89 Standard
+   - Uses C89/C90 (CMAKE_C_STANDARD 90)
+
+2. Unity Details Stack
+   - Configured via unity_detail_config.h
+   - Provides stack-trace-like error context
+   - Shows call hierarchy and variable values in test failures
+
+3. Force-Included Configuration
+   - unity_detail_config.h is force-included in all compilation units
+   - GCC/Clang: -include flag
+   - MSVC: /FI flag
+   - Defines UNITY_DETAIL_STACK_SIZE and custom labels
+
+4. UNIT_TESTING Define
+   - Adds UNIT_TESTING preprocessor symbol
+   - Can be used for conditional compilation in production code
+
+5. Pre-written Test Runner
+   - Uses pre-written TestProductionCode_Runner.c
+   - No auto-generation needed for this simple example
+
+Compiler Support:
+-----------------
+- GCC/Clang: Full C89 warning flags + forced include with -include
+- MSVC: /W4, /wd4068 + forced include with /FI
+- Optional -Werror/WX via UNITY_WERROR option
+
+Details Stack Configuration:
+----------------------------
+The unity_detail_config.h defines:
+- UNITY_DETAIL_STACK_SIZE: Number of detail levels (5)
+- Custom detail labels: "During call", "Bit Position", "Bit Mask"
+- Display formatting: INT32, HEX8 format specifiers
+- Custom enum for detail types
+
+Example Error Output:
+---------------------
+test/TestProductionCode.c:36:test_BitExtractor:FAIL: Expected 0 Was 1.
+During call BitExtractor. During call BitExtractor_down. Bit Position 6.
+Bit Mask 0x02. Unexpected bit value
+
+This shows:
+- File and line number
+- Test name
+- Failure message
+- Call hierarchy (BitExtractor -> BitExtractor_down)
+- Variable values at failure point
+
+Comparison with Other Examples:
+--------------------------------
+┌──────────────────┬────────────┬────────────┬────────────┐
+│     Feature      │ Example 1  │ Example 2  │ Example 5  │
+├──────────────────┼────────────┼────────────┼────────────┤
+│ C Standard       │ C89/C90    │ C99        │ C89/C90    │
+├──────────────────┼────────────┼────────────┼────────────┤
+│ Unity Extension  │ None       │ Fixture    │ Details    │
+│                  │            │            │ Stack      │
+├──────────────────┼────────────┼────────────┼────────────┤
+│ Test Runners     │ Pre-written│ Pre-written│Pre-written │
+├──────────────────┼────────────┼────────────┼────────────┤
+│ Special Config   │ No         │ No         │ Yes        │
+│                  │            │            │ (forced    │
+│                  │            │            │ include)   │
+├──────────────────┼────────────┼────────────┼────────────┤
+│ Error Reporting  │ Standard   │ Standard   │ Enhanced   │
+│                  │            │            │ (stack-    │
+│                  │            │            │ like)      │
+├──────────────────┼────────────┼────────────┼────────────┤
+│ Target Name      │ test1/2    │ ex2_*      │ ex5_test1  │
+└──────────────────┴────────────┴────────────┴────────────┘
+
+Use Case:
+---------
+Example 5 is particularly useful for:
+- Testing code with deep call hierarchies
+- Iterative algorithms where failures occur in nested loops
+- Debugging complex state machines
+- When you need to know not just WHAT failed, but WHERE in the call chain
+
+Build Instructions:
+-------------------
+cmake --preset debug
+cmake --build --preset debug
+ctest --preset debug
+
+Or run directly:
+./build/debug/bin/ex5_test1

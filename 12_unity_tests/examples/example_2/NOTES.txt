@@ -1,0 +1,67 @@
+  Key Features of example_2/CMakeLists.txt:
+
+  1. C99 Standard
+  - Uses C99 (CMAKE_C_STANDARD 99) instead of C89 like example_1
+
+  2. Unity Fixture Extension
+  - Includes unity_fixture.c from Unity/extras/fixture/src
+  - This provides test grouping functionality (RUN_TEST_GROUP)
+
+  3. Single Executable: ex2_all_tests
+  - Combines all source files into one executable:
+  - Unity core and fixture extension
+  - ProductionCode.c and ProductionCode2.c
+  - Test files and their runners
+  - all_tests.c (main runner)
+
+  4. Compiler Settings
+  - Same warning flags as example_1
+  - Defines UNITY_FIXTURE_NO_EXTRAS symbol
+  - Optional -Werror via UNITY_WERROR option
+
+  5. Test Registration
+  - Registered with CTest using -v flag (verbose output)
+
+  Differences from example_1:
+  ┌───────────────────┬───────────────────────────┬────────────────────────┐
+  │      Feature      │         Example 1         │       Example 2        │
+  ├───────────────────┼───────────────────────────┼────────────────────────┤
+  │ C Standard        │ C89/C90                   │ C99                    │
+  ├───────────────────┼───────────────────────────┼────────────────────────┤
+  │ Unity Extension   │ None                      │ Fixture                │
+  ├───────────────────┼───────────────────────────┼────────────────────────┤
+  │ Executables       │ 2 separate (test1, test2) │ 1 combined (all_tests) │
+  ├───────────────────┼───────────────────────────┼────────────────────────┤
+  │ Test Organization │ Individual runners        │ Test groups            │
+  ├───────────────────┼───────────────────────────┼────────────────────────┤
+  │ Target Prefix     │ test1, test2              │ ex2_all_tests          │
+  └───────────────────┴───────────────────────────┴────────────────────────┘
+  The target is named ex2_all_tests (with ex2_ prefix) to avoid conflicts with example_1 targets.
+  The examples/CMakeLists.txt has also been updated to include example_2.
+
+  Updates Made:
+
+  1. Compiler-Dependent Warning Flags
+  - Added if(CMAKE_C_COMPILER_ID MATCHES "GNU|Clang") for Unix-style flags
+  - Added elseif(CMAKE_C_COMPILER_ID MATCHES "MSVC") for MSVC-specific flags
+
+  2. MSVC Warning Flags
+  - /W4 - High warning level (equivalent to -Wall -Wextra)
+  - /wd4068 - Disable unknown pragma warning (equivalent to -Wno-unknown-pragmas)
+
+  3. Updated UNITY_WERROR Option
+  - For GCC/Clang: Adds -Werror
+  - For MSVC: Adds /WX (treat warnings as errors)
+
+  Comparison:
+  ┌────────────────────┬──────────────────────┬─────────┐
+  │      Feature       │      GCC/Clang       │  MSVC   │
+  ├────────────────────┼──────────────────────┼─────────┤
+  │ Warning level      │ -Wall -Wextra        │ /W4     │
+  ├────────────────────┼──────────────────────┼─────────┤
+  │ Unknown pragma     │ -Wno-unknown-pragmas │ /wd4068 │
+  ├────────────────────┼──────────────────────┼─────────┤
+  │ Warnings as errors │ -Werror              │ /WX     │
+  └────────────────────┴──────────────────────┴─────────┘
+  Now example_2 will build cleanly with Visual Studio 2022 using the vs2022 preset,
+  just like example_1 does!
