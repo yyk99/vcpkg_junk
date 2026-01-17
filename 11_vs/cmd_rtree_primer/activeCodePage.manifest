@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<assembly manifestVersion="1.0" xmlns="urn:schemas-microsoft-com:asm.v1">
+    <assemblyIdentity type="win32" name="global_mapper.exe" version="6.0.0.0"/>
+    <application>
+        <windowsSettings>
+            <!-- ko-KR for CP-949 in Windows-11 -->
+            <!-- ru-RU for CP-1251 in Windows-11 -->
+            <!-- UTF-8 for UTF-8 (codepage 65001) Windows 10/11 -->
+            <activeCodePage xmlns="http://schemas.microsoft.com/SMI/2019/WindowsSettings">UTF-8</activeCodePage>
+        </windowsSettings>
+    </application>
+</assembly>

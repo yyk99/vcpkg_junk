@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <!-- Include the CesiumJS JavaScript and CSS files -->
+    <script src="https://cesium.com/downloads/cesiumjs/releases/1.132/Build/Cesium/Cesium.js"></script>
+    <link href="https://cesium.com/downloads/cesiumjs/releases/1.132/Build/Cesium/Widgets/widgets.css" rel="stylesheet">
+</head>
+<body>
+    <div id="cesiumContainer"></div>
+    <script type="module">
+        // Grant CesiumJS access to your ion assets
+        // Cesium.Ion.defaultAccessToken =  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJmYzIwMGIwYi0yOWE1LTQ2NTItOTUzZS0zYjI4YTllMzJhNDgiLCJpZCI6MTcxMjc3LCJpYXQiOjE3MjY2NjA3Mzl9.fKEyT8oM2ZtUAWKZgWF0klrIB9iJjiptB3c6bwn1HwY";
+        const viewer = new Cesium.Viewer("cesiumContainer");
+
+        try {
+            const tileset = await Cesium.Cesium3DTileset.fromUrl(
+                "tileset.json",
+            );
+
+            {
+                tileset.debugColorizeTiles = true;
+                tileset.debugShowBoundingVolume = true;
+                tileset.debugShowContentBoundingVolume = true;
+
+                // tileset.maximumMemoryUsage = 100; // Increase to 1 GB or more
+                tileset.maximumScreenSpaceError = 500; // Adjust this value as needed.
+            }
+
+            viewer.scene.primitives.add(tileset);
+            await viewer.zoomTo(tileset);
+
+            // Apply the default style if it exists
+            const extras = tileset.asset.extras;
+            if (
+                Cesium.defined(extras) &&
+                Cesium.defined(extras.ion) &&
+                Cesium.defined(extras.ion.defaultStyle)
+            ) {
+                tileset.style = new Cesium.Cesium3DTileStyle(extras.ion.defaultStyle);
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    </script>
+</body>
+</html>

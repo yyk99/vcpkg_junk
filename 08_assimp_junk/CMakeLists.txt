@@ -3,7 +3,7 @@
 # https://learn.microsoft.com/en-us/vcpkg/users/buildsystems/cmake-integration#settings-reference
 #
 
-cmake_minimum_required(VERSION 3.25)
+cmake_minimum_required(VERSION 3.22)
 
 if(POLICY CMP0167)
     cmake_policy(SET CMP0167 NEW)
@@ -37,8 +37,12 @@ find_package(Eigen3 CONFIG REQUIRED)
 
 add_definitions(${Boost_LIB_DIAGNOSTIC_DEFINITIONS})
 
-add_executable(
-    cmd_getargs_08
+# "VCPKG_TARGET_TRIPLET": "x64-linux-dynamic"
+if ("${VCPKG_TARGET_TRIPLET}" STREQUAL "x64-linux-dynamic")
+   add_definitions(-DX64_LINUX_DYNAMIC=1)
+endif()
+
+add_executable(cmd_getargs_08
     cmd_getargs.cpp
     ../.clang-format
     README.md
@@ -46,14 +50,53 @@ add_executable(
 target_link_libraries(cmd_getargs_08 PRIVATE Boost::program_options)
 set_target_properties(cmd_getargs_08 PROPERTIES FOLDER "Apps")
 
+find_package(glm CONFIG REQUIRED)
+
+## Or use the header-only version
+#find_package(glm CONFIG REQUIRED)
+#target_link_libraries(main PRIVATE glm::glm-header-only)
+
+add_executable(cmd_aiscene_bounding_box_08
+    cmd_aiscene_bounding_box.cpp
+    ../.clang-format
+    README.md
+)
+target_link_libraries(cmd_aiscene_bounding_box_08 PRIVATE 
+    assimp::assimp
+    glm::glm
+)
+set_target_properties(cmd_aiscene_bounding_box_08 PROPERTIES FOLDER "Apps")
+
+find_path(TINYGLTF_INCLUDE_DIRS "tiny_gltf.h")
+
+add_executable(cmd_tinygltf_bounding_volume_08
+    cmd_tinygltf_bounding_volume.cpp
+    ../.clang-format
+    README.md
+)
+target_include_directories(cmd_tinygltf_bounding_volume_08 PRIVATE ${TINYGLTF_INCLUDE_DIRS})
+set_target_properties(cmd_tinygltf_bounding_volume_08 PROPERTIES FOLDER "Apps")
+
+add_executable(cmd_tinygltf_example_08
+    cmd_tinygltf_example.cpp
+)
+target_include_directories(cmd_tinygltf_example_08
+    PRIVATE ${TINYGLTF_INCLUDE_DIRS})
+set_target_properties(cmd_tinygltf_example_08 PROPERTIES FOLDER "Apps")
+
+find_package(draco REQUIRED)
+add_executable(cmd_pnts_decoder cmd_pnts_decoder.cpp)
+target_link_libraries(cmd_pnts_decoder PRIVATE draco::draco)
+set_target_properties(cmd_pnts_decoder PROPERTIES FOLDER "Apps")
+
 if(BUILD_TESTING)
     enable_testing()
     
     include(GoogleTest)
 
-    list(APPEND VCPKG_MANIFEST_FEATURES "tests")
-
     find_package(GTest REQUIRED)
+
+    find_path(TINYGLTF_INCLUDE_DIRS "tiny_gltf.h")
 
     add_executable(test_08
         TilesetJson.h
@@ -61,19 +104,30 @@ if(BUILD_TESTING)
         meshtoolbox.h
         test_assimp.cpp
         test_boost.cpp
+        test_draco.cpp
+        test_draco.h
+
+        test_cesium_geometry_error.cpp
 
         .editorconfig
+        .clang-format
     )
-    target_include_directories(test_08 PRIVATE ${Stb_INCLUDE_DIR})
-    target_link_libraries(
-        test_08
-        PRIVATE
+    if (MSVC)
+        # That MUST be fixed. CMAKE does not add /Zi flag in Debug configuration
+        target_compile_options(test_08 PRIVATE
+            $<$<CONFIG:Debug>:/Zi>
+            $<$<CONFIG:RelWithDebInfo>:/Zi> # Example for RelWithDebInfo as well
+        )
+    endif()
+    target_include_directories(test_08 PRIVATE ${Stb_INCLUDE_DIR} ${TINYGLTF_INCLUDE_DIRS})
+    target_link_libraries(test_08 PRIVATE
         Boost::program_options
         Boost::filesystem
         Boost::geometry
         assimp::assimp
         json-c::json-c
         Eigen3::Eigen
+        draco::draco
 
         GTest::gtest
         GTest::gtest_main
