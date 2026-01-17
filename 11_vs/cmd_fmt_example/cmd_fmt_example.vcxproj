@@ -13,7 +13,7 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{b25e9776-c4c9-48be-84bd-9e125374e18d}</ProjectGuid>
+    <ProjectGuid>{2E383BEC-41FE-447C-A34B-5E9128DB6F37}</ProjectGuid>
     <RootNamespace>cmdapp1</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
     <ProjectName>cmd_fmt_example</ProjectName>

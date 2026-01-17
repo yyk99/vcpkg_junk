@@ -4,7 +4,8 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 17.10.35004.147
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cmd_app1", "cmd_app1\cmd_app1.vcxproj", "{B25E9776-C4C9-48BE-84BD-9E125374E18D}"
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cmd_fmt_example", "cmd_fmt_example\cmd_fmt_example.vcxproj", "{B25E9776-C4C9-48BE-84BD-9E125374E18D}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cmd_fmt_example", "cmd_fmt_example\cmd_fmt_example.vcxproj", "{2E383BEC-41FE-447C-A34B-5E9128DB6F37}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cmd_mem_allocate", "cmd_mem_allocate\cmd_mem_allocate.vcxproj", "{4ACC0D7C-DDF7-4D82-9740-8137FB883688}"
 EndProject
@@ -52,6 +53,10 @@ Global
 		{B25E9776-C4C9-48BE-84BD-9E125374E18D}.Debug|x64.Build.0 = Debug|x64
 		{B25E9776-C4C9-48BE-84BD-9E125374E18D}.Release|x64.ActiveCfg = Release|x64
 		{B25E9776-C4C9-48BE-84BD-9E125374E18D}.Release|x64.Build.0 = Release|x64
+		{2E383BEC-41FE-447C-A34B-5E9128DB6F37}.Debug|x64.ActiveCfg = Debug|x64
+		{2E383BEC-41FE-447C-A34B-5E9128DB6F37}.Debug|x64.Build.0 = Debug|x64
+		{2E383BEC-41FE-447C-A34B-5E9128DB6F37}.Release|x64.ActiveCfg = Release|x64
+		{2E383BEC-41FE-447C-A34B-5E9128DB6F37}.Release|x64.Build.0 = Release|x64
 		{4ACC0D7C-DDF7-4D82-9740-8137FB883688}.Debug|x64.ActiveCfg = Debug|x64
 		{4ACC0D7C-DDF7-4D82-9740-8137FB883688}.Debug|x64.Build.0 = Debug|x64
 		{4ACC0D7C-DDF7-4D82-9740-8137FB883688}.Release|x64.ActiveCfg = Release|x64
