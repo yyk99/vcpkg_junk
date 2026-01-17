@@ -1,12 +1,14 @@
 {
   "dependencies": [
     "assimp",
+    "draco",
+    "tinygltf",
+    "glm",
     "boost-program-options",
     "boost-filesystem",
     "boost-geometry",
     "json-c",
-    "eigen3",
-    "gtest"
+    "eigen3"
   ],
   "features": {
     "tests": {
@@ -15,5 +17,6 @@
         "gtest"
       ]
     }
-  }
+  },
+  "builtin-baseline": "9612cfe7ecbbb9c213b42ed4d82ecce1913c46af"
 }

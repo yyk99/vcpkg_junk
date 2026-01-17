@@ -1,0 +1,59 @@
+● Based on examining the contents of examples/example_3/, here's the purpose of this example:
+
+  Purpose of Example 3
+
+  Primary Goal: Demonstrate Unity's Ruby automation tools and show passing, failing, and ignored tests together.
+
+  Key Features Demonstrated:
+
+  1. Ruby Build Automation (Rake)
+  - Uses rakefile.rb and rakefile_helper.rb for build automation
+  - Shows how Ruby can:
+  - Auto-generate test runners from test files
+  - Auto-discover tests (finds all Test*.c files)
+  - Compile and link automatically
+  - Generate fancy summaries of test results
+  - Support multiple toolchains (GCC, IAR) via YAML config files
+
+  2. Test Runner Auto-Generation
+  - Unlike example_1 (manual runners) and example_2 (pre-written runners)
+  - Example 3 uses Ruby scripts to automatically generate test runners
+  - The rakefile_helper.rb uses Unity's generate_test_runner.rb script
+  - Test runners are created on-the-fly during build
+
+  3. Test Status Variety
+  - Passing tests: test_FindFunction_WhichIsBroken_ShouldReturnZeroIfItemIsNotInList
+  - Failing tests: Intentionally broken code to demonstrate failure reporting
+  - Ignored tests: TEST_IGNORE() and TEST_IGNORE_MESSAGE() examples
+
+  4. Custom Unity Helpers
+  - helper/UnityHelper.h and UnityHelper.c show how to:
+  - Create custom assertions for complex types
+  - Extend Unity with your own assertion macros
+  - Example: TEST_ASSERT_EQUAL_EXAMPLE_STRUCT_T()
+
+  5. Configuration Files
+  - target_gcc_32.yml: Shows how to configure:
+  - Compiler flags (-std=c99, -Wall, -m32)
+  - Include paths
+  - Defines (UNITY_INCLUDE_DOUBLE, UNITY_SUPPORT_TEST_CASES)
+  - Linker options (-lm for math library)
+
+  Comparison Summary:
+
+  Example 1: Basic Unity - Manual test runners, no Ruby
+  Example 2: Unity Fixture - Test grouping, pre-written runners
+  Example 3: Ruby Automation - Auto-generated runners, rake build, fancy summaries
+
+  The "Why Ruby?" Message:
+
+  The readme explicitly says:
+  
+  "Without ruby, you have to maintain your own test runners. Do that for a while and you'll
+  learn why you really want to start using the Ruby tools."
+
+  This example demonstrates the power of automation - instead of manually writing and
+  maintaining test runner main() functions, Ruby scripts scan your test files and generate everything automatically.
+
+  In our CMakeLists.txt version: We replicate this by using add_custom_command() to invoke
+  the Ruby generate_test_runner.rb script, achieving the same automation within CMake!

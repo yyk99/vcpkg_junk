@@ -1,8 +1,11 @@
 {
     "cSpell.words": [
+        "AABB",
         "assxml",
         "cesiumjs",
+        "ECEF",
         "Eigen",
+        "EPSG",
         "georeferenced",
         "getargs",
         "glft",

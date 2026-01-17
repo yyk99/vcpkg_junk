@@ -1,2 +1,5 @@
 vcpkg_installed/
 x64/
+*.user
+*~
+out/

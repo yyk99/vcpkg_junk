@@ -24,6 +24,16 @@
       "inherits": "vcpkg",
       "environment": {
         "VCPKG_ROOT": "c:\\opt\\vcpkg"
+      },
+      "cacheVariables": {
+        "CMAKE_PREFIX_PATH": "c:/Qt/6.8.0/msvc2022_64/"
+      }
+    },
+    {
+      "name": "windows-quagga",
+      "inherits": "default",
+      "cacheVariables": {
+        "CMAKE_PREFIX_PATH": "c:/qt6/6.8.1/msvc2022_64/"
       }
     },
     {

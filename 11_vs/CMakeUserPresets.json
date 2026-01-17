@@ -1,0 +1,80 @@
+{
+  "version": 3,
+  "configurePresets": [
+    {
+      "name": "default",
+      "inherits": "vcpkg",
+      "environment": {
+        "VCPKG_ROOT": "g:\\opt\\vcpkg"
+      }
+    },
+    {
+      "name": "windows-developmentyk",
+      "inherits": "vcpkg",
+      "environment": {
+        "VCPKG_ROOT": "c:\\opt\\vcpkg"
+      }
+    },
+    {
+      "name": "cherry",
+      "inherits": "vcpkg",
+      "environment": {
+        "VCPKG_ROOT": "e:\\opt\\vcpkg"
+      }
+    },
+    {
+      "name": "kestrel",
+      "inherits": "vcpkg",
+      "generator": "Unix Makefiles",
+      "binaryDir": "${sourceDir}/build-linux",
+      "environment": {
+        "VCPKG_ROOT": "/home/yyk/src/vcpkg"
+      },
+      "cacheVariables": {
+        "VCPKG_INSTALLED_DIR": "$env{VCPKG_ROOT}/installed"
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "default-debug",
+      "configurePreset": "default",
+      "configuration": "Debug"
+    },
+    {
+      "name": "default-release",
+      "configurePreset": "default",
+      "configuration": "Release"
+    },
+    {
+      "name": "windows-developmentyk-debug",
+      "configurePreset": "windows-developmentyk",
+      "configuration": "Debug"
+    },
+    {
+      "name": "windows-developmentyk-release",
+      "configurePreset": "windows-developmentyk",
+      "configuration": "Release"
+    },
+    {
+      "name": "cherry-debug",
+      "configurePreset": "cherry",
+      "configuration": "Debug"
+    },
+    {
+      "name": "cherry-release",
+      "configurePreset": "cherry",
+      "configuration": "Release"
+    },
+    {
+      "name": "kestrel-debug",
+      "configurePreset": "kestrel",
+      "configuration": "Debug"
+    },
+    {
+      "name": "kestrel-release",
+      "configurePreset": "kestrel",
+      "configuration": "Release"
+    }
+  ]
+}

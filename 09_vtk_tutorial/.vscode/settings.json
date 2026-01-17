@@ -5,5 +5,9 @@
         "jsoncpp",
         "Voronoi",
         "voronoy"
-    ]
+    ],
+    "files.associations": {
+        "filesystem": "cpp",
+        "chrono": "cpp"
+    }
 }

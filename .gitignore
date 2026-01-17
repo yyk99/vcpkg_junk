@@ -3,3 +3,8 @@
 #
 build*/
 .vs/
+out/
+.#*
+*~
+TAGS
+tmpclaude-*-cwd

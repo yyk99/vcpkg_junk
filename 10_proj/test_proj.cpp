@@ -720,3 +720,72 @@ TEST_F(ProjF, lv95_GM20040_2) {
         EXPECT_NEAR(1200000, a.enu.n, 0.1E-8);
     }
 }
+
+/// @brief
+/// @param --gtest_filter=ProjF.lv95_GM20040_3
+/// @param
+TEST_F(ProjF, lv95_GM20040_3) {
+    //
+    //  proj -s +proj=geocent +ellps=WGS84 -t +proj=latlong +ellps=WGS84
+    //  +nadgrids=@s -R
+    //
+    //  proj -s +proj=latlong +ellps=WGS84 -t +proj=helmert +ellps=bessel
+    //  +towg=321.723,119.896,-128.642,0.081937,0.000413,0.000162,0.000464 -R
+
+    PJ_CONTEXT *C;
+    PJ *P;
+
+    // Define ECEF (WGS 84) as source CRS
+    const char *ecef_crs = "EPSG:4978";
+
+    // Define LV95 (CH1903+ / EPSG:2056) as target CRS
+    const char *lv95_crs = "EPSG:2056";
+
+    // Create PROJ context
+    C = proj_context_create();
+
+    // Create transformation object from ECEF to LV95
+    P = proj_create_crs_to_crs(C, ecef_crs, lv95_crs, NULL);
+
+    ASSERT_TRUE(P) << "Failed to create transformation object.";
+
+    // Example ECEF coordinates (x, y, z in meters)
+#if 0
+    double ecef_x = 4240000.0;
+    double ecef_y = 570000.0;
+    double ecef_z = 4780000.0;
+#else
+    // A point in ECEF coordinates
+    double ecef_x = 4383992.2072651461;
+    double ecef_y = 571588.35117251193;
+    double ecef_z = 4583655.5109447325;
+#endif
+    // Create PROJ_COORD object for input coordinates
+    PJ_COORD ecef_coord;
+    ecef_coord.xyz.x = ecef_x;
+    ecef_coord.xyz.y = ecef_y;
+    ecef_coord.xyz.z = ecef_z;
+
+    // Create PROJ_COORD object for output coordinates
+    PJ_COORD lv95_coord;
+
+    // Perform the transformation
+    lv95_coord = proj_trans(P, PJ_FWD, ecef_coord);
+
+    ASSERT_TRUE(proj_errno(P) == 0)
+        << "Transformation failed: " << proj_errno_string(proj_errno(P));
+
+    // Output LV95 coordinates (easting, northing, elevation)
+    CONSOLE(std::setprecision(18));
+    CONSOLE("LV95 Easting: " << lv95_coord.xyz.x
+                             << ", Northing: " << lv95_coord.xyz.y);
+    CONSOLE("LV95 Elevation: " << lv95_coord.xyz.z);
+
+    // ImageToCloudConverter_F.swiss_t2
+    EXPECT_NEAR(2599206.86962043, lv95_coord.xyz.x, 0.06);
+    EXPECT_NEAR(1119445.49903813, lv95_coord.xyz.y, 0.03);
+
+    // Destroy the transformation object and context
+    proj_destroy(P);
+    proj_context_destroy(C);
+}

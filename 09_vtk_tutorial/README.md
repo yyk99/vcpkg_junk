@@ -26,6 +26,19 @@ In Windows (WIP)
     cmake --build build-vs2022
     cmake --build build-vs2022 --target RUN_TESTS
 
+## Setting environment
+
+In Windows:
+
+    In the Command Line (CMD)
+
+    set PROJ_DATA=vcpkg_installed/x64-windows/share/proj/
+    Debug\test_09.exe
+
+If Visual Studio is used, then set Debugging / Environment property:
+
+    PROJ_DATA=$(ProjectDir)vcpkg_installed/x64-windows/share/proj/
+
 ## REFERENCE
 
 See more details

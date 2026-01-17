@@ -1,0 +1,72 @@
+{
+  "version": 3,
+  "configurePresets": [
+    {
+      "name": "default",
+      "inherits": "vcpkg",
+      "environment": {
+        "VCPKG_ROOT": "g:\\opt\\vcpkg"
+      }
+    },
+    {
+      "name": "windows-developmentyk",
+      "inherits": "vcpkg",
+      "environment": {
+        "VCPKG_ROOT": "c:\\opt\\vcpkg",
+        "VULKAN_SDK": "c:\\opt\\VulkanSDK\\1.4.328.1"
+      }
+    },
+    {
+      "name": "cherry",
+      "inherits": "vcpkg",
+      "environment": {
+        "VCPKG_ROOT": "e:\\opt\\vcpkg"
+      }
+    },
+    {
+      "name": "kestrel",
+      "inherits": "vcpkg",
+      "generator": "Unix Makefiles",
+      "binaryDir": "${sourceDir}/build-linux",
+      "environment": {
+        "VCPKG_ROOT": "/home/yyk/src/vcpkg"
+      }
+    },
+    {
+      "name": "kestrel-clang",
+      "inherits": "vcpkg",
+      "generator": "Unix Makefiles",
+      "binaryDir": "${sourceDir}/build-linux-clang",
+      "environment": {
+        "VCPKG_ROOT": "/home/yyk/src/vcpkg"
+      },
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "CMAKE_C_COMPILER": "clang",
+        "CMAKE_CXX_COMPILER": "clang++"
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "default",
+      "configurePreset": "default"
+    },
+    {
+      "name": "windows-developmentyk",
+      "configurePreset": "windows-developmentyk"
+    },
+    {
+      "name": "cherry",
+      "configurePreset": "cherry"
+    },
+    {
+      "name": "kestrel",
+      "configurePreset": "kestrel"
+    },
+    {
+      "name": "kestrel-clang",
+      "configurePreset": "kestrel-clang"
+    }
+  ]
+}
