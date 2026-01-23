@@ -4,6 +4,7 @@
     {
       "name": "default",
       "inherits": "vcpkg",
+      "binaryDir": "${sourceDir}/build/default",
       "environment": {
         "VCPKG_ROOT": "g:\\opt\\vcpkg"
       }
@@ -11,6 +12,7 @@
     {
       "name": "windows-developmentyk",
       "inherits": "vcpkg",
+      "binaryDir": "${sourceDir}/build/windows-developmentyk",
       "environment": {
         "VCPKG_ROOT": "c:\\opt\\vcpkg"
       }
@@ -18,6 +20,7 @@
     {
       "name": "cherry",
       "inherits": "vcpkg",
+      "binaryDir": "${sourceDir}/build/cherry",
       "environment": {
         "VCPKG_ROOT": "e:\\opt\\vcpkg"
       }
@@ -26,7 +29,7 @@
       "name": "kestrel",
       "inherits": "vcpkg",
       "generator": "Unix Makefiles",
-      "binaryDir": "${sourceDir}/build-linux",
+      "binaryDir": "${sourceDir}/build/kestrel",
       "environment": {
         "VCPKG_ROOT": "/home/yyk/src/vcpkg"
       },
