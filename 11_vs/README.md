@@ -20,7 +20,3 @@ Apparently
 ### Branch devel/yurik42/11_vs_sombrero_elevation_generator
 
 	Add cmd_sombrero_elevation_generator app
-
-
-
-
